@@ -1,0 +1,202 @@
+/* ============================================================
+   StudyFlix Admin — Sidebar styles
+   ============================================================ */
+
+#adminSidebar {
+    --sb-width: 250px;
+    --sb-bg: #141c33;
+    --sb-border: rgba(255,255,255,0.07);
+    --sb-text: #8892B0;
+    --sb-text-strong: #E8EEFF;
+    --sb-gold: #FFD700;
+    --sb-teal: #00D4B4;
+    --sb-red: #ff5555;
+
+    flex: 0 0 var(--sb-width);
+    width: var(--sb-width);
+    min-height: 100vh;
+    position: relative;
+    z-index: 100;
+}
+
+.admin-sidebar-inner {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: linear-gradient(180deg, #141c33 0%, #0f1830 100%);
+    border-right: 1px solid var(--sb-border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.4rem 0.9rem 1rem;
+    overflow-y: auto;
+}
+
+/* Header */
+.admin-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.4rem 0.5rem 1.2rem;
+    border-bottom: 1px solid var(--sb-border);
+    margin-bottom: 1rem;
+}
+.admin-sidebar-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sb-gold), #FF6B00);
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+}
+.admin-sidebar-meta { min-width: 0; }
+.admin-sidebar-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--sb-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.admin-sidebar-email {
+    font-size: 0.72rem;
+    color: var(--sb-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Nav */
+.admin-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+}
+.admin-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 10px;
+    color: var(--sb-text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: background 0.2s, color 0.2s;
+    border: 1px solid transparent;
+}
+.admin-sidebar-link i {
+    width: 18px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.admin-sidebar-link:hover {
+    background: rgba(255,255,255,0.04);
+    color: var(--sb-text-strong);
+}
+.admin-sidebar-link.is-active {
+    background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,107,0,0.08));
+    color: var(--sb-gold);
+    border-color: rgba(255,215,0,0.25);
+}
+
+/* Footer / logout */
+.admin-sidebar-footer {
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--sb-border);
+    margin-top: 0.6rem;
+}
+.admin-sidebar-logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 0.8rem;
+    background: rgba(255,85,85,0.08);
+    border: 1px solid rgba(255,85,85,0.25);
+    border-radius: 10px;
+    color: #ff9b9b;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+.admin-sidebar-logout:hover {
+    background: rgba(255,85,85,0.16);
+    border-color: var(--sb-red);
+    color: #ffb9b9;
+}
+.admin-sidebar-logout i {
+    width: 18px;
+    text-align: center;
+}
+
+/* Toggle button (hidden on desktop) */
+.admin-sidebar-toggle { display: none; }
+
+/* Overlay for mobile drawer */
+.admin-sidebar-overlay { display: none; }
+
+/* ============================================================
+   Responsive — collapse to drawer below 900px
+   ============================================================ */
+@media (max-width: 900px) {
+    #adminSidebar {
+        flex: 0 0 0;
+        width: 0;
+        min-height: 0;
+        position: static;
+    }
+    .admin-sidebar-inner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 260px;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 9000;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    }
+    .admin-sidebar-inner.is-open { transform: translateX(0); }
+
+    .admin-sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(28,38,64,0.95);
+        border: 1px solid rgba(255,215,0,0.3);
+        color: var(--sb-gold);
+        font-size: 1rem;
+        cursor: pointer;
+        z-index: 9001;
+    }
+
+    .admin-sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        z-index: 8999;
+    }
+    .admin-sidebar-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}

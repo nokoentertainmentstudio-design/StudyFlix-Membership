@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Admins — StudyFlix Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;--red:#ff5555;--muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,.07)}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#080C18,#111A2E);color:#E8EEFF;min-height:100vh;overflow-x:hidden}
+.hero-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.guard{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,42,.95);z-index:10000;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.guard.hidden{display:none}
+.guard-text{color:var(--muted);font-size:.9rem}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,215,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.main{padding:1.5rem 1.5rem 3rem;max-width:1300px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;flex-wrap:wrap}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1.5px}
+h1 .hl{background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+.btn{padding:.65rem 1.2rem;border-radius:10px;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:rgba(255,255,255,.05);color:#E8EEFF;border-color:var(--border)}
+.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--orange));color:#111;border:none}
+.btn-gold:hover:not(:disabled){transform:scale(1.02);box-shadow:0 0 20px rgba(255,215,0,.3)}
+.btn-teal{background:rgba(0,212,180,.1);color:var(--teal);border-color:rgba(0,212,180,.3)}
+.btn-teal:hover:not(:disabled){background:rgba(0,212,180,.2)}
+.btn-red{background:rgba(255,85,85,.12);color:#ff9b9b;border-color:rgba(255,85,85,.35)}
+.btn-red:hover:not(:disabled){background:rgba(255,85,85,.22)}
+.btn-sm{padding:.4rem .8rem;font-size:.72rem;border-radius:8px}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.1rem;flex-wrap:wrap}
+.panel-head h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.8px;color:var(--gold);display:flex;align-items:center;gap:.5rem}
+.panel-head p{color:var(--muted);font-size:.78rem;margin-top:.2rem;max-width:520px}
+
+.gen-row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.code-display{display:none;margin-top:1rem;background:rgba(0,212,180,.08);border:1px solid rgba(0,212,180,.3);border-radius:12px;padding:1rem 1.2rem}
+.code-display.show{display:block}
+.code-display label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block;margin-bottom:.4rem}
+.code-value{font-family:'Courier New',monospace;font-size:1.4rem;font-weight:800;letter-spacing:4px;color:var(--teal);word-break:break-all;margin-bottom:.6rem}
+.code-meta{font-size:.72rem;color:var(--muted);line-height:1.55}
+
+.admins-grid{display:grid;gap:.8rem}
+.admin-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.admin-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--orange));color:#111;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;flex-shrink:0}
+.admin-info{flex:1;min-width:200px}
+.admin-name{font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.admin-email{color:var(--muted);font-size:.75rem;margin-top:.15rem;word-break:break-all}
+.admin-meta{color:var(--muted);font-size:.7rem;margin-top:.3rem}
+.admin-actions{display:flex;gap:.4rem;flex-wrap:wrap;flex-shrink:0}
+
+.badge{display:inline-block;padding:.18rem .6rem;border-radius:20px;font-size:.6rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+.b-active{background:rgba(0,212,180,.15);color:var(--teal)}
+.b-inactive{background:rgba(255,85,85,.15);color:#ff9b9b}
+.b-you{background:rgba(255,215,0,.15);color:var(--gold)}
+
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty i{font-size:2rem;color:rgba(255,215,0,.35);display:block;margin-bottom:.8rem}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:5000;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal.show{display:flex}
+.mc{width:100%;max-width:480px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.7rem;box-shadow:0 25px 60px rgba(0,0,0,.6)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
+.mh h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold);letter-spacing:.5px}
+.mh button{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;line-height:1}
+.mh button:hover{color:var(--teal)}
+.mc p{color:var(--muted);font-size:.85rem;line-height:1.6;margin-bottom:1.2rem}
+.mc p strong{color:#ff9b9b}
+.mactions{display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap}
+.mactions .btn{flex:1;justify-content:center}
+
+#toast{position:fixed;bottom:24px;right:24px;background:rgba(28,38,64,.98);border:1px solid var(--border);border-left:3px solid var(--teal);padding:.9rem 1.2rem;border-radius:12px;font-size:.85rem;font-weight:700;z-index:20000;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;max-width:340px}
+#toast.error{border-left-color:var(--red);color:#ff9b9b}
+
+@media(max-width:700px){.main{padding-top:75px}h1{font-size:2rem}.admin-card{flex-direction:column;align-items:flex-start}.admin-actions{width:100%}.admin-actions .btn{flex:1;justify-content:center}.panel{padding:1.1rem}}
+</style>
+</head>
+<body class="has-sidebar">
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard">
+  <div class="spinner"></div>
+  <div class="guard-text" id="guardText">Verifying admin access…</div>
+</div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1><span class="hl">Admins</span></h1>
+      <p class="sub">Manage administrator accounts and generate invite codes.</p>
+    </div>
+    <button class="btn btn-ghost" id="refreshBtn"><i class="fas fa-rotate-right"></i> Refresh</button>
+  </div>
+
+  <!-- GENERATE INVITE -->
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2><i class="fas fa-key"></i> Invite a New Admin</h2>
+        <p>Generate an invite code and share it with the person you want to add. Codes are single-use and expire after 7 days.</p>
+      </div>
+    </div>
+    <div class="gen-row">
+      <button class="btn btn-gold" id="genBtn"><i class="fas fa-plus"></i> Generate Invite Code</button>
+      <button class="btn btn-ghost" id="viewInvitesBtn"><i class="fas fa-list"></i> View Active Invites</button>
+    </div>
+
+    <div class="code-display" id="codeDisplay">
+      <label>Invite Code</label>
+      <div class="code-value" id="codeValue">————-————-————</div>
+      <div class="code-meta" id="codeMeta"></div>
+      <div style="display:flex;gap:.5rem;margin-top:.9rem;flex-wrap:wrap">
+        <button class="btn btn-teal btn-sm" id="copyBtn"><i class="fas fa-copy"></i> Copy Code</button>
+        <button class="btn btn-ghost btn-sm" id="shareBtn"><i class="fas fa-share"></i> Share Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMINS LIST -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2><i class="fas fa-user-shield"></i> Current Admins</h2>
+    </div>
+    <div class="admins-grid" id="adminsGrid">
+      <div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading admins…</div>
+    </div>
+  </div>
+
+  <!-- ACTIVE INVITES -->
+  <div class="panel" id="invitesPanel" style="display:none">
+    <div class="panel-head">
+      <h2><i class="fas fa-ticket"></i> Active Invites</h2>
+      <button class="btn btn-ghost btn-sm" id="closeInvitesBtn"><i class="fas fa-xmark"></i> Close</button>
+    </div>
+    <div id="invitesList"></div>
+  </div>
+</main>
+
+<!-- CONFIRM MODAL -->
+<div class="modal" id="modal">
+  <div class="mc">
+    <div class="mh"><h3 id="modalTitle">Confirm</h3><button id="modalClose">&times;</button></div>
+    <p id="modalText"></p>
+    <div class="mactions">
+      <button class="btn btn-ghost" id="modalCancel">Cancel</button>
+      <button class="btn btn-red" id="modalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNWXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();const db=firebase.firestore();
+
+let currentUser=null,currentAdmin=null,allAdmins=[];
+
+const toastEl=document.getElementById('toast');let tt=null;
+function toast(m,err){toastEl.textContent=m;toastEl.classList.toggle('error',!!err);toastEl.style.display='block';clearTimeout(tt);tt=setTimeout(()=>toastEl.style.display='none',3200)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function toDate(t){if(!t)return null;try{if(t.toDate)return t.toDate();if(t.seconds)return new Date(t.seconds*1000);return new Date(t)}catch(e){return null}}
+function fmt(d){return d?d.toLocaleString():'—'}
+
+/* Sidebar */
+(async function(){
+  try{
+    const r=await fetch('admin-sidebar.html');
+    document.getElementById('sidebar-placeholder').innerHTML=await r.text();
+    const sb=document.getElementById('sidebar'),tg=document.getElementById('sidebarToggle'),cl=document.getElementById('sidebarClose'),ov=document.getElementById('sidebarOverlay'),lo=document.getElementById('sidebarLogout');
+    tg.addEventListener('click',()=>{sb.classList.add('open');ov.classList.add('active')});
+    function c(){sb.classList.remove('open');ov.classList.remove('active')}
+    cl.addEventListener('click',c);ov.addEventListener('click',c);
+    const cur=location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.page===cur));
+    lo.addEventListener('click',async()=>{lo.disabled=true;try{await auth.signOut()}catch(e){}location.href='admin-login.html'});
+  }catch(e){console.error(e)}
+})();
+
+async function logActivity(type,payload){
+  try{await db.collection('activity').add({type,by:currentUser.uid,byEmail:currentUser.email,byName:currentAdmin.name||'',at:firebase.firestore.FieldValue.serverTimestamp(),...payload})}catch(e){}
+}
+
+/* Modal */
+const modal=document.getElementById('modal');
+let modalResolve=null;
+document.getElementById('modalClose').addEventListener('click',()=>closeModal(false));
+document.getElementById('modalCancel').addEventListener('click',()=>closeModal(false));
+document.getElementById('modalConfirm').addEventListener('click',()=>closeModal(true));
+function closeModal(v){modal.classList.remove('show');if(modalResolve){modalResolve(v);modalResolve=null}}
+function confirmDialog(title,text){
+  return new Promise(resolve=>{
+    document.getElementById('modalTitle').textContent=title;
+    document.getElementById('modalText').innerHTML=text;
+    modal.classList.add('show');
+    modalResolve=resolve;
+  });
+}
+
+/* Load admins */
+async function loadAdmins(){
+  const g=document.getElementById('adminsGrid');
+  g.innerHTML='<div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading admins…</div>';
+  try{
+    const snap=await db.collection('admins').get();
+    allAdmins=snap.docs.map(d=>({id:d.id,data:d.data()}));
+
+    if(!allAdmins.length){g.innerHTML='<div class="empty"><i class="fas fa-user-slash"></i>No admins found.</div>';return}
+
+    g.innerHTML=allAdmins.map(a=>{
+      const d=a.data;
+      const name=d.name||d.email||'Admin';
+      const initial=name.charAt(0).toUpperCase();
+      const isYou=a.id===currentUser.uid;
+      const status=(d.status||'active').toLowerCase();
+      const role=d.role||'admin';
+      const lastLogin=toDate(d.lastLoginAt);
+      return `<div class="admin-card">
+        <div class="admin-avatar">${esc(initial)}</div>
+        <div class="admin-info">
+          <div class="admin-name">
+            ${esc(name)}
+            ${isYou?'<span class="badge b-you">You</span>':''}
+            <span class="badge ${status==='active'?'b-active':'b-inactive'}">${esc(status)}</span>
+          </div>
+          <div class="admin-email">${esc(d.email||'—')}</div>
+          <div class="admin-meta">
+            Role: ${esc(role)} · Added ${d.createdAt&&d.createdAt.toDate?d.createdAt.toDate().toLocaleDateString():'—'}
+            ${lastLogin?' · Last login '+lastLogin.toLocaleDateString():''}
+          </div>
+        </div>
+        <div class="admin-actions">
+          ${!isYou&&status==='active'?`<button class="btn btn-red btn-sm" data-action="suspend" data-id="${a.id}"><i class="fas fa-ban"></i> Suspend</button>`:''}
+          ${!isYou&&status!=='active'?`<button class="btn btn-teal btn-sm" data-action="reactivate" data-id="${a.id}"><i class="fas fa-check"></i> Reactivate</button>`:''}
+          ${!isYou?`<button class="btn btn-ghost btn-sm" data-action="delete" data-id="${a.id}"><i class="fas fa-trash"></i></button>`:''}
+        </div>
+      </div>`;
+    }).join('');
+
+    g.querySelectorAll('[data-action]').forEach(b=>{
+      b.addEventListener('click',()=>handleAdminAction(b.dataset.action,b.dataset.id));
+    });
+  }catch(err){
+    console.error(err);
+    g.innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle"></i>'+esc(err.message)+'</div>';
+  }
+}
+
+async function handleAdminAction(action,id){
+  const a=allAdmins.find(x=>x.id===id);if(!a)return;
+  const name=a.data.name||a.data.email||'this admin';
+
+  if(action==='suspend'){
+    if(!await confirmDialog('Suspend Admin','Remove admin access for <strong>'+esc(name)+'</strong>? They will no longer be able to sign in to the admin panel.'))return;
+    try{
+      await db.collection('admins').doc(id).update({status:'inactive',suspendedAt:firebase.firestore.FieldValue.serverTimestamp(),suspendedBy:currentUser.uid});
+      await logActivity('admin_suspended',{adminId:id,adminName:name});
+      toast('Admin suspended.');loadAdmins();
+    }catch(err){toast('Failed: '+(err.code||err.message),true)}
+  } else if(action==='reactivate'){
+    if(!await confirmDialog('Reactivate Admin','Restore admin access for <strong>'+esc(name)+'</strong>?'))return;
+    try{
+      await db.collection('admins').doc(id).update({status:'active',reactivatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      await logActivity('admin_reactivated',{adminId:id,adminName:name});
+      toast('Admin reactivated.');loadAdmins();
+    }catch(err){toast('Failed: '+(err.code||err.message),true)}
+  } else if(action==='delete'){
+    if(!await confirmDialog('Delete Admin','<strong>PERMANENTLY</strong> remove <strong>'+esc(name)+'</strong> from the admins collection?<br><br>Their Firebase Auth account will remain active but they will lose all admin access.'))return;
+    try{
+      await db.collection('admins').doc(id).delete();
+      await logActivity('admin_deleted',{adminId:id,adminName:name});
+      toast('Admin deleted.');loadAdmins();
+    }catch(err){toast('Failed: '+(err.code||err.message),true)}
+  }
+}
+
+/* Generate invite */
+function genCode(){
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const seg=()=>Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  return seg()+'-'+seg()+'-'+seg();
+}
+
+document.getElementById('genBtn').addEventListener('click',async()=>{
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Generating…';
+  try{
+    const code=genCode();
+    const expiresAt=new Date(Date.now()+7*24*60*60*1000);
+    await db.collection('adminInvites').doc(code).set({
+      used:false,
+      createdBy:currentUser.uid,
+      createdByEmail:currentUser.email,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      expiresAt:firebase.firestore.Timestamp.fromDate(expiresAt)
+    });
+    await logActivity('invite_created',{code});
+    document.getElementById('codeValue').textContent=code;
+    document.getElementById('codeMeta').innerHTML='Created by <strong>'+esc(currentUser.email)+'</strong><br>Expires on '+expiresAt.toLocaleString()+'<br><br>Share this code with the new admin. They use it on <strong>admin-register.html</strong>';
+    document.getElementById('codeDisplay').classList.add('show');
+    toast('Invite code generated.');
+  }catch(err){console.error(err);toast('Failed: '+(err.code||err.message),true)}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-plus"></i> Generate Invite Code'}
+});
+
+document.getElementById('copyBtn').addEventListener('click',()=>{
+  const code=document.getElementById('codeValue').textContent;
+  navigator.clipboard.writeText(code).then(()=>toast('Code copied.')).catch(()=>toast('Copy failed — select it manually.',true));
+});
+
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  const code=document.getElementById('codeValue').textContent;
+  const url=location.origin+location.pathname.replace(/admin-admins\.html$/,'admin-register.html')+'?code='+encodeURIComponent(code);
+  if(navigator.share){navigator.share({title:'StudyFlix Admin Invite',text:'Use this code to become a StudyFlix admin: '+code,url}).catch(()=>{})}
+  else{navigator.clipboard.writeText(url).then(()=>toast('Link copied.')).catch(()=>toast('Share failed.',true))}
+});
+
+/* View invites */
+document.getElementById('viewInvitesBtn').addEventListener('click',async()=>{
+  const panel=document.getElementById('invitesPanel');
+  const list=document.getElementById('invitesList');
+  panel.style.display='block';
+  list.innerHTML='<div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading…</div>';
+  try{
+    const snap=await db.collection('adminInvites').get();
+    const invites=snap.docs.map(d=>({id:d.id,data:d.data()})).filter(i=>!i.data.used).sort((a,b)=>(b.data.createdAt&&b.data.createdAt.seconds||0)-(a.data.createdAt&&a.data.createdAt.seconds||0));
+    if(!invites.length){list.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>No active invites.</div>';return}
+    list.innerHTML=invites.map(i=>{
+      const d=i.data;
+      const exp=d.expiresAt&&d.expiresAt.toDate?d.expiresAt.toDate():null;
+      const expired=exp&&exp<new Date();
+      return `<div class="admin-card">
+        <div style="flex:1;min-width:200px">
+          <div class="code-value" style="font-size:1.1rem;margin-bottom:.4rem">${esc(i.id)}</div>
+          <div class="admin-meta">Created by ${esc(d.createdByEmail||'—')} · Expires ${exp?exp.toLocaleDateString():'never'} ${expired?'<strong style="color:#ff5555">(EXPIRED)</strong>':''}</div>
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-ghost btn-sm" data-copy="${esc(i.id)}"><i class="fas fa-copy"></i></button>
+          <button class="btn btn-red btn-sm" data-del="${esc(i.id)}"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{navigator.clipboard.writeText(b.dataset.copy).then(()=>toast('Copied.'))}));
+    list.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',async()=>{
+      if(!await confirmDialog('Delete Invite','Delete invite code <strong>'+esc(b.dataset.del)+'</strong>?'))return;
+      try{await db.collection('adminInvites').doc(b.dataset.del).delete();toast('Deleted.');b.closest('.admin-card').remove()}catch(e){toast('Failed: '+e.message,true)}
+    }));
+  }catch(err){list.innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle"></i>'+esc(err.message)+'</div>'}
+});
+
+document.getElementById('closeInvitesBtn').addEventListener('click',()=>{document.getElementById('invitesPanel').style.display='none'});
+document.getElementById('refreshBtn').addEventListener('click',async e=>{e.target.disabled=true;await loadAdmins();e.target.disabled=false;toast('Refreshed.')});
+
+/* Auth */
+auth.onAuthStateChanged(async user=>{
+  const guard=document.getElementById('guard'),gt=document.getElementById('guardText');
+  if(!user){gt.textContent='Not signed in. Redirecting…';setTimeout(()=>location.href='admin-login.html',900);return}
+  currentUser=user;
+  try{
+    const snap=await db.collection('admins').doc(user.uid).get();
+    if(!snap.exists||snap.data().role!=='admin'||snap.data().status!=='active'){gt.textContent='Admin access required.';setTimeout(()=>location.href='admin-login.html',1200);return}
+    currentAdmin=snap.data();
+    const name=currentAdmin.name||user.email.split('@')[0];
+    const av=document.getElementById('sidebarAdminAvatar'),nm=document.getElementById('sidebarAdminName'),em=document.getElementById('sidebarAdminEmail');
+    if(av)av.textContent=name.charAt(0).toUpperCase();if(nm)nm.textContent=name;if(em)em.textContent=user.email||'';
+    guard.classList.add('hidden');
+    await loadAdmins();
+    // Update last login (best effort)
+    try{await db.collection('admins').doc(user.uid).update({lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){}
+  }catch(err){console.error(err);gt.textContent='Verification failed.';setTimeout(()=>location.href='admin-login.html',1500)}
+});
+</script>
+</body>
+</html>

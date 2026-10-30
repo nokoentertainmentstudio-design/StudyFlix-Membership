@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StudyFlix - Applications</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    >
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3e 100%);
+            color: #E8EEFF;
+            min-height: 100vh;
+        }
+
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --red: #ff4d6d;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+        }
+
+        .highlight {
+            color: var(--gold);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            margin-top: 0.4rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.4rem;
+        }
+
+        .stat-card i {
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+        }
+
+        .stat-card p {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .applications-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .refresh-btn {
+            background: transparent;
+            color: var(--teal);
+            border: 1px solid var(--teal);
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(0, 212, 180, 0.1);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.35rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .pending {
+            background: rgba(255, 215, 0, 0.12);
+            color: var(--gold);
+        }
+
+        .paid {
+            background: rgba(0, 212, 180, 0.12);
+            color: var(--teal);
+        }
+
+        .empty {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: var(--red);
+        }
+
+        @media (max-width: 700px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <nav class="navbar">
+        <div class="brand">STUDYFLIX ADMIN</div>
+
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="../member/index.html">Member Site</a>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>
+            Membership <span class="highlight">Applications</span>
+        </h1>
+
+        <p>
+            Review student membership applications submitted through StudyFlix.
+        </p>
+    </section>
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <i class="fas fa-file-alt"></i>
+            <h3 id="totalApplications">0</h3>
+            <p>Total Applications</p>
+        </div>
+
+        <div class="stat-card">
+            <i class="fas fa-clock"></i>
+            <h3 id="pendingApplications">0</h3>
+            <p>Pending Applications</p>
+        </div>
+
+        <div class="stat-card">
+            <i class="fas fa-check-circle"></i>
+            <h3 id="paidApplications">0</h3>
+            <p>Paid Applications</p>
+        </div>
+
+    </section>
+
+    <section class="applications-card">
+
+        <div class="card-header">
+            <h2>Pending Applications</h2>
+
+            <button class="refresh-btn" onclick="loadApplications()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Email</th>
+                        <th>School</th>
+                        <th>School Code</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="applicationsTable">
+
+                    <tr>
+                        <td colspan="6" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading applications...
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyABNx_RDW8ttLrSRRFOW3WkHIzuU2DGpTHI",
+        authDomain: "studyflix-membership.firebaseapp.com",
+        projectId: "studyflix-membership",
+        storageBucket: "studyflix-membership.firebasestorage.app",
+        messagingSenderId: "641080177215",
+        appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+        measurementId: "G-3384WRNWXW"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+
+    /*
+     * CHECK ADMIN
+     */
+
+    auth.onAuthStateChanged(async (user) => {
+
+        if (!user) {
+            window.location.href = "../member/login.html";
+            return;
+        }
+
+        try {
+
+            const userDoc = await db
+                .collection("users")
+                .doc(user.uid)
+                .get();
+
+            if (!userDoc.exists) {
+                alert("Admin account not found.");
+                await auth.signOut();
+                window.location.href = "../member/login.html";
+                return;
+            }
+
+            const userData = userDoc.data();
+
+            if (userData.role !== "admin") {
+                alert("Access denied. Admins only.");
+                await auth.signOut();
+                window.location.href = "../member/login.html";
+                return;
+            }
+
+            loadApplications();
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById("applicationsTable").innerHTML =
+                `<tr>
+                    <td colspan="6" class="error">
+                        Unable to verify administrator account.
+                    </td>
+                </tr>`;
+
+        }
+
+    });
+
+
+    /*
+     * LOAD APPLICATIONS
+     */
+
+    async function loadApplications() {
+
+        const table = document.getElementById("applicationsTable");
+
+        table.innerHTML =
+            `<tr>
+                <td colspan="6" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading applications...
+                </td>
+            </tr>`;
+
+        try {
+
+            const snapshot = await db
+                .collection("members")
+                .where("applicationStatus", "==", "pending")
+                .get();
+
+            document.getElementById("totalApplications").textContent =
+                snapshot.size;
+
+            document.getElementById("pendingApplications").textContent =
+                snapshot.size;
+
+            let paidCount = 0;
+
+            if (snapshot.empty) {
+
+                table.innerHTML =
+                    `<tr>
+                        <td colspan="6" class="empty">
+                            <i class="fas fa-inbox"></i>
+                            <br><br>
+                            No pending applications found.
+                        </td>
+                    </tr>`;
+
+                document.getElementById("paidApplications").textContent = "0";
+
+                return;
+            }
+
+            table.innerHTML = "";
+
+            snapshot.forEach(doc => {
+
+                const data = doc.data();
+
+                if (data.paid === true) {
+                    paidCount++;
+                }
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>
+                        <strong>${escapeHtml(data.fullName || data.name || "Unknown")}</strong>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(data.email || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(data.school || "-")}
+                    </td>
+
+                    <td>
+                        <strong>${escapeHtml(data.schoolCode || "-")}</strong>
+                    </td>
+
+                    <td>
+                        ${
+                            data.paid === true
+                            ? '<span class="status paid">PAID</span>'
+                            : '<span class="status pending">NOT PAID</span>'
+                        }
+                    </td>
+
+                    <td>
+                        <span class="status pending">
+                            PENDING
+                        </span>
+                    </td>
+                `;
+
+                table.appendChild(row);
+
+            });
+
+            document.getElementById("paidApplications").textContent =
+                paidCount;
+
+        } catch (error) {
+
+            console.error("Error loading applications:", error);
+
+            table.innerHTML =
+                `<tr>
+                    <td colspan="6" class="error">
+                        Failed to load applications.
+                        <br>
+                        <small>${escapeHtml(error.message)}</small>
+                    </td>
+                </tr>`;
+
+        }
+
+    }
+
+
+    /*
+     * SECURITY HELPER
+     */
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+</script>
+
+</body>
+</html>

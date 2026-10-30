@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Settings — StudyFlix Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --gold:#FFD700;
+  --orange:#FF6B00;
+  --teal:#00D4B4;
+  --blue:#2288FF;
+  --red:#ff5555;
+  --muted:#8892B0;
+  --card:#1C2640;
+  --border:rgba(255,255,255,.07)
+}
+
+body{
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,#080C18,#111A2E);
+  color:#E8EEFF;
+  min-height:100vh;
+  overflow-x:hidden
+}
+
+.hero-bg{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),
+    radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);
+  z-index:-2
+}
+
+.guard{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,10,42,.95);
+  z-index:10000;
+  flex-direction:column;
+  gap:1rem;
+  text-align:center;
+  padding:2rem
+}
+
+.guard.hidden{display:none}
+
+.guard-text{
+  color:var(--muted);
+  font-size:.9rem
+}
+
+.spinner{
+  width:32px;
+  height:32px;
+  border:3px solid rgba(255,215,0,.15);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:spin .8s linear infinite
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.main{
+  padding:1.5rem 1.5rem 3rem;
+  max-width:1000px;
+  margin:0 auto
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  padding-bottom:1.2rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:1.6rem;
+  flex-wrap:wrap
+}
+
+h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.4rem;
+  letter-spacing:1.5px
+}
+
+h1 .hl{
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent
+}
+
+.sub{
+  color:var(--muted);
+  font-size:.85rem;
+  margin-top:.25rem
+}
+
+.btn{
+  padding:.65rem 1.2rem;
+  border-radius:10px;
+  font-family:inherit;
+  font-weight:800;
+  font-size:.8rem;
+  cursor:pointer;
+  border:1px solid transparent;
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  transition:.2s
+}
+
+.btn:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
+
+.btn-ghost{
+  background:rgba(255,255,255,.05);
+  color:#E8EEFF;
+  border-color:var(--border)
+}
+
+.btn-ghost:hover:not(:disabled){
+  background:rgba(255,255,255,.1)
+}
+
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#111;
+  border:none
+}
+
+.btn-gold:hover:not(:disabled){
+  transform:scale(1.02);
+  box-shadow:0 0 20px rgba(255,215,0,.3)
+}
+
+.info-banner{
+  background:rgba(0,212,180,.06);
+  border:1px solid rgba(0,212,180,.25);
+  border-radius:12px;
+  padding:.9rem 1.1rem;
+  font-size:.8rem;
+  color:#7ff0dd;
+  line-height:1.6;
+  display:flex;
+  gap:.7rem;
+  align-items:flex-start;
+  margin-bottom:1.4rem
+}
+
+.info-banner i{
+  color:var(--teal);
+  margin-top:2px;
+  flex-shrink:0
+}
+
+.section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:1.5rem;
+  margin-bottom:1.4rem
+}
+
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.4rem;
+  letter-spacing:.8px;
+  color:var(--gold);
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  margin-bottom:.4rem
+}
+
+.section-desc{
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.55;
+  margin-bottom:1.2rem
+}
+
+.fg{
+  margin-bottom:1rem
+}
+
+.fg:last-child{
+  margin-bottom:0
+}
+
+.fg label{
+  display:block;
+  font-size:.7rem;
+  font-weight:800;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:.4rem;
+  letter-spacing:.5px
+}
+
+.fg input[type="text"],
+.fg input[type="number"],
+.fg textarea{
+  width:100%;
+  padding:.75rem 1rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:#fff;
+  font-size:.88rem;
+  font-family:inherit;
+  outline:none;
+  transition:border-color .2s
+}
+
+.fg input:focus,
+.fg textarea:focus{
+  border-color:var(--teal)
+}
+
+.fg input::placeholder,
+.fg textarea::placeholder{
+  color:#5b6788
+}
+
+.fg textarea{
+  min-height:70px;
+  resize:vertical
+}
+
+.fg .hint{
+  font-size:.7rem;
+  color:var(--muted);
+  margin-top:.35rem;
+  line-height:1.5
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1rem
+}
+
+.price-group{
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:12px;
+  padding:1rem;
+  margin-bottom:1rem
+}
+
+.price-group:last-child{
+  margin-bottom:0
+}
+
+.price-group-title{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  font-weight:900;
+  font-size:.9rem;
+  margin-bottom:.9rem;
+  color:#fff
+}
+
+.price-group-title i{
+  color:var(--gold)
+}
+
+.price-period{
+  font-size:.65rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:var(--teal);
+  margin-bottom:.35rem
+}
+
+.toggle-row{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:.85rem 0;
+  border-bottom:1px solid var(--border)
+}
+
+.toggle-row:last-child{
+  border-bottom:none;
+  padding-bottom:0
+}
+
+.toggle-row:first-child{
+  padding-top:0
+}
+
+.toggle-info{
+  flex:1;
+  min-width:0
+}
+
+.toggle-info h4{
+  font-size:.88rem;
+  font-weight:800;
+  margin-bottom:.15rem
+}
+
+.toggle-info p{
+  color:var(--muted);
+  font-size:.73rem;
+  line-height:1.5
+}
+
+.toggle{
+  position:relative;
+  width:46px;
+  height:26px;
+  flex-shrink:0
+}
+
+.toggle input{
+  opacity:0;
+  width:0;
+  height:0;
+  position:absolute
+}
+
+.toggle-slider{
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,.1);
+  border-radius:26px;
+  transition:background .25s;
+  border:1px solid rgba(255,255,255,.05);
+  cursor:pointer
+}
+
+.toggle-slider::before{
+  content:"";
+  position:absolute;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#fff;
+  left:2px;
+  top:2px;
+  transition:transform .25s;
+  box-shadow:0 2px 4px rgba(0,0,0,.3)
+}
+
+.toggle input:checked + .toggle-slider{
+  background:linear-gradient(135deg,var(--teal),#2288FF)
+}
+
+.toggle input:checked + .toggle-slider::before{
+  transform:translateX(20px)
+}
+
+.save-bar{
+  position:sticky;
+  bottom:1rem;
+  background:linear-gradient(135deg,rgba(28,38,64,.98),rgba(22,32,58,.98));
+  border:1px solid rgba(255,215,0,.25);
+  border-radius:14px;
+  padding:1rem 1.2rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  flex-wrap:wrap;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  backdrop-filter:blur(8px);
+  z-index:100
+}
+
+.save-bar .status{
+  font-size:.8rem;
+  color:var(--muted)
+}
+
+.save-bar .status.dirty{
+  color:var(--gold)
+}
+
+.save-bar .status.saved{
+  color:var(--teal)
+}
+
+.save-bar .btn{
+  min-width:150px;
+  justify-content:center
+}
+
+#toast{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  background:rgba(28,38,64,.98);
+  border:1px solid var(--border);
+  border-left:3px solid var(--teal);
+  padding:.9rem 1.2rem;
+  border-radius:12px;
+  font-size:.85rem;
+  font-weight:700;
+  z-index:20000;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  display:none;
+  max-width:340px
+}
+
+#toast.error{
+  border-left-color:var(--red);
+  color:#ff9b9b
+}
+
+@media(max-width:700px){
+  .main{
+    padding-top:75px
+  }
+
+  h1{
+    font-size:2rem
+  }
+
+  .grid-2{
+    grid-template-columns:1fr
+  }
+
+  .save-bar{
+    padding:.85rem 1rem
+  }
+
+  .save-bar .btn{
+    width:100%
+  }
+}
+</style>
+</head>
+
+<body class="has-sidebar">
+
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard">
+  <div class="spinner"></div>
+  <div class="guard-text" id="guardText">Verifying admin access…</div>
+</div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+
+  <div class="topbar">
+    <div>
+      <h1><span class="hl">Site</span> Settings</h1>
+      <p class="sub">Configure pricing, contact info, and feature toggles.</p>
+    </div>
+
+    <button class="btn btn-ghost" id="resetBtn">
+      <i class="fas fa-rotate-left"></i> Reload
+    </button>
+  </div>
+
+  <div class="info-banner">
+    <i class="fas fa-circle-info"></i>
+    <div>
+      Changes here take effect as soon as you save.
+      Pricing updates the home page plans automatically.
+      Monthly and annual prices can be managed separately.
+      The toggles control what members can do on the site.
+    </div>
+  </div>
+
+  <!-- ================= MEMBERSHIP PRICING ================= -->
+
+  <div class="section">
+
+    <h2 class="section-title">
+      <i class="fas fa-tag"></i> Membership Pricing
+    </h2>
+
+    <p class="section-desc">
+      Set the monthly and annual prices for each StudyFlix membership plan.
+      These values are saved to Firebase and can be used by the home page,
+      membership application page, and payment page.
+    </p>
+
+    <!-- STANDARD PLAN -->
+
+    <div class="price-group">
+
+      <div class="price-group-title">
+        <i class="fas fa-graduation-cap"></i>
+        Standard Plan
+      </div>
+
+      <div class="grid-2">
+
+        <div class="fg">
+          <div class="price-period">Monthly</div>
+
+          <label for="priceMonthly">
+            Standard Plan (per month)
+          </label>
+
+          <input
+            type="number"
+            id="priceMonthly"
+            min="0"
+            step="1"
+            placeholder="100"
+          />
+
+          <div class="hint">
+            Current monthly Standard membership price.
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="price-period">Annual</div>
+
+          <label for="priceAnnual">
+            Standard Plan (per year)
+          </label>
+
+          <input
+            type="number"
+            id="priceAnnual"
+            min="0"
+            step="1"
+            placeholder="1000"
+          />
+
+          <div class="hint">
+            Annual Standard membership price.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PLUS DATA PLAN -->
+
+    <div class="price-group">
+
+      <div class="price-group-title">
+        <i class="fas fa-mobile-screen-button"></i>
+        Standard Plan + Telkom Data
+      </div>
+
+      <div class="grid-2">
+
+        <div class="fg">
+          <div class="price-period">Monthly</div>
+
+          <label for="priceWithData">
+            Plan + Telkom Data (per month)
+          </label>
+
+          <input
+            type="number"
+            id="priceWithData"
+            min="0"
+            step="1"
+            placeholder="300"
+          />
+
+          <div class="hint">
+            Current monthly membership price with Telkom data.
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="price-period">Annual</div>
+
+          <label for="priceAnnualWithData">
+            Plan + Telkom Data (per year)
+          </label>
+
+          <input
+            type="number"
+            id="priceAnnualWithData"
+            min="0"
+            step="1"
+            placeholder="3000"
+          />
+
+          <div class="hint">
+            Annual membership price with Telkom data.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- CURRENCY -->
+
+    <div class="fg">
+
+      <label for="currencySymbol">
+        Currency Symbol
+      </label>
+
+      <input
+        type="text"
+        id="currencySymbol"
+        placeholder="R"
+        maxlength="3"
+        style="max-width:120px"
+      />
+
+      <div class="hint">
+        Displayed before the amount everywhere on the site.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= SITE INFORMATION ================= -->
+
+  <div class="section">
+
+    <h2 class="section-title">
+      <i class="fas fa-globe"></i> Site Information
+    </h2>
+
+    <p class="section-desc">
+      General contact and support info shown on the home page footer.
+    </p>
+
+    <div class="grid-2">
+
+      <div class="fg">
+
+        <label for="supportEmail">
+          Support Email
+        </label>
+
+        <input
+          type="text"
+          id="supportEmail"
+          placeholder="support@studyflix.example"
+        />
+
+      </div>
+
+      <div class="fg">
+
+        <label for="supportPhone">
+          Support Phone
+        </label>
+
+        <input
+          type="text"
+          id="supportPhone"
+          placeholder="+27 71 234 5678"
+        />
+
+      </div>
+
+    </div>
+
+    <div class="fg">
+
+      <label for="footerTagline">
+        Footer Tagline
+      </label>
+
+      <input
+        type="text"
+        id="footerTagline"
+        placeholder="Noko Entertainment Studio"
+      />
+
+      <div class="hint">
+        Shown under the STUDYFLIX brand in the footer.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= FEATURE TOGGLES ================= -->
+
+  <div class="section">
+
+    <h2 class="section-title">
+      <i class="fas fa-toggle-on"></i> Feature Toggles
+    </h2>
+
+    <p class="section-desc">
+      Turn parts of the site on or off without code changes.
+    </p>
+
+
+    <label class="toggle-row" for="acceptApplications">
+
+      <div class="toggle-info">
+
+        <h4>Accept New Applications</h4>
+
+        <p>
+          When off, the register and application pages show a
+          "closed" message and block submissions.
+        </p>
+
+      </div>
+
+      <div class="toggle">
+
+        <input
+          type="checkbox"
+          id="acceptApplications"
+        />
+
+        <span class="toggle-slider"></span>
+
+      </div>
+
+    </label>
+
+
+    <label class="toggle-row" for="requirePayment">
+
+      <div class="toggle-info">
+
+        <h4>Require Payment Before Review</h4>
+
+        <p>
+          When on, applications without a payment record stay
+          hidden from the admin review queue.
+        </p>
+
+      </div>
+
+      <div class="toggle">
+
+        <input
+          type="checkbox"
+          id="requirePayment"
+        />
+
+        <span class="toggle-slider"></span>
+
+      </div>
+
+    </label>
+
+
+    <label class="toggle-row" for="showPricing">
+
+      <div class="toggle-info">
+
+        <h4>Show Pricing on Home Page</h4>
+
+        <p>
+          When off, the pricing section and its nav link are
+          hidden from logged-out visitors.
+        </p>
+
+      </div>
+
+      <div class="toggle">
+
+        <input
+          type="checkbox"
+          id="showPricing"
+        />
+
+        <span class="toggle-slider"></span>
+
+      </div>
+
+    </label>
+
+
+    <label class="toggle-row" for="maintenanceMode">
+
+      <div class="toggle-info">
+
+        <h4>Maintenance Mode</h4>
+
+        <p>
+          Puts a "we'll be back soon" notice on the home page
+          and blocks all signups and applications.
+        </p>
+
+      </div>
+
+      <div class="toggle">
+
+        <input
+          type="checkbox"
+          id="maintenanceMode"
+        />
+
+        <span class="toggle-slider"></span>
+
+      </div>
+
+    </label>
+
+  </div>
+
+
+  <!-- ================= SAVE BAR ================= -->
+
+  <div class="save-bar">
+
+    <div class="status" id="saveStatus">
+      No unsaved changes
+    </div>
+
+    <button class="btn btn-gold" id="saveBtn">
+      <i class="fas fa-save"></i>
+      Save Settings
+    </button>
+
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+
+<!-- ================= FIREBASE ================= -->
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+  authDomain:"studyflix-membership.firebaseapp.com",
+  projectId:"studyflix-membership",
+  storageBucket:"studyflix-membership.firebasestorage.app",
+  messagingSenderId:"641080177215",
+  appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",
+  measurementId:"G-3384WRNWXW"
+};
+
+if(!firebase.apps.length){
+  firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+let currentAdmin = null;
+let originalData = null;
+let dirty = false;
+
+
+/* ================= TOAST ================= */
+
+const toastEl = document.getElementById('toast');
+
+let tt = null;
+
+function toast(message,error){
+
+  toastEl.textContent = message;
+
+  toastEl.classList.toggle('error',!!error);
+
+  toastEl.style.display = 'block';
+
+  clearTimeout(tt);
+
+  tt = setTimeout(()=>{
+    toastEl.style.display = 'none';
+  },3200);
+}
+
+
+/* ================= DEFAULT SETTINGS ================= */
+
+const DEFAULTS = {
+
+  priceMonthly:100,
+
+  priceWithData:300,
+
+  priceAnnual:1000,
+
+  priceAnnualWithData:3000,
+
+  currencySymbol:'R',
+
+  supportEmail:'support@studyflix.example',
+
+  supportPhone:'',
+
+  footerTagline:'Noko Entertainment Studio',
+
+  acceptApplications:true,
+
+  requirePayment:false,
+
+  showPricing:true,
+
+  maintenanceMode:false
+
+};
+
+
+/* ================= FORM FIELDS ================= */
+
+const fields = {
+
+  priceMonthly:
+    document.getElementById('priceMonthly'),
+
+  priceWithData:
+    document.getElementById('priceWithData'),
+
+  priceAnnual:
+    document.getElementById('priceAnnual'),
+
+  priceAnnualWithData:
+    document.getElementById('priceAnnualWithData'),
+
+  currencySymbol:
+    document.getElementById('currencySymbol'),
+
+  supportEmail:
+    document.getElementById('supportEmail'),
+
+  supportPhone:
+    document.getElementById('supportPhone'),
+
+  footerTagline:
+    document.getElementById('footerTagline'),
+
+  acceptApplications:
+    document.getElementById('acceptApplications'),
+
+  requirePayment:
+    document.getElementById('requirePayment'),
+
+  showPricing:
+    document.getElementById('showPricing'),
+
+  maintenanceMode:
+    document.getElementById('maintenanceMode')
+
+};
+
+
+/* ================= LOAD SIDEBAR ================= */
+
+(async function(){
+
+  try{
+
+    const r = await fetch('admin-sidebar.html');
+
+    document.getElementById('sidebar-placeholder').innerHTML =
+      await r.text();
+
+    const sb =
+      document.getElementById('sidebar');
+
+    const tg =
+      document.getElementById('sidebarToggle');
+
+    const cl =
+      document.getElementById('sidebarClose');
+
+    const ov =
+      document.getElementById('sidebarOverlay');
+
+    const lo =
+      document.getElementById('sidebarLogout');
+
+
+    tg.addEventListener('click',()=>{
+      sb.classList.add('open');
+      ov.classList.add('active');
+    });
+
+
+    function closeSidebar(){
+
+      sb.classList.remove('open');
+
+      ov.classList.remove('active');
+
+    }
+
+
+    cl.addEventListener('click',closeSidebar);
+
+    ov.addEventListener('click',closeSidebar);
+
+
+    const cur =
+      location.pathname.split('/').pop();
+
+
+    document
+      .querySelectorAll('.sidebar-link')
+      .forEach(a=>{
+        a.classList.toggle(
+          'active',
+          a.dataset.page === cur
+        );
+      });
+
+
+    lo.addEventListener('click',async()=>{
+
+      lo.disabled = true;
+
+      try{
+        await auth.signOut();
+      }catch(e){}
+
+      location.href = 'admin-login.html';
+
+    });
+
+  }catch(e){
+
+    console.error(e);
+
+  }
+
+})();
+
+
+/* ================= ACTIVITY LOG ================= */
+
+async function logActivity(type,payload){
+
+  try{
+
+    await db.collection('activity').add({
+
+      type,
+
+      by:currentUser.uid,
+
+      byEmail:currentUser.email,
+
+      byName:currentAdmin.name || '',
+
+      at:
+        firebase.firestore.FieldValue.serverTimestamp(),
+
+      ...payload
+
+    });
+
+  }catch(e){}
+
+}
+
+
+/* ================= LOAD SETTINGS ================= */
+
+async function loadSettings(){
+
+  try{
+
+    const snap =
+      await db
+        .collection('settings')
+        .doc('site')
+        .get();
+
+    const data =
+      snap.exists ? snap.data() : {};
+
+    originalData = {
+      ...DEFAULTS,
+      ...data
+    };
+
+    populate(originalData);
+
+    dirty = false;
+
+    updateSaveBar();
+
+  }catch(err){
+
+    console.error(err);
+
+    toast(
+      'Could not load settings — using defaults.',
+      true
+    );
+
+    originalData = {
+      ...DEFAULTS
+    };
+
+    populate(originalData);
+
+    dirty = false;
+
+    updateSaveBar();
+
+  }
+
+}
+
+
+/* ================= POPULATE FORM ================= */
+
+function populate(d){
+
+  fields.priceMonthly.value =
+    d.priceMonthly ?? DEFAULTS.priceMonthly;
+
+  fields.priceWithData.value =
+    d.priceWithData ?? DEFAULTS.priceWithData;
+
+  fields.priceAnnual.value =
+    d.priceAnnual ?? DEFAULTS.priceAnnual;
+
+  fields.priceAnnualWithData.value =
+    d.priceAnnualWithData ??
+    DEFAULTS.priceAnnualWithData;
+
+  fields.currencySymbol.value =
+    d.currencySymbol || 'R';
+
+  fields.supportEmail.value =
+    d.supportEmail || '';
+
+  fields.supportPhone.value =
+    d.supportPhone || '';
+
+  fields.footerTagline.value =
+    d.footerTagline || '';
+
+  fields.acceptApplications.checked =
+    d.acceptApplications !== false;
+
+  fields.requirePayment.checked =
+    d.requirePayment === true;
+
+  fields.showPricing.checked =
+    d.showPricing !== false;
+
+  fields.maintenanceMode.checked =
+    d.maintenanceMode === true;
+
+}
+
+
+/* ================= COLLECT FORM ================= */
+
+function collect(){
+
+  return {
+
+    priceMonthly:
+      parseFloat(fields.priceMonthly.value) || 0,
+
+    priceWithData:
+      parseFloat(fields.priceWithData.value) || 0,
+
+    priceAnnual:
+      parseFloat(fields.priceAnnual.value) || 0,
+
+    priceAnnualWithData:
+      parseFloat(fields.priceAnnualWithData.value) || 0,
+
+    currencySymbol:
+      fields.currencySymbol.value || 'R',
+
+    supportEmail:
+      fields.supportEmail.value.trim(),
+
+    supportPhone:
+      fields.supportPhone.value.trim(),
+
+    footerTagline:
+      fields.footerTagline.value.trim(),
+
+    acceptApplications:
+      fields.acceptApplications.checked,
+
+    requirePayment:
+      fields.requirePayment.checked,
+
+    showPricing:
+      fields.showPricing.checked,
+
+    maintenanceMode:
+      fields.maintenanceMode.checked
+
+  };
+
+}
+
+
+/* ================= SYNC HOMEPAGE PRICES ================= */
+
+/*
+  This keeps the existing monthly homepage
+  plan prices working.
+
+  Annual prices are stored in settings/site
+  and will be connected to the membership
+  application/payment page next.
+*/
+
+async function syncPricesToContent(
+  priceMonthly,
+  priceWithData
+){
+
+  try{
+
+    const snap =
+      await db
+        .collection('settings')
+        .doc('content')
+        .get();
+
+    if(!snap.exists){
+      return false;
+    }
+
+    const data = snap.data();
+
+    if(
+      !Array.isArray(data.plans) ||
+      !data.plans.length
+    ){
+      return false;
+    }
+
+
+    const updatedPlans =
+      data.plans.map((p,i)=>{
+
+        const copy =
+          Object.assign({},p);
+
+        if(i === 0 && priceMonthly > 0){
+
+          copy.price = priceMonthly;
+
+        }
+
+        if(i === 1 && priceWithData > 0){
+
+          copy.price = priceWithData;
+
+        }
+
+        return copy;
+
+      });
+
+
+    await db
+      .collection('settings')
+      .doc('content')
+      .update({
+        plans:updatedPlans
+      });
+
+
+    return true;
+
+  }catch(e){
+
+    console.warn(
+      'Could not sync prices to content plans:',
+      e.message
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* ================= DIRTY STATE ================= */
+
+function markDirty(){
+
+  dirty = true;
+
+  updateSaveBar();
+
+}
+
+
+function updateSaveBar(){
+
+  const el =
+    document.getElementById('saveStatus');
+
+
+  if(dirty){
+
+    el.textContent =
+      'You have unsaved changes';
+
+    el.className =
+      'status dirty';
+
+  }else{
+
+    el.textContent =
+      'All changes saved';
+
+    el.className =
+      'status saved';
+
+  }
+
+}
+
+
+/* ================= WATCH FORM ================= */
+
+Object.values(fields).forEach(field=>{
+
+  field.addEventListener(
+    'input',
+    markDirty
+  );
+
+  field.addEventListener(
+    'change',
+    markDirty
+  );
+
+});
+
+
+/* ================= SAVE SETTINGS ================= */
+
+document
+  .getElementById('saveBtn')
+  .addEventListener('click',async()=>{
+
+    const btn =
+      document.getElementById('saveBtn');
+
+    btn.disabled = true;
+
+    btn.innerHTML =
+      '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+
+    try{
+
+      const data = collect();
+
+
+      data.updatedAt =
+        firebase.firestore.FieldValue
+          .serverTimestamp();
+
+
+      data.updatedBy =
+        currentUser.uid;
+
+
+      /*
+        Saves:
+
+        priceMonthly
+        priceWithData
+        priceAnnual
+        priceAnnualWithData
+
+        plus the existing settings.
+      */
+
+      await db
+        .collection('settings')
+        .doc('site')
+        .set(
+          data,
+          {merge:true}
+        );
+
+
+      /*
+        Keep existing homepage monthly
+        pricing synchronization.
+      */
+
+      const synced =
+        await syncPricesToContent(
+          data.priceMonthly,
+          data.priceWithData
+        );
+
+
+      originalData = {
+        ...originalData,
+        ...data
+      };
+
+
+      dirty = false;
+
+      updateSaveBar();
+
+
+      await logActivity(
+        'settings_updated',
+        {
+          keys:Object.keys(data).join(',')
+        }
+      );
+
+
+      toast(
+        synced
+          ? 'Settings saved and homepage prices updated.'
+          : 'Settings saved.'
+      );
+
+
+    }catch(err){
+
+      console.error(err);
+
+      toast(
+        'Save failed: ' +
+        (err.code || err.message),
+        true
+      );
+
+
+    }finally{
+
+      btn.disabled = false;
+
+      btn.innerHTML =
+        '<i class="fas fa-save"></i> Save Settings';
+
+    }
+
+  });
+
+
+/* ================= RESET / RELOAD ================= */
+
+document
+  .getElementById('resetBtn')
+  .addEventListener('click',async()=>{
+
+    if(
+      dirty &&
+      !confirm(
+        'You have unsaved changes. Discard and reload?'
+      )
+    ){
+      return;
+    }
+
+    await loadSettings();
+
+    toast('Reloaded.');
+
+  });
+
+
+/* ================= BEFORE UNLOAD ================= */
+
+window.addEventListener(
+  'beforeunload',
+  e=>{
+
+    if(dirty){
+
+      e.preventDefault();
+
+      e.returnValue = '';
+
+    }
+
+  }
+);
+
+
+/* ================= ADMIN AUTH ================= */
+
+auth.onAuthStateChanged(async user=>{
+
+  const guard =
+    document.getElementById('guard');
+
+  const gt =
+    document.getElementById('guardText');
+
+
+  if(!user){
+
+    gt.textContent =
+      'Not signed in. Redirecting…';
+
+    setTimeout(
+      ()=>location.href='admin-login.html',
+      900
+    );
+
+    return;
+
+  }
+
+
+  currentUser = user;
+
+
+  try{
+
+    const snap =
+      await db
+        .collection('admins')
+        .doc(user.uid)
+        .get();
+
+
+    if(
+      !snap.exists ||
+      snap.data().role !== 'admin' ||
+      snap.data().status !== 'active'
+    ){
+
+      gt.textContent =
+        'Admin access required.';
+
+      setTimeout(
+        ()=>location.href='admin-login.html',
+        1200
+      );
+
+      return;
+
+    }
+
+
+    currentAdmin =
+      snap.data();
+
+
+    const name =
+      currentAdmin.name ||
+      user.email.split('@')[0];
+
+
+    const av =
+      document.getElementById(
+        'sidebarAdminAvatar'
+      );
+
+    const nm =
+      document.getElementById(
+        'sidebarAdminName'
+      );
+
+    const em =
+      document.getElementById(
+        'sidebarAdminEmail'
+      );
+
+
+    if(av){
+
+      av.textContent =
+        name.charAt(0).toUpperCase();
+
+    }
+
+
+    if(nm){
+
+      nm.textContent =
+        name;
+
+    }
+
+
+    if(em){
+
+      em.textContent =
+        user.email || '';
+
+    }
+
+
+    guard.classList.add('hidden');
+
+
+    await loadSettings();
+
+
+  }catch(err){
+
+    console.error(err);
+
+    gt.textContent =
+      'Verification failed.';
+
+    setTimeout(
+      ()=>location.href='admin-login.html',
+      1500
+    );
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>

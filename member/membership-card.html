@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Membership Card — StudyFlix</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --red: #ff5555;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #080C18, #111A2E);
+            color: #E8EEFF;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dash-main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 3rem;
+        }
+        @media (max-width: 768px) {
+            .dash-main { padding-top: 75px; }
+        }
+
+        .dash-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+        .dash-user { display: flex; align-items: center; gap: 0.8rem; }
+
+        .dash-avatar {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .dash-name { font-weight: 800; font-size: 0.98rem; line-height: 1.2; }
+        .dash-email { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+
+        .dash-logout {
+            background: rgba(255, 80, 80, 0.1);
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            color: #ff9b9b;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .dash-logout:hover { background: rgba(255, 80, 80, 0.2); border-color: rgba(255, 80, 80, 0.5); }
+        .dash-logout i { margin-right: 5px; }
+
+        .dash-header { margin-bottom: 1.6rem; }
+        .dash-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.6rem;
+            letter-spacing: 1.5px;
+            line-height: 1.1;
+        }
+        .dash-header h1 .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .dash-header p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .loading-wrap {
+            text-align: center;
+            padding: 5rem 1rem;
+            color: var(--muted);
+        }
+        .loading-wrap i {
+            font-size: 2rem;
+            color: var(--teal);
+            margin-bottom: 1rem;
+        }
+        .loading-wrap p { font-size: 0.9rem; }
+
+        .locked-wrap {
+            display: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .locked-wrap::before {
+            content: "";
+            position: absolute;
+            width: 280px; height: 280px;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.05);
+            top: -140px; right: -100px;
+        }
+        .locked-wrap > * { position: relative; z-index: 1; }
+
+        .locked-icon {
+            width: 90px; height: 90px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+        }
+        .locked-icon.locked-pending  { background: rgba(255, 215, 0, 0.1);  color: var(--gold); }
+        .locked-icon.locked-declined { background: rgba(255, 80, 80, 0.1);  color: var(--red); }
+        .locked-icon.locked-none     { background: rgba(34, 136, 255, 0.1); color: var(--blue); }
+
+        .locked-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.6rem;
+        }
+        .locked-text {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            max-width: 480px;
+            margin: 0 auto 1.8rem;
+        }
+        .locked-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.8rem;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .locked-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 26px rgba(255,215,0,0.28);
+        }
+
+        /* ============================================================
+           CARD WRAP + SCALER
+           ============================================================ */
+        .card-wrap {
+            display: none;
+            padding: 0.5rem 0;
+        }
+        .card-wrap.visible { display: block; }
+
+        .card-scale-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            overflow: hidden;
+            /* height set by JS */
+        }
+
+        /* ============================================================
+           MEMBERSHIP CARD — fixed 640x400 landscape
+           ============================================================ */
+        .membership-card {
+            width: 640px;
+            height: 400px;
+            flex-shrink: 0;
+            transform-origin: top center;
+            background: linear-gradient(135deg, #1C2640 0%, #243253 100%);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 22px;
+            padding: 22px 26px 20px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.55);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Nunito', sans-serif;
+            color: #E8EEFF;
+        }
+
+        .membership-card::before {
+            content: "";
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.12), transparent 70%);
+            top: -150px; right: -100px;
+        }
+        .membership-card::after {
+            content: "";
+            position: absolute;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,212,180,0.10), transparent 70%);
+            bottom: -120px; left: -80px;
+        }
+
+        .membership-card > * { position: relative; z-index: 1; }
+
+        .card-shine {
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%);
+            z-index: 0;
+            animation: shine 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes shine {
+            0%, 100% { left: -100%; }
+            50%      { left: 100%; }
+        }
+
+        /* ---------- CARD TOP ---------- */
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 52px;
+            flex-shrink: 0;
+            margin-bottom: 14px;
+        }
+        .card-logo-img {
+            height: 44px;
+            width: auto;
+            max-width: 260px;
+            object-fit: contain;
+            filter: drop-shadow(0 3px 8px rgba(255,215,0,0.15));
+        }
+        .card-logo-fallback {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.9rem;
+            color: var(--gold);
+            letter-spacing: 2.5px;
+        }
+        .card-chip {
+            width: 42px; height: 30px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #d4b64a, #ffd966, #b8942f);
+            position: relative;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .card-chip::before,
+        .card-chip::after {
+            content: "";
+            position: absolute;
+            left: 15%; right: 15%;
+            height: 1.5px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 1px;
+        }
+        .card-chip::before { top: 35%; }
+        .card-chip::after  { top: 60%; }
+
+        /* ---------- CARD BODY ---------- */
+        .card-body {
+            flex: 1;
+            display: flex;
+            gap: 18px;
+            min-height: 0;
+            align-items: center;
+        }
+
+        /* Photo column */
+        .card-photo-col {
+            flex-shrink: 0;
+        }
+        .card-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 14px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(0,212,180,0.06));
+            border: 1.5px solid rgba(255,215,0,0.28);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .card-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .card-photo-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: rgba(255,215,0,0.5);
+        }
+        .card-photo-placeholder i {
+            font-size: 52px;
+        }
+        .card-photo-placeholder span {
+            font-size: 9px;
+            letter-spacing: 1px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* Info column */
+        .card-info-col {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .card-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.75rem;
+            letter-spacing: 1px;
+            line-height: 1.05;
+            color: #fff;
+            word-break: break-word;
+        }
+        .card-status {
+            display: flex;
+        }
+        .card-status span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 30px;
+            background: rgba(0, 212, 180, 0.12);
+            color: var(--teal);
+            font-weight: 800;
+            font-size: 0.62rem;
+            letter-spacing: 0.8px;
+            border: 1px solid rgba(0,212,180,0.3);
+            text-transform: uppercase;
+        }
+        .card-status span.expired {
+            background: rgba(255, 85, 85, 0.12);
+            color: #ff9b9b;
+            border-color: rgba(255,85,85,0.35);
+        }
+
+        .card-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .card-detail {
+            background: rgba(255,255,255,0.04);
+            border-radius: 8px;
+            padding: 6px 9px;
+        }
+        .card-detail span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            font-weight: 700;
+        }
+        .card-detail strong {
+            font-size: 0.78rem;
+            font-weight: 800;
+            word-break: break-word;
+            color: #E8EEFF;
+        }
+
+        /* QR column */
+        .card-qr-col {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .qr-box {
+            width: 150px;
+            height: 150px;
+            padding: 8px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .qr-box canvas,
+        .qr-box img {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            object-fit: contain !important;
+            border-radius: 4px;
+        }
+        .qr-box .qr-loading {
+            color: #111;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* ---------- CARD FOOTER ---------- */
+        .card-footer {
+            flex-shrink: 0;
+            text-align: center;
+            padding-top: 12px;
+            margin-top: 10px;
+            border-top: 1px solid rgba(255,215,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255,215,0,0.25);
+        }
+        .card-footer i {
+            font-size: 0.85rem;
+            color: var(--gold);
+        }
+
+        /* ---------- CARD ACTIONS ---------- */
+        .card-actions {
+            display: flex;
+            gap: 0.7rem;
+            justify-content: center;
+            margin-top: 1.6rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.65rem 1.4rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            color: #000;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: scale(1.03);
+            box-shadow: 0 0 24px rgba(0,212,180,0.3);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: scale(1.03);
+            box-shadow: 0 0 24px rgba(255,215,0,0.35);
+        }
+        .btn-gold:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-ghost {
+            background: rgba(255,255,255,0.06);
+            color: #E8EEFF;
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: skel 1.4s ease-in-out infinite;
+            border-radius: 6px;
+            display: inline-block;
+            width: 60%;
+            height: 1rem;
+            vertical-align: middle;
+        }
+        @keyframes skel {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ============================================================
+           CAMERA MODAL
+           ============================================================ */
+        .camera-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(8px);
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .camera-modal.show { display: flex; }
+
+        .camera-card {
+            width: 100%;
+            max-width: 460px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.4rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+        }
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .camera-header h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .camera-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.6rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .camera-close:hover { color: var(--teal); }
+
+        .camera-preview {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #000;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 0.8rem;
+        }
+        .camera-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: scaleX(-1);
+        }
+        .camera-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 62%;
+            aspect-ratio: 1 / 1;
+            border: 3px dashed rgba(255,215,0,0.55);
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 40px rgba(255,215,0,0.15) inset;
+        }
+        .camera-error {
+            display: none;
+            background: rgba(255,80,80,0.1);
+            border: 1px solid rgba(255,80,80,0.35);
+            color: #ff9b9b;
+            padding: 0.7rem 0.9rem;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+        .camera-hint {
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .camera-actions {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: flex-end;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 700px) {
+            .dash-header h1 { font-size: 2rem; }
+            .card-actions .btn { flex: 1; justify-content: center; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card-shine { animation: none; }
+            .skeleton { animation: none; }
+        }
+
+        /* ============================================================
+           PRINT
+           ============================================================ */
+        @media print {
+            body { background: #fff; color: #000; }
+            .dash-topbar, .dash-header, .dash-logout,
+            .card-actions, #sidebar-placeholder, .sidebar,
+            .sidebar-toggle, .sidebar-overlay,
+            .locked-wrap, .camera-modal { display: none !important; }
+            .dash-main { padding: 0 !important; max-width: 100% !important; }
+            .card-scale-wrap { height: auto !important; }
+            .membership-card {
+                transform: none !important;
+                box-shadow: none;
+                border: 2px solid #d4b64a;
+                page-break-inside: avoid;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body class="has-sidebar">
+
+    <div id="sidebar-placeholder"></div>
+
+    <main class="dash-main">
+
+        <div class="dash-topbar">
+            <div class="dash-user">
+                <div class="dash-avatar" id="topAvatar">–</div>
+                <div>
+                    <div class="dash-name" id="topName"><span class="skeleton"></span></div>
+                    <div class="dash-email" id="topEmail"></div>
+                </div>
+            </div>
+            <button class="dash-logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <header class="dash-header">
+            <h1>MEMBERSHIP <span class="highlight">CARD</span></h1>
+            <p>Your digital StudyFlix membership card.</p>
+        </header>
+
+        <div class="loading-wrap" id="loadingWrap">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading your membership card…</p>
+        </div>
+
+        <div class="locked-wrap" id="lockedWrap">
+            <div class="locked-icon" id="lockedIcon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="locked-title" id="lockedTitle">Card not yet available</h2>
+            <p class="locked-text" id="lockedText">
+                Your membership card will appear here once your application has been approved.
+            </p>
+            <a href="dashboard.html" class="locked-btn" id="lockedBtn">
+                <i class="fas fa-arrow-left"></i>
+                <span id="lockedBtnText">Back to Dashboard</span>
+            </a>
+        </div>
+
+        <div class="card-wrap" id="cardWrap">
+
+            <div class="card-scale-wrap" id="cardScaleWrap">
+                <div class="membership-card" id="membershipCard">
+
+                    <div class="card-shine"></div>
+
+                    <div class="card-top">
+                        <img src="images/STUDYFLIX%20LOGO.png"
+                             alt="StudyFlix"
+                             class="card-logo-img"
+                             id="cardLogoImg"
+                             onerror="this.style.display='none';document.getElementById('cardLogoFallback').style.display='block';" />
+                        <div class="card-logo-fallback" id="cardLogoFallback" style="display:none;">STUDYFLIX</div>
+                        <div class="card-chip"></div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="card-photo-col">
+                            <div class="card-photo" id="cardPhotoBox">
+                                <div class="card-photo-placeholder" id="cardPhotoPlaceholder">
+                                    <i class="fas fa-user"></i>
+                                    <span>No photo</span>
+                                </div>
+                                <img id="cardPhotoImg" style="display:none;" alt="Member" />
+                            </div>
+                        </div>
+
+                        <div class="card-info-col">
+                            <div class="card-name" id="cardName">Member Name</div>
+                            <div class="card-status" id="cardStatus">
+                                <span><i class="fas fa-check-circle"></i> ACTIVE MEMBER</span>
+                            </div>
+                            <div class="card-details">
+                                <div class="card-detail">
+                                    <span>Membership No.</span>
+                                    <strong id="cardMemberNo">—</strong>
+                                </div>
+                                <div class="card-detail">
+                                    <span>School</span>
+                                    <strong id="cardSchool">—</strong>
+                                </div>
+                                <div class="card-detail">
+                                    <span>Issued</span>
+                                    <strong id="cardIssued">—</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-qr-col">
+                            <div class="qr-box" id="qrBox">
+                                <div class="qr-loading">Generating…</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <i class="fas fa-globe"></i>
+                        <span>studyflix.co.za</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="btn btn-gold" id="selfieBtn">
+                    <i class="fas fa-camera"></i>
+                    <span id="selfieBtnText">Take Selfie</span>
+                </button>
+                <button class="btn btn-ghost" id="removePhotoBtn" style="display:none;">
+                    <i class="fas fa-trash"></i> Remove Photo
+                </button>
+                <button class="btn btn-primary" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download Card
+                </button>
+                <button class="btn btn-ghost" id="printBtn">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <a href="dashboard.html" class="btn btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ================= CAMERA MODAL ================= -->
+    <div class="camera-modal" id="cameraModal">
+        <div class="camera-card">
+            <div class="camera-header">
+                <h3><i class="fas fa-camera"></i> Take a Selfie</h3>
+                <button class="camera-close" id="cameraClose" aria-label="Close">&times;</button>
+            </div>
+
+            <div class="camera-error" id="cameraError"></div>
+
+            <div class="camera-preview" id="cameraPreview">
+                <video id="cameraVideo" autoplay playsinline muted></video>
+                <div class="camera-guide"></div>
+            </div>
+
+            <p class="camera-hint">Center your face in the circle. This photo will appear on your membership card.</p>
+
+            <div class="camera-actions">
+                <button class="btn btn-ghost" id="cameraCancel">Cancel</button>
+                <button class="btn btn-primary" id="cameraCapture">
+                    <i class="fas fa-camera"></i> Capture
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FIREBASE ================= -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <!-- ================= QR CODE LIBRARY ================= -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- ================= HTML2CANVAS ================= -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- ================= SIDEBAR LOADER ================= -->
+    <script>
+        (function () {
+            'use strict';
+            const SIDEBAR_PLACEHOLDER_ID = 'sidebar-placeholder';
+            const SIDEBAR_PATH = 'sidebar.html';
+
+            async function loadSidebar() {
+                const placeholder = document.getElementById(SIDEBAR_PLACEHOLDER_ID);
+                if (!placeholder) return;
+                try {
+                    const response = await fetch(SIDEBAR_PATH);
+                    const html = await response.text();
+                    placeholder.innerHTML = html;
+                    initSidebar();
+                } catch (err) {
+                    console.error('Failed to load sidebar:', err);
+                }
+            }
+
+            function initSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebarClose = document.getElementById('sidebarClose');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (!sidebar) return;
+
+                const nav = sidebar.querySelector('.sidebar-nav');
+                if (nav && !nav.querySelector('[data-page="dashboard.html"]')) {
+                    const dashLink = document.createElement('a');
+                    dashLink.href = 'dashboard.html';
+                    dashLink.className = 'sidebar-link';
+                    dashLink.setAttribute('data-page', 'dashboard.html');
+                    dashLink.innerHTML =
+                        '<i class="fas fa-th-large"></i>' +
+                        '<div class="link-content">' +
+                            '<span class="link-title">Dashboard</span>' +
+                            '<span class="link-desc">Your membership overview.</span>' +
+                        '</div>';
+                    nav.prepend(dashLink);
+                }
+
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', () => {
+                        sidebar.classList.add('open');
+                        if (overlay) overlay.classList.add('active');
+                    });
+                }
+                function closeSidebar() {
+                    sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+                if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+                if (overlay) overlay.addEventListener('click', closeSidebar);
+
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+                    if (link.getAttribute('data-page') === currentPath) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadSidebar);
+            } else {
+                loadSidebar();
+            }
+
+            window.StudyFlixSidebar = {
+                load: loadSidebar,
+                close: function () {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    if (sidebar) sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+            };
+        })();
+    </script>
+
+    <!-- ================= CARD LOGIC ================= -->
+    <script>
+        /* ---------- FIREBASE ---------- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+            authDomain: "studyflix-membership.firebaseapp.com",
+            projectId: "studyflix-membership",
+            storageBucket: "studyflix-membership.firebasestorage.app",
+            messagingSenderId: "641080177215",
+            appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+            measurementId: "G-3384WRNXW"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        /* ---------- CARD CONFIG ---------- */
+        const CARD_VALID_DAYS = 30;
+        const CARD_WIDTH = 640;
+        const CARD_HEIGHT = 400;
+
+        /* ---------- STATE ---------- */
+        const STATE = {
+            NONE:     'none',
+            PENDING:  'pending',
+            APPROVED: 'approved',
+            DECLINED: 'declined'
+        };
+
+        let currentUser = null;
+        let currentData = null;
+        let unsubDoc    = null;
+        let healedOnce  = false;
+        let lastQRText  = null;
+        let datesWritten = false;
+        let cameraStream = null;
+
+        /* ---------- DOM ---------- */
+        const els = {
+            topAvatar:   document.getElementById('topAvatar'),
+            topName:     document.getElementById('topName'),
+            topEmail:    document.getElementById('topEmail'),
+            logoutBtn:   document.getElementById('logoutBtn'),
+
+            loadingWrap: document.getElementById('loadingWrap'),
+            lockedWrap:  document.getElementById('lockedWrap'),
+            lockedIcon:  document.getElementById('lockedIcon'),
+            lockedTitle: document.getElementById('lockedTitle'),
+            lockedText:  document.getElementById('lockedText'),
+            lockedBtn:   document.getElementById('lockedBtn'),
+            lockedBtnText: document.getElementById('lockedBtnText'),
+
+            cardWrap:    document.getElementById('cardWrap'),
+            cardScaleWrap: document.getElementById('cardScaleWrap'),
+            membershipCard: document.getElementById('membershipCard'),
+            cardName:    document.getElementById('cardName'),
+            cardStatus:  document.getElementById('cardStatus'),
+            cardMemberNo:document.getElementById('cardMemberNo'),
+            cardSchool:  document.getElementById('cardSchool'),
+            cardIssued:  document.getElementById('cardIssued'),
+            cardPhotoImg:document.getElementById('cardPhotoImg'),
+            cardPhotoPlaceholder:document.getElementById('cardPhotoPlaceholder'),
+            qrBox:       document.getElementById('qrBox'),
+            printBtn:    document.getElementById('printBtn'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            selfieBtn:   document.getElementById('selfieBtn'),
+            selfieBtnText: document.getElementById('selfieBtnText'),
+            removePhotoBtn: document.getElementById('removePhotoBtn'),
+
+            cameraModal: document.getElementById('cameraModal'),
+            cameraVideo: document.getElementById('cameraVideo'),
+            cameraClose: document.getElementById('cameraClose'),
+            cameraCancel: document.getElementById('cameraCancel'),
+            cameraCapture: document.getElementById('cameraCapture'),
+            cameraError: document.getElementById('cameraError')
+        };
+
+        /* ---------- SCALE CARD TO FIT WIDTH ---------- */
+        function fitCard() {
+            const wrap = els.cardScaleWrap;
+            const card = els.membershipCard;
+            if (!wrap || !card) return;
+            const avail = wrap.clientWidth;
+            if (!avail) return;
+            const scale = Math.min(1, avail / CARD_WIDTH);
+            card.style.transform = `scale(${scale})`;
+            wrap.style.height = (CARD_HEIGHT * scale) + 'px';
+        }
+        window.addEventListener('resize', fitCard);
+
+        /* ---------- STATE MACHINE ---------- */
+        function deriveState(data) {
+            if (!data) return STATE.NONE;
+            const appStatus = (data.applicationStatus || '').toString().toLowerCase();
+            const memStatus = (data.status || data.membershipStatus || '').toString().toLowerCase();
+            if (memStatus === 'active' || memStatus === 'approved' || appStatus === 'approved') return STATE.APPROVED;
+            if (['declined', 'rejected', 'inactive'].includes(memStatus) || ['declined', 'rejected'].includes(appStatus)) return STATE.DECLINED;
+            const hasApplication = !!(data.application && (data.application.submittedAt || data.application.firstName));
+            if (hasApplication && ['pending', 'in review', 'under review'].includes(appStatus)) return STATE.PENDING;
+            return STATE.NONE;
+        }
+
+        /* ---------- NAME RESOLUTION ---------- */
+        async function resolveName(user, data) {
+            if (data && (data.name || data.fullName || data.displayName)) {
+                return { name: data.name || data.fullName || data.displayName, source: 'firestore' };
+            }
+            try {
+                const stored = localStorage.getItem('studyflix_name_' + user.uid);
+                if (stored && stored.trim()) return { name: stored.trim(), source: 'localStorage' };
+            } catch (e) { /* ignore */ }
+            if (user.displayName && user.displayName.trim()) {
+                return { name: user.displayName.trim(), source: 'auth' };
+            }
+            if (user.email) return { name: user.email.split('@')[0], source: 'email' };
+            return { name: 'Member', source: 'fallback' };
+        }
+
+        /* ---------- HEAL MEMBER DOC ---------- */
+        async function healMemberDoc(user, name, data) {
+            const ref = db.collection('members').doc(user.uid);
+            try {
+                if (!data) {
+                    await ref.set({
+                        uid: user.uid,
+                        name: name,
+                        email: user.email || '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        plan: 'studyflix-monthly',
+                        status: 'pending',
+                        applicationStatus: 'pending',
+                        membershipNumber: null
+                    }, { merge: true });
+                } else {
+                    const hasName = !!(data.name || data.fullName || data.displayName);
+                    if (!hasName) await ref.set({ name: name }, { merge: true });
+                }
+            } catch (err) {
+                console.warn('Could not heal member doc:', err.message);
+            }
+        }
+
+        /* ---------- DATE HELPERS ---------- */
+        function toDate(ts) {
+            if (!ts) return null;
+            try {
+                if (ts.toDate) return ts.toDate();
+                if (ts.seconds) return new Date(ts.seconds * 1000);
+                return new Date(ts);
+            } catch (e) { return null; }
+        }
+
+        function formatDayMonthYear(d) {
+            if (!d) return '—';
+            return d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function computeValidUntil(data) {
+            const explicit = toDate(data && data.validUntil);
+            if (explicit) return explicit;
+            const base =
+                toDate(data && data.issuedAt) ||
+                toDate(data && (data.approvedAt || data.activatedAt)) ||
+                toDate(data && data.createdAt);
+            if (!base) return null;
+            const v = new Date(base);
+            v.setDate(v.getDate() + CARD_VALID_DAYS);
+            return v;
+        }
+
+        function computeIssuedAt(data) {
+            const explicit = toDate(data && data.issuedAt);
+            if (explicit) return explicit;
+            return (
+                toDate(data && (data.approvedAt || data.activatedAt)) ||
+                toDate(data && data.createdAt) ||
+                null
+            );
+        }
+
+        function isExpired(validUntil) {
+            if (!validUntil) return false;
+            return validUntil.getTime() < Date.now();
+        }
+
+        /* ---------- PERSIST ISSUED / VALID UNTIL ---------- */
+        async function persistCardDates(user, data) {
+            if (datesWritten) return data;
+            if (!data) return data;
+            const state = deriveState(data);
+            if (state !== STATE.APPROVED) return data;
+
+            const hasIssued = !!data.issuedAt;
+            const hasValid  = !!data.validUntil;
+            if (hasIssued && hasValid) {
+                datesWritten = true;
+                return data;
+            }
+
+            const issuedAt = computeIssuedAt(data) || new Date();
+            const validUntil = new Date(issuedAt);
+            validUntil.setDate(validUntil.getDate() + CARD_VALID_DAYS);
+
+            const fallback = Object.assign({}, data, {
+                issuedAt: firebase.firestore.Timestamp.fromDate(issuedAt),
+                validUntil: firebase.firestore.Timestamp.fromDate(validUntil)
+            });
+
+            try {
+                await db.collection('members').doc(user.uid).set({
+                    issuedAt: firebase.firestore.Timestamp.fromDate(issuedAt),
+                    validUntil: firebase.firestore.Timestamp.fromDate(validUntil)
+                }, { merge: true });
+                datesWritten = true;
+                return fallback;
+            } catch (err) {
+                console.warn('Could not persist card dates:', err.message);
+                return fallback;
+            }
+        }
+
+        /* ---------- QR CODE ---------- */
+        
+        const VERIFY_PAGE_URL =
+            "https://studyflix-membership.web.app/partner/partner-verification.html";
+
+        function buildVerificationURL(memberNo, uid) {
+            const params = new URLSearchParams();
+            params.set("member", memberNo);   
+            if (uid) params.set("uid", uid);
+            return VERIFY_PAGE_URL + "?" + params.toString();
+        }
+
+        function renderQR(memberNo, uid) {
+            const text = buildVerificationURL(memberNo, uid);
+            if (text === lastQRText) return;
+            lastQRText = text;
+
+            els.qrBox.innerHTML = '';
+
+            const temp = document.createElement('div');
+            temp.style.position = 'absolute';
+            temp.style.left = '-9999px';
+            temp.style.top = '0';
+            document.body.appendChild(temp);
+
+            try {
+                new QRCode(temp, {
+                    text: text,
+                    width: 512,
+                    height: 512,
+                    colorDark: '#111111',
+                    colorLight: '#ffffff', 
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+
+                const canvas = temp.querySelector('canvas');
+                if (canvas) {
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const img = document.createElement('img');
+                    img.src = dataUrl;
+                    img.alt = 'QR';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                    img.style.display = 'block';
+                    els.qrBox.appendChild(img);
+                } else {
+                    temp.querySelectorAll('canvas, img').forEach(node => {
+                        node.style.width = '100%';
+                        node.style.height = '100%';
+                        node.style.objectFit = 'contain';
+                        node.style.display = 'block';
+                        els.qrBox.appendChild(node);
+                    });
+                }
+            } catch (err) {
+                console.error('QR render failed:', err);
+                els.qrBox.innerHTML =
+                    '<div class="qr-loading" style="color:#b00;">Could not generate QR code.</div>';
+            } finally {
+                document.body.removeChild(temp);
+            }
+        }
+
+        /* ---------- PHOTO ---------- */
+        function applyPhoto(data) {
+            const photo = data && data.memberPhoto;
+            if (photo && photo.startsWith('data:image')) {
+                els.cardPhotoImg.src = photo;
+                els.cardPhotoImg.style.display = 'block';
+                els.cardPhotoPlaceholder.style.display = 'none';
+                els.removePhotoBtn.style.display = '';
+                els.selfieBtnText.textContent = 'Update Selfie';
+            } else {
+                els.cardPhotoImg.src = '';
+                els.cardPhotoImg.style.display = 'none';
+                els.cardPhotoPlaceholder.style.display = 'flex';
+                els.removePhotoBtn.style.display = 'none';
+                els.selfieBtnText.textContent = 'Take Selfie';
+            }
+        }
+
+        /* ---------- RENDER STATES ---------- */
+        function showLocked(state) {
+            els.loadingWrap.style.display = 'none';
+            els.cardWrap.classList.remove('visible');
+            els.lockedWrap.style.display  = 'block';
+
+            const icon = els.lockedIcon;
+            icon.className = 'locked-icon';
+
+            if (state === STATE.PENDING) {
+                icon.classList.add('locked-pending');
+                icon.innerHTML = '<i class="fas fa-hourglass-half"></i>';
+                els.lockedTitle.textContent = 'Card unlocks after approval';
+                els.lockedText.textContent  = 'Your application is currently under review. Once approved, your digital membership card and QR code will appear here.';
+                els.lockedBtn.setAttribute('href', 'application-status.html');
+                els.lockedBtnText.textContent = 'Check Application Status';
+            } else if (state === STATE.DECLINED) {
+                icon.classList.add('locked-declined');
+                icon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                els.lockedTitle.textContent = 'Membership not active';
+                els.lockedText.textContent  = 'Your application was not approved, so a membership card cannot be issued. Please contact support if you believe this was a mistake.';
+                els.lockedBtn.setAttribute('href', 'mailto:support@studyflix.example');
+                els.lockedBtnText.textContent = 'Contact Support';
+            } else {
+                icon.classList.add('locked-none');
+                icon.innerHTML = '<i class="fas fa-lock"></i>';
+                els.lockedTitle.textContent = 'No card yet';
+                els.lockedText.textContent  = 'You haven\'t completed your membership application. Apply first — once approved, your card will appear here.';
+                els.lockedBtn.setAttribute('href', 'membership-application.html');
+                els.lockedBtnText.textContent = 'Start Application';
+            }
+        }
+
+        function showCard(user, data, name) {
+            els.loadingWrap.style.display = 'none';
+            els.lockedWrap.style.display  = 'none';
+            els.cardWrap.classList.add('visible');
+
+            els.cardName.textContent = name;
+
+            let memberNo = data && (data.membershipNumber || data.memberNumber);
+            if (!memberNo) {
+                memberNo = 'SF' + user.uid.slice(0, 8).toUpperCase();
+            }
+            els.cardMemberNo.textContent = memberNo;
+
+            els.cardSchool.textContent = (data && data.school) || 'Not provided';
+
+            const issued = computeIssuedAt(data);
+            els.cardIssued.textContent = issued ? formatDayMonthYear(issued) : '—';
+
+            /* Status badge based on expiry (not displayed, but badge flips) */
+            const valid = computeValidUntil(data);
+            if (valid && isExpired(valid)) {
+                els.cardStatus.innerHTML =
+                    '<span class="expired"><i class="fas fa-clock"></i> EXPIRED</span>';
+            } else {
+                els.cardStatus.innerHTML =
+                    '<span><i class="fas fa-check-circle"></i> ACTIVE MEMBER</span>';
+            }
+
+            applyPhoto(data);
+            renderQR(memberNo, user.uid);
+
+            setTimeout(fitCard, 30);
+        }
+
+        /* ---------- MAIN RENDER ---------- */
+        async function renderCard(user, data) {
+            currentData = data;
+
+            const { name, source } = await resolveName(user, data);
+
+            els.topName.textContent = name;
+            els.topName.classList.remove('skeleton');
+            els.topAvatar.textContent = name.charAt(0).toUpperCase();
+            els.topEmail.textContent = user.email || '';
+
+            if (!healedOnce && source !== 'firestore') {
+                healedOnce = true;
+                healMemberDoc(user, name, data);
+            }
+
+            const state = deriveState(data);
+
+            if (state === STATE.APPROVED) {
+                const enriched = await persistCardDates(user, data);
+                showCard(user, enriched, name);
+            } else {
+                showLocked(state);
+            }
+        }
+
+        /* ============================================================
+           SELFIE CAMERA
+           ============================================================ */
+        async function openCamera() {
+            els.cameraError.style.display = 'none';
+            els.cameraError.textContent = '';
+            els.cameraModal.classList.add('show');
+
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Camera not supported on this device/browser.');
+                }
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 640 } },
+                    audio: false
+                });
+                els.cameraVideo.srcObject = cameraStream;
+                await els.cameraVideo.play();
+            } catch (err) {
+                console.error('Camera error:', err);
+                els.cameraError.textContent = err.name === 'NotAllowedError'
+                    ? 'Camera access was denied. Enable camera permissions in your browser settings and try again.'
+                    : (err.message || 'Could not access camera.');
+                els.cameraError.style.display = 'block';
+            }
+        }
+
+        function closeCamera() {
+            els.cameraModal.classList.remove('show');
+            if (cameraStream) {
+                try { cameraStream.getTracks().forEach(t => t.stop()); } catch (e) {}
+                cameraStream = null;
+            }
+            els.cameraVideo.srcObject = null;
+        }
+
+        function capturePhoto() {
+            const video = els.cameraVideo;
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+            if (!vw || !vh) {
+                els.cameraError.textContent = 'Camera is still warming up. Try again in a second.';
+                els.cameraError.style.display = 'block';
+                return null;
+            }
+
+            const size = Math.min(vw, vh);
+            const sx = (vw - size) / 2;
+            const sy = (vh - size) / 2;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 320;
+            canvas.height = 320;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, sx, sy, size, size, 0, 0, 320, 320);
+
+            return canvas.toDataURL('image/jpeg', 0.72);
+        }
+
+        async function savePhoto(dataUrl) {
+            if (!currentUser) return;
+            try {
+                await db.collection('members').doc(currentUser.uid).set({
+                    memberPhoto: dataUrl,
+                    memberPhotoUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                if (currentData) currentData.memberPhoto = dataUrl;
+                applyPhoto({ memberPhoto: dataUrl });
+                toast('Photo saved to your card.');
+            } catch (err) {
+                console.error('Could not save photo:', err);
+                toast('Could not save photo: ' + err.message, true);
+            }
+        }
+
+        async function removePhoto() {
+            if (!currentUser) return;
+            if (!confirm('Remove your photo from the membership card?')) return;
+            try {
+                await db.collection('members').doc(currentUser.uid).set({
+                    memberPhoto: firebase.firestore.FieldValue.delete(),
+                    memberPhotoUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                if (currentData) delete currentData.memberPhoto;
+                applyPhoto({});
+                toast('Photo removed.');
+            } catch (err) {
+                console.error('Could not remove photo:', err);
+                toast('Could not remove photo: ' + err.message, true);
+            }
+        }
+
+        /* ---------- TOAST ---------- */
+        function toast(msg, isError) {
+            let el = document.getElementById('toast');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'toast';
+                el.style.cssText = `
+                    position: fixed; bottom: 24px; right: 24px;
+                    background: rgba(28,38,64,0.98);
+                    border: 1px solid rgba(255,255,255,0.08);
+                    border-left: 3px solid ${isError ? '#ff5555' : '#00D4B4'};
+                    color: ${isError ? '#ff9b9b' : '#E8EEFF'};
+                    padding: 0.9rem 1.2rem;
+                    border-radius: 12px;
+                    font-size: 0.85rem;
+                    font-weight: 700;
+                    z-index: 20000;
+                    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+                    max-width: 340px;
+                    font-family: 'Nunito', sans-serif;
+                `;
+                document.body.appendChild(el);
+            }
+            el.style.borderLeftColor = isError ? '#ff5555' : '#00D4B4';
+            el.style.color = isError ? '#ff9b9b' : '#E8EEFF';
+            el.textContent = msg;
+            el.style.display = 'block';
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3200);
+        }
+
+        /* ============================================================
+           DOWNLOAD CARD AS PNG
+           ============================================================ */
+        async function downloadCard() {
+            const card = els.membershipCard;
+            if (!card) return;
+
+            els.downloadBtn.disabled = true;
+            const originalHtml = els.downloadBtn.innerHTML;
+            els.downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Rendering…';
+
+            const shine = card.querySelector('.card-shine');
+            const prevShineDisplay = shine ? shine.style.display : null;
+            if (shine) shine.style.display = 'none';
+
+            const prevTransform = card.style.transform;
+            card.style.transform = 'none';
+
+            const prevWrapHeight = els.cardScaleWrap.style.height;
+            const prevWrapOverflow = els.cardScaleWrap.style.overflow;
+            els.cardScaleWrap.style.height = 'auto';
+            els.cardScaleWrap.style.overflow = 'visible';
+
+            try {
+                if (document.fonts && document.fonts.ready) {
+                    await Promise.race([
+                        document.fonts.ready,
+                        new Promise(res => setTimeout(res, 3000))
+                    ]);
+                }
+
+                const imgs = Array.from(card.querySelectorAll('img'));
+                await Promise.race([
+                    Promise.all(imgs.map(img => {
+                        if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                        return new Promise(res => {
+                            img.onload = res;
+                            img.onerror = res;
+                            setTimeout(res, 4000);
+                        });
+                    })),
+                    new Promise(res => setTimeout(res, 5000))
+                ]);
+
+                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+                const renderPromise = html2canvas(card, {
+                    backgroundColor: '#1C2640',
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    logging: false,
+                    imageTimeout: 4000,
+                    removeContainer: true
+                });
+
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error(
+                        'Render timed out. Try again, or use the Print button and "Save as PDF".'
+                    )), 15000)
+                );
+
+                const canvas = await Promise.race([renderPromise, timeoutPromise]);
+
+                const filename = 'studyflix-membership-card-' + Date.now() + '.png';
+                const dataUrl = canvas.toDataURL('image/png');
+
+                const byteString = atob(dataUrl.split(',')[1]);
+                const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+                const blob = new Blob([ab], { type: mimeString });
+
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+                toast('Card downloaded.');
+
+            } catch (err) {
+                console.error('Download failed:', err);
+                toast(err.message || 'Download failed.', true);
+            } finally {
+                if (shine) shine.style.display = prevShineDisplay || '';
+                card.style.transform = prevTransform;
+                els.cardScaleWrap.style.height = prevWrapHeight || '';
+                els.cardScaleWrap.style.overflow = prevWrapOverflow || '';
+                els.downloadBtn.disabled = false;
+                els.downloadBtn.innerHTML = originalHtml;
+                fitCard();
+            }
+        }
+
+        /* ---------- BUTTON WIRING ---------- */
+        els.printBtn.addEventListener('click', () => window.print());
+        els.downloadBtn.addEventListener('click', downloadCard);
+        els.selfieBtn.addEventListener('click', openCamera);
+        els.removePhotoBtn.addEventListener('click', removePhoto);
+
+        els.cameraClose.addEventListener('click', closeCamera);
+        els.cameraCancel.addEventListener('click', closeCamera);
+        els.cameraModal.addEventListener('click', (e) => {
+            if (e.target === els.cameraModal) closeCamera();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && els.cameraModal.classList.contains('show')) closeCamera();
+        });
+
+        els.cameraCapture.addEventListener('click', async () => {
+            const dataUrl = capturePhoto();
+            if (!dataUrl) return;
+            els.cameraCapture.disabled = true;
+            els.cameraCapture.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+            await savePhoto(dataUrl);
+            els.cameraCapture.disabled = false;
+            els.cameraCapture.innerHTML = '<i class="fas fa-camera"></i> Capture';
+            closeCamera();
+        });
+
+        /* ---------- AUTH GUARD + LIVE UPDATES ---------- */
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+
+            try { await user.reload(); } catch (e) { /* ignore */ }
+            const freshUser = auth.currentUser || user;
+
+            let initialData = null;
+            try {
+                const snap = await db.collection('members').doc(freshUser.uid).get();
+                if (snap.exists) initialData = snap.data();
+            } catch (err) {
+                console.warn('Firestore read blocked:', err.message);
+            }
+
+            await renderCard(freshUser, initialData);
+
+            if (unsubDoc) unsubDoc();
+            unsubDoc = db.collection('members').doc(freshUser.uid).onSnapshot(
+                async (snap) => {
+                    const data = snap.exists ? snap.data() : null;
+                    await renderCard(freshUser, data);
+                },
+                (err) => {
+                    console.warn('Live updates unavailable:', err.message);
+                }
+            );
+        });
+
+        /* ---------- LOGOUT ---------- */
+        els.logoutBtn.addEventListener('click', async () => {
+            els.logoutBtn.disabled = true;
+            try {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                await auth.signOut();
+            } catch (err) {
+                console.error(err);
+                els.logoutBtn.disabled = false;
+            }
+            window.location.href = 'login.html';
+        });
+    </script>
+
+</body>
+</html>

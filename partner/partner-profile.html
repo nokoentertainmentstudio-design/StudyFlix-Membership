@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Partner Profile | StudyFlix</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        :root {
+            --gold: #FFD700;
+            --teal: #00D4B4;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Nunito', sans-serif;
+            color: white;
+            background: linear-gradient(135deg, #080D1A, #101A30);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .navbar-links a:hover {
+            color: var(--gold);
+        }
+
+        /* HEADER */
+
+        .page-header {
+            text-align: center;
+            padding: 55px 0 30px;
+        }
+
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 50px;
+            margin: 0;
+        }
+
+        .highlight {
+            color: var(--gold);
+        }
+
+        .page-sub {
+            color: var(--muted);
+            margin-top: 10px;
+        }
+
+        /* PROFILE CARD */
+
+        .profile-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 40px;
+        }
+
+        .profile-icon {
+            text-align: center;
+            font-size: 60px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .profile-card h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-item {
+            background: #111A2E;
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .info-label {
+            display: block;
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .partner-status {
+            color: var(--teal);
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 13px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .dashboard-btn {
+            background: var(--gold);
+            color: #111;
+        }
+
+        .home-btn {
+            background: #263352;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .navbar-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .navbar-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 40px;
+            }
+
+            .profile-card {
+                padding: 25px 20px;
+            }
+
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="container navbar-content">
+
+            <a href="../member/index.html" class="navbar-brand">
+                STUDYFLIX
+            </a>
+
+            <div class="navbar-links">
+
+                <a href="../member/index.html">
+                    Home
+                </a>
+
+                <a href="partner-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="partner-verification.html">
+                    Verification
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HEADER -->
+
+    <section class="page-header">
+
+        <div class="container">
+
+            <h1 class="page-title">
+                PARTNER <span class="highlight">PROFILE</span>
+            </h1>
+
+            <p class="page-sub">
+                View your StudyFlix partner information.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- PROFILE -->
+
+    <main class="container">
+
+        <div class="profile-card">
+
+            <div class="profile-icon">
+                <i class="fas fa-building"></i>
+            </div>
+
+            <h2>
+                Partner Information
+            </h2>
+
+
+            <div class="profile-info">
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Partner Name
+                    </span>
+
+                    <span class="info-value">
+                        StudyFlix Partner Store
+                    </span>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Partner Number
+                    </span>
+
+                    <span class="info-value">
+                        PRT20260001
+                    </span>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Contact Person
+                    </span>
+
+                    <span class="info-value">
+                        Partner Manager
+                    </span>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Email Address
+                    </span>
+
+                    <span class="info-value">
+                        partner@example.com
+                    </span>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Phone Number
+                    </span>
+
+                    <span class="info-value">
+                        071 000 0000
+                    </span>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Location
+                    </span>
+
+                    <span class="info-value">
+                        Pretoria, South Africa
+                    </span>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Partner Status
+                    </span>
+
+                    <span class="info-value partner-status">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Partnership Since
+                    </span>
+
+                    <span class="info-value">
+                        September 2026
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="buttons">
+
+                <a href="partner-dashboard.html"
+                   class="btn dashboard-btn">
+
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+
+                </a>
+
+                <a href="../member/index.html"
+                   class="btn home-btn">
+
+                    <i class="fas fa-home"></i>
+                    Home
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <div class="container">
+
+            <p>
+                © 2025 Noko Entertainment Studio · StudyFlix · All rights reserved
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>

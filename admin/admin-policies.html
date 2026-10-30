@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Policies — StudyFlix Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;--red:#ff5555;--muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,.07)}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#080C18,#111A2E);color:#E8EEFF;min-height:100vh;overflow-x:hidden}
+.hero-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.guard{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,42,.95);z-index:10000;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.guard.hidden{display:none}
+.guard-text{color:var(--muted);font-size:.9rem}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,215,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.main{padding:1.5rem 1.5rem 3rem;max-width:1100px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;flex-wrap:wrap}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1.5px}
+h1 .hl{background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+.btn{padding:.65rem 1.2rem;border-radius:10px;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:rgba(255,255,255,.05);color:#E8EEFF;border-color:var(--border)}
+.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--orange));color:#111;border:none}
+.btn-gold:hover:not(:disabled){transform:scale(1.02);box-shadow:0 0 20px rgba(255,215,0,.3)}
+
+.info-banner{background:rgba(0,212,180,.06);border:1px solid rgba(0,212,180,.25);border-radius:12px;padding:.9rem 1.1rem;font-size:.8rem;color:#7ff0dd;line-height:1.6;display:flex;gap:.7rem;align-items:flex-start;margin-bottom:1.4rem}
+.info-banner i{color:var(--teal);margin-top:2px;flex-shrink:0}
+
+/* Tabs */
+.tabs{display:flex;gap:.4rem;border-bottom:1px solid var(--border);margin-bottom:1.2rem;flex-wrap:wrap}
+.tab{background:none;border:none;color:var(--muted);font-family:inherit;font-weight:800;font-size:.85rem;padding:.75rem 1.1rem;cursor:pointer;border-bottom:2px solid transparent;transition:.2s;display:inline-flex;align-items:center;gap:.45rem}
+.tab:hover{color:#E8EEFF}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* Editor panel */
+.editor-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1.4rem}
+.editor-wrap.hidden{display:none}
+
+.editor-toolbar{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;padding:.7rem .9rem;background:rgba(0,0,0,.22);border-bottom:1px solid var(--border)}
+.tool-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);color:#E8EEFF;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.85rem;font-family:inherit;transition:.15s}
+.tool-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(0,212,180,.4);color:var(--teal)}
+.tool-btn.active{background:rgba(0,212,180,.18);border-color:var(--teal);color:var(--teal)}
+.tool-select{height:34px;padding:0 2rem 0 .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:#E8EEFF;font-family:inherit;font-size:.78rem;font-weight:700;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238892B0'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right .4rem center;background-size:16px}
+.tool-select:focus{border-color:var(--teal)}
+.tool-sep{width:1px;height:22px;background:var(--border);margin:0 .2rem}
+
+.editor{min-height:420px;padding:1.6rem 1.8rem;outline:none;color:#E8EEFF;font-size:.92rem;line-height:1.75;overflow-y:auto;max-height:70vh}
+.editor:focus{background:rgba(0,0,0,.12)}
+.editor h1,.editor h2{color:#E8EEFF;font-size:1.35rem;font-weight:900;margin:1.6rem 0 .7rem}
+.editor h2:first-child,.editor h1:first-child{margin-top:0}
+.editor h3{color:#d5dcf0;font-size:1.05rem;font-weight:800;margin:1.2rem 0 .5rem}
+.editor p{margin-bottom:.8rem}
+.editor ul,.editor ol{margin:.6rem 0 1rem 1.4rem}
+.editor li{margin-bottom:.35rem}
+.editor a{color:var(--teal)}
+.editor .highlight{background:rgba(255,255,255,.05);border:1px solid var(--border);padding:1rem 1.1rem;border-radius:10px;margin:1rem 0}
+.editor .warning{background:rgba(249,115,22,.08);border-left:4px solid #f97316;padding:1rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0}
+.editor .contact-box{background:rgba(0,0,0,.35);color:#E8EEFF;padding:1.1rem 1.2rem;border-radius:12px;margin-top:1rem;border:1px solid var(--border)}
+.editor .contact-box h3{color:var(--gold);margin-top:0}
+.editor .contact-box a{color:#9cc7ff}
+
+.editor-footer{display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.9rem 1.1rem;background:rgba(0,0,0,.22);border-top:1px solid var(--border)}
+.save-status{font-size:.78rem;color:var(--muted);font-weight:700}
+.save-status.dirty{color:var(--gold)}
+.save-status.saved{color:var(--teal)}
+.footer-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:5000;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-overlay.show{display:flex}
+.modal-card{width:100%;max-width:820px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.6rem;box-shadow:0 25px 60px rgba(0,0,0,.6);max-height:90vh;display:flex;flex-direction:column}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
+.modal-header h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.5px;color:var(--gold);display:flex;align-items:center;gap:.5rem}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--teal)}
+.html-textarea{width:100%;flex:1;min-height:400px;padding:1rem;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;color:#E8EEFF;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.5;resize:vertical;outline:none}
+.html-textarea:focus{border-color:var(--teal)}
+.modal-actions{display:flex;gap:.6rem;margin-top:1rem;justify-content:flex-end;flex-wrap:wrap}
+
+#toast{position:fixed;bottom:24px;right:24px;background:rgba(28,38,64,.98);border:1px solid var(--border);border-left:3px solid var(--teal);padding:.9rem 1.2rem;border-radius:12px;font-size:.85rem;font-weight:700;z-index:20000;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;max-width:340px}
+#toast.error{border-left-color:var(--red);color:#ff9b9b}
+
+@media(max-width:700px){
+  .main{padding-top:75px}
+  h1{font-size:2rem}
+  .editor{padding:1rem;font-size:.88rem;min-height:340px}
+  .editor-toolbar{padding:.55rem .6rem}
+  .editor-footer{flex-direction:column;align-items:stretch}
+  .footer-actions .btn{flex:1;justify-content:center}
+}
+</style>
+</head>
+<body class="has-sidebar">
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard"><div class="spinner"></div><div class="guard-text" id="guardText">Verifying admin access…</div></div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1><span class="hl">Policy</span> Editor</h1>
+      <p class="sub">Edit the Terms &amp; Conditions and Privacy Policy shown to the public.</p>
+    </div>
+    <button class="btn btn-ghost" id="reloadBtn"><i class="fas fa-rotate-left"></i> Reload</button>
+  </div>
+
+  <div class="info-banner">
+    <i class="fas fa-circle-info"></i>
+    <div>Changes go live on the public pages as soon as you save. The <strong>Last Updated</strong> date on each page is set automatically.</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="terms"><i class="fas fa-file-contract"></i> Terms &amp; Conditions</button>
+    <button class="tab" data-tab="privacy"><i class="fas fa-shield-halved"></i> Privacy Policy</button>
+  </div>
+
+  <!-- TERMS PANEL -->
+  <section class="editor-wrap" data-panel="terms">
+    <div class="editor-toolbar" data-toolbar="terms">
+      <select class="tool-select" data-cmd="formatBlock">
+        <option value="P">Paragraph</option>
+        <option value="H2">Heading 2</option>
+        <option value="H3">Heading 3</option>
+      </select>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="bold" title="Bold"><i class="fas fa-bold"></i></button>
+      <button class="tool-btn" data-cmd="italic" title="Italic"><i class="fas fa-italic"></i></button>
+      <button class="tool-btn" data-cmd="underline" title="Underline"><i class="fas fa-underline"></i></button>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="insertUnorderedList" title="Bullet list"><i class="fas fa-list-ul"></i></button>
+      <button class="tool-btn" data-cmd="insertOrderedList" title="Numbered list"><i class="fas fa-list-ol"></i></button>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="createLink" title="Insert link"><i class="fas fa-link"></i></button>
+      <button class="tool-btn" data-cmd="removeFormat" title="Clear formatting"><i class="fas fa-eraser"></i></button>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="undo" title="Undo"><i class="fas fa-rotate-left"></i></button>
+      <button class="tool-btn" data-cmd="redo" title="Redo"><i class="fas fa-rotate-right"></i></button>
+    </div>
+    <div class="editor" id="termsEditor" contenteditable="true" spellcheck="true"></div>
+    <div class="editor-footer">
+      <span class="save-status" id="termsStatus">Loading…</span>
+      <div class="footer-actions">
+        <button class="btn btn-ghost" data-action="view-html" data-panel="terms"><i class="fas fa-code"></i> View HTML</button>
+        <button class="btn btn-ghost" data-action="view-live" data-panel="terms"><i class="fas fa-eye"></i> Open Live Page</button>
+        <button class="btn btn-gold" data-action="save" data-panel="terms"><i class="fas fa-save"></i> Save Terms</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVACY PANEL -->
+  <section class="editor-wrap hidden" data-panel="privacy">
+    <div class="editor-toolbar" data-toolbar="privacy">
+      <select class="tool-select" data-cmd="formatBlock">
+        <option value="P">Paragraph</option>
+        <option value="H2">Heading 2</option>
+        <option value="H3">Heading 3</option>
+      </select>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="bold" title="Bold"><i class="fas fa-bold"></i></button>
+      <button class="tool-btn" data-cmd="italic" title="Italic"><i class="fas fa-italic"></i></button>
+      <button class="tool-btn" data-cmd="underline" title="Underline"><i class="fas fa-underline"></i></button>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="insertUnorderedList" title="Bullet list"><i class="fas fa-list-ul"></i></button>
+      <button class="tool-btn" data-cmd="insertOrderedList" title="Numbered list"><i class="fas fa-list-ol"></i></button>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="createLink" title="Insert link"><i class="fas fa-link"></i></button>
+      <button class="tool-btn" data-cmd="removeFormat" title="Clear formatting"><i class="fas fa-eraser"></i></button>
+      <span class="tool-sep"></span>
+      <button class="tool-btn" data-cmd="undo" title="Undo"><i class="fas fa-rotate-left"></i></button>
+      <button class="tool-btn" data-cmd="redo" title="Redo"><i class="fas fa-rotate-right"></i></button>
+    </div>
+    <div class="editor" id="privacyEditor" contenteditable="true" spellcheck="true"></div>
+    <div class="editor-footer">
+      <span class="save-status" id="privacyStatus">Loading…</span>
+      <div class="footer-actions">
+        <button class="btn btn-ghost" data-action="view-html" data-panel="privacy"><i class="fas fa-code"></i> View HTML</button>
+        <button class="btn btn-ghost" data-action="view-live" data-panel="privacy"><i class="fas fa-eye"></i> Open Live Page</button>
+        <button class="btn btn-gold" data-action="save" data-panel="privacy"><i class="fas fa-save"></i> Save Privacy Policy</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- HTML source modal -->
+<div class="modal-overlay" id="htmlModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3><i class="fas fa-code"></i> HTML Source</h3>
+      <button class="modal-close" id="htmlModalClose" aria-label="Close">&times;</button>
+    </div>
+    <textarea class="html-textarea" id="htmlTextarea" spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="htmlCancel">Cancel</button>
+      <button class="btn btn-gold" id="htmlApply"><i class="fas fa-check"></i> Apply Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+
+<script>
+/* ---------- FIREBASE ---------- */
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNWXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+/* ---------- STATE ---------- */
+let currentUser=null, currentAdmin=null;
+const editors={
+  terms:   {el:document.getElementById('termsEditor'),   status:document.getElementById('termsStatus'),   dirty:false, loaded:false},
+  privacy: {el:document.getElementById('privacyEditor'), status:document.getElementById('privacyStatus'), dirty:false, loaded:false}
+};
+let activePanel='terms';
+
+/* ---------- HELPERS ---------- */
+const toastEl=document.getElementById('toast');
+let toastTimer=null;
+function toast(m,isErr){
+  toastEl.textContent=m;
+  toastEl.classList.toggle('error',!!isErr);
+  toastEl.style.display='block';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{toastEl.style.display='none'},3200);
+}
+function sanitize(html){
+  return DOMPurify.sanitize(html,{
+    ALLOWED_TAGS:['h1','h2','h3','h4','p','ul','ol','li','strong','em','b','i','u','a','br','div','span','blockquote','hr'],
+    ALLOWED_ATTR:['href','target','rel','class']
+  });
+}
+function setStatus(panel,state){
+  const e=editors[panel];
+  if(state==='dirty'){e.status.textContent='You have unsaved changes';e.status.className='save-status dirty'}
+  else if(state==='saved'){e.status.textContent='All changes saved';e.status.className='save-status saved'}
+  else{e.status.textContent='Loading…';e.status.className='save-status'}
+}
+
+/* ---------- SIDEBAR ---------- */
+(async function(){
+  try{
+    const r=await fetch('admin-sidebar.html');
+    document.getElementById('sidebar-placeholder').innerHTML=await r.text();
+    const sb=document.getElementById('sidebar'),tg=document.getElementById('sidebarToggle'),cl=document.getElementById('sidebarClose'),ov=document.getElementById('sidebarOverlay'),lo=document.getElementById('sidebarLogout');
+    if(tg)tg.addEventListener('click',()=>{sb.classList.add('open');ov.classList.add('active')});
+    const close=()=>{sb.classList.remove('open');ov.classList.remove('active')};
+    if(cl)cl.addEventListener('click',close);
+    if(ov)ov.addEventListener('click',close);
+    const cur=location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.page===cur));
+    if(lo)lo.addEventListener('click',async()=>{lo.disabled=true;try{await auth.signOut()}catch(e){}location.href='admin-login.html'});
+  }catch(e){console.warn('Sidebar load failed',e)}
+})();
+
+/* ---------- ACTIVITY LOG ---------- */
+async function logActivity(type,payload){
+  try{await db.collection('activity').add({type,by:currentUser.uid,byEmail:currentUser.email,byName:currentAdmin.name||'',at:firebase.firestore.FieldValue.serverTimestamp(),...payload})}catch(e){}
+}
+
+/* ---------- LOAD ---------- */
+/* ---------- LOAD ---------- */
+async function fetchLocalPolicy(panel){
+  const file = panel==='privacy' ? 'privacy-policy.html' : 'terms.html';
+
+  // Try every plausible location — different folder layouts are all supported.
+  const candidates = [
+    file,               // same folder as the admin page
+    './' + file,
+    '../' + file,       // terms one level up
+    '/policy/' + file,  // /policy/terms.html
+    '/' + file,         // root
+    '../policy/' + file
+  ];
+
+  for(const path of candidates){
+    try{
+      const res = await fetch(path,{cache:'no-store'});
+      if(!res.ok) continue;
+      const html = await res.text();
+      if(!html || html.length < 100) continue;
+
+      const doc = new DOMParser().parseFromString(html,'text/html');
+
+      // Try every sensible container. If the page has #policyBody we use it,
+      // otherwise fall back to the card wrappers so it works even if the id
+      // wasn't added.
+      const body =
+        doc.getElementById('policyBody')        ||
+        doc.querySelector('.terms-card')        ||
+        doc.querySelector('.policy-card')       ||
+        doc.querySelector('main .container')    ||
+        doc.querySelector('main');
+
+      if(body){
+        // Strip out the .updated banner so we don't duplicate it
+        const clone = body.cloneNode(true);
+        const updated = clone.querySelector('.updated');
+        if(updated) updated.remove();
+
+        const cleaned = clone.innerHTML.trim();
+        if(cleaned.length > 80){
+          return { html: cleaned, path };
+        }
+      }
+    }catch(err){
+      // try next candidate
+    }
+  }
+  return null;
+}
+
+async function loadPolicy(panel){
+  const e = editors[panel];
+  e.status.textContent = 'Loading…';
+  e.status.className = 'save-status';
+
+  // 1. Try Firestore first — this is where the admin's saved version lives
+  try{
+    const snap = await db.collection('settings').doc('policies').get();
+    if(snap.exists){
+      const policy = snap.data()[panel];
+      if(policy && policy.html && policy.html.trim().length > 20){
+        e.el.innerHTML = sanitize(policy.html);
+        e.loaded = true;
+        e.dirty = false;
+        setStatus(panel,'saved');
+        return;
+      }
+    }
+  }catch(err){
+    console.warn('Firestore policy read failed:',err.message);
+  }
+
+  // 2. Fall back to the static public page
+  const local = await fetchLocalPolicy(panel);
+  if(local){
+    e.el.innerHTML = sanitize(local.html);
+    e.loaded = true;
+    e.dirty = false;
+    e.status.textContent = `Loaded from ${local.path} — not yet published`;
+    e.status.className = 'save-status';
+    return;
+  }
+
+  // 3. Nothing found — start from a minimal template so the admin isn't
+  //    staring at an empty box
+  e.el.innerHTML = panel === 'privacy'
+    ? `<h2>1. Introduction</h2>
+       <p>StudyFlix respects your privacy and is committed to protecting your personal information.</p>
+       <p>This Privacy Policy explains how we collect, use and protect your information.</p>
+       <h2>2. Information We Collect</h2>
+       <p>Describe the information you collect here.</p>`
+    : `<h2>1. Acceptance of These Terms</h2>
+       <p>By accessing or using StudyFlix you agree to be bound by these Terms and Conditions.</p>
+       <h2>2. About StudyFlix</h2>
+       <p>Describe your service here.</p>`;
+
+  e.loaded = true;
+  e.dirty = false;
+  e.status.textContent = 'Could not find existing content — starting blank. Save to publish.';
+  e.status.className = 'save-status dirty';
+  console.warn('loadPolicy: no Firestore doc and no local file matched for', panel);
+}
+
+/* ---------- TABS ---------- */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const id=tab.dataset.tab;
+    activePanel=id;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===tab));
+    document.querySelectorAll('.editor-wrap').forEach(p=>p.classList.toggle('hidden',p.dataset.panel!==id));
+  });
+});
+
+/* ---------- TOOLBAR ---------- */
+document.querySelectorAll('.editor-toolbar').forEach(tb=>{
+  const panel=tb.dataset.toolbar;
+  tb.addEventListener('click',e=>{
+    const btn=e.target.closest('.tool-btn');
+    if(!btn)return;
+    e.preventDefault();
+    editors[panel].el.focus();
+    const cmd=btn.dataset.cmd;
+    if(cmd==='createLink'){
+      const url=prompt('Enter URL:','https://');
+      if(url)document.execCommand('createLink',false,url);
+    }else{
+      document.execCommand(cmd,false,null);
+    }
+    markDirty(panel);
+    updateToolbarState(panel);
+  });
+  const sel=tb.querySelector('select[data-cmd="formatBlock"]');
+  if(sel){
+    sel.addEventListener('change',()=>{
+      editors[panel].el.focus();
+      document.execCommand('formatBlock',false,sel.value);
+      markDirty(panel);
+      sel.selectedIndex=0;
+    });
+  }
+});
+
+function updateToolbarState(panel){
+  const tb=document.querySelector(`.editor-toolbar[data-toolbar="${panel}"]`);
+  if(!tb)return;
+  ['bold','italic','underline','insertUnorderedList','insertOrderedList'].forEach(cmd=>{
+    const btn=tb.querySelector(`.tool-btn[data-cmd="${cmd}"]`);
+    if(!btn)return;
+    let on=false;
+    try{on=document.queryCommandState(cmd)}catch(e){}
+    btn.classList.toggle('active',on);
+  });
+}
+
+/* ---------- DIRTY TRACKING ---------- */
+function markDirty(panel){
+  const e=editors[panel];
+  if(!e.loaded)return;
+  e.dirty=true;
+  setStatus(panel,'dirty');
+}
+Object.entries(editors).forEach(([panel,e])=>{
+  e.el.addEventListener('input',()=>markDirty(panel));
+  e.el.addEventListener('keyup',()=>updateToolbarState(panel));
+  e.el.addEventListener('mouseup',()=>updateToolbarState(panel));
+  e.el.addEventListener('paste',ev=>{
+    // Paste as plain text to avoid importing unwanted styles
+    ev.preventDefault();
+    const text=(ev.clipboardData||window.clipboardData).getData('text/plain');
+    document.execCommand('insertText',false,text);
+    markDirty(panel);
+  });
+});
+
+/* ---------- SAVE ---------- */
+document.querySelectorAll('[data-action="save"]').forEach(btn=>{
+  btn.addEventListener('click',()=>savePolicy(btn.dataset.panel,btn));
+});
+
+async function savePolicy(panel,btn){
+  const e=editors[panel];
+  const html=sanitize(e.el.innerHTML.trim());
+
+  const oldHtml=btn.innerHTML;
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+  try{
+    const payload={};
+    payload[panel]={
+      html,
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+      updatedBy:currentUser.uid,
+      updatedByName:(currentAdmin&&currentAdmin.name)||currentUser.email||''
+    };
+
+    await db.collection('settings').doc('policies').set(payload,{merge:true});
+
+    await logActivity('policy_updated',{policy:panel});
+
+    e.el.innerHTML=html;
+    e.dirty=false;
+    setStatus(panel,'saved');
+    toast(`${panel==='terms'?'Terms & Conditions':'Privacy Policy'} saved.`);
+  }catch(err){
+    console.error(err);
+    toast('Save failed: '+(err.code||err.message),true);
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=oldHtml;
+  }
+}
+
+/* ---------- VIEW HTML ---------- */
+const htmlModal=document.getElementById('htmlModal');
+const htmlTextarea=document.getElementById('htmlTextarea');
+let htmlPanel=null;
+
+document.querySelectorAll('[data-action="view-html"]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    htmlPanel=btn.dataset.panel;
+    htmlTextarea.value=editors[htmlPanel].el.innerHTML;
+    htmlModal.classList.add('show');
+  });
+});
+document.getElementById('htmlModalClose').addEventListener('click',()=>htmlModal.classList.remove('show'));
+document.getElementById('htmlCancel').addEventListener('click',()=>htmlModal.classList.remove('show'));
+htmlModal.addEventListener('click',e=>{if(e.target===htmlModal)htmlModal.classList.remove('show')});
+document.getElementById('htmlApply').addEventListener('click',()=>{
+  if(!htmlPanel)return;
+  editors[htmlPanel].el.innerHTML=sanitize(htmlTextarea.value);
+  markDirty(htmlPanel);
+  htmlModal.classList.remove('show');
+  toast('HTML applied. Remember to save.');
+});
+
+/* ---------- VIEW LIVE ---------- */
+document.querySelectorAll('[data-action="view-live"]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const file=btn.dataset.panel==='privacy'?'privacy-policy.html':'terms.html';
+    window.open(file,'_blank','noopener');
+  });
+});
+
+/* ---------- RELOAD ---------- */
+document.getElementById('reloadBtn').addEventListener('click',async()=>{
+  const anyDirty=editors.terms.dirty||editors.privacy.dirty;
+  if(anyDirty && !confirm('You have unsaved changes. Discard and reload?'))return;
+  await loadPolicy('terms');
+  await loadPolicy('privacy');
+  toast('Reloaded.');
+});
+
+/* ---------- UNSAVED WARNING ---------- */
+window.addEventListener('beforeunload',e=>{
+  if(editors.terms.dirty||editors.privacy.dirty){e.preventDefault();e.returnValue=''}
+});
+
+/* ---------- AUTH GUARD ---------- */
+auth.onAuthStateChanged(async user=>{
+  const guard=document.getElementById('guard'),gt=document.getElementById('guardText');
+  if(!user){gt.textContent='Not signed in. Redirecting…';setTimeout(()=>location.href='admin-login.html',900);return}
+  currentUser=user;
+  try{
+    const snap=await db.collection('admins').doc(user.uid).get();
+    if(!snap.exists||snap.data().role!=='admin'||snap.data().status!=='active'){
+      gt.textContent='Admin access required.';
+      setTimeout(()=>location.href='admin-login.html',1200);
+      return;
+    }
+    currentAdmin=snap.data();
+    const name=currentAdmin.name||user.email.split('@')[0];
+    const av=document.getElementById('sidebarAdminAvatar'),nm=document.getElementById('sidebarAdminName'),em=document.getElementById('sidebarAdminEmail');
+    if(av)av.textContent=name.charAt(0).toUpperCase();
+    if(nm)nm.textContent=name;
+    if(em)em.textContent=user.email||'';
+    guard.classList.add('hidden');
+    await loadPolicy('terms');
+    await loadPolicy('privacy');
+  }catch(err){
+    console.error(err);
+    gt.textContent='Verification failed.';
+    setTimeout(()=>location.href='admin-login.html',1500);
+  }
+});
+</script>
+</body>
+</html>

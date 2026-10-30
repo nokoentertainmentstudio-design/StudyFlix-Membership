@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Notifications — StudyFlix Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;--red:#ff5555;--muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,.07)}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#080C18,#111A2E);color:#E8EEFF;min-height:100vh;overflow-x:hidden}
+.hero-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.guard{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,42,.95);z-index:10000;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.guard.hidden{display:none}
+.guard-text{color:var(--muted);font-size:.9rem}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,215,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.main{padding:1.5rem 1.5rem 3rem;max-width:1100px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;flex-wrap:wrap}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1.5px}
+h1 .hl{background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+.btn{padding:.65rem 1.2rem;border-radius:10px;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:rgba(255,255,255,.05);color:#E8EEFF;border-color:var(--border)}
+.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--orange));color:#111;border:none}
+.btn-gold:hover:not(:disabled){transform:scale(1.02);box-shadow:0 0 20px rgba(255,215,0,.3)}
+.btn-red{background:rgba(255,85,85,.12);color:#ff9b9b;border-color:rgba(255,85,85,.35)}
+.btn-red:hover:not(:disabled){background:rgba(255,85,85,.22)}
+
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:1.2rem}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem;margin-bottom:1.2rem}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.8px;color:var(--gold);display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+
+.fg{margin-bottom:1rem}
+.fg:last-child{margin-bottom:0}
+.fg label{display:block;font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;letter-spacing:.5px}
+.fg input[type="text"],.fg textarea,.fg select{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--teal)}
+.fg input::placeholder,.fg textarea::placeholder{color:#5b6788}
+.fg textarea{min-height:130px;resize:vertical;line-height:1.6}
+.fg select{cursor:pointer}
+
+.type-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.type-btn{flex:1;min-width:100px;padding:.65rem .8rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:#E8EEFF;cursor:pointer;font-family:inherit;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;gap:.4rem;transition:.15s}
+.type-btn:hover{background:rgba(255,255,255,.06)}
+.type-btn.active[data-type="info"]{background:rgba(34,136,255,.12);border-color:rgba(34,136,255,.5);color:#9cc7ff}
+.type-btn.active[data-type="success"]{background:rgba(0,212,180,.12);border-color:rgba(0,212,180,.5);color:var(--teal)}
+.type-btn.active[data-type="warning"]{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.5);color:var(--gold)}
+.type-btn.active[data-type="urgent"]{background:rgba(255,85,85,.12);border-color:rgba(255,85,85,.5);color:#ff9b9b}
+
+/* Preview */
+.preview-panel{position:sticky;top:1rem}
+.preview-box{border-radius:12px;padding:1rem 1.1rem;border:1px solid;margin-bottom:.9rem;display:flex;gap:.8rem;align-items:flex-start}
+.preview-box.info{background:rgba(34,136,255,.08);border-color:rgba(34,136,255,.3)}
+.preview-box.success{background:rgba(0,212,180,.08);border-color:rgba(0,212,180,.3)}
+.preview-box.warning{background:rgba(255,215,0,.08);border-color:rgba(255,215,0,.3)}
+.preview-box.urgent{background:rgba(255,85,85,.08);border-color:rgba(255,85,85,.3)}
+.preview-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.05rem}
+.preview-box.info .preview-icon{background:rgba(34,136,255,.15);color:#9cc7ff}
+.preview-box.success .preview-icon{background:rgba(0,212,180,.15);color:var(--teal)}
+.preview-box.warning .preview-icon{background:rgba(255,215,0,.15);color:var(--gold)}
+.preview-box.urgent .preview-icon{background:rgba(255,85,85,.15);color:#ff9b9b}
+.preview-body{flex:1;min-width:0}
+.preview-title{font-weight:800;font-size:.95rem;margin-bottom:.25rem;word-break:break-word}
+.preview-text{font-size:.82rem;color:var(--muted);line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.preview-time{font-size:.68rem;color:var(--muted);margin-top:.5rem;opacity:.7}
+
+.audience-info{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;font-size:.78rem;color:var(--muted);line-height:1.55}
+.audience-info strong{color:#E8EEFF;font-weight:800}
+
+.notif-list{display:flex;flex-direction:column;gap:.7rem}
+.notif-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;display:flex;gap:.8rem;align-items:flex-start}
+.notif-card.info{border-left:3px solid #2288FF}
+.notif-card.success{border-left:3px solid var(--teal)}
+.notif-card.warning{border-left:3px solid var(--gold)}
+.notif-card.urgent{border-left:3px solid var(--red)}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-weight:800;font-size:.9rem;margin-bottom:.3rem;word-break:break-word}
+.notif-text{font-size:.82rem;color:#dce2f0;line-height:1.55;margin-bottom:.5rem;word-break:break-word;white-space:pre-wrap}
+.notif-meta{font-size:.7rem;color:var(--muted);display:flex;gap:.9rem;flex-wrap:wrap}
+.notif-actions{display:flex;gap:.3rem;flex-shrink:0}
+.notif-actions button{background:rgba(255,255,255,.05);border:1px solid var(--border);color:#E8EEFF;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:.78rem;transition:.15s}
+.notif-actions .del{color:#ff9b9b;border-color:rgba(255,85,85,.3)}
+.notif-actions .del:hover{background:rgba(255,85,85,.15)}
+
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.empty i{font-size:2rem;color:rgba(255,215,0,.3);display:block;margin-bottom:.7rem}
+
+#toast{position:fixed;bottom:24px;right:24px;background:rgba(28,38,64,.98);border:1px solid var(--border);border-left:3px solid var(--teal);padding:.9rem 1.2rem;border-radius:12px;font-size:.85rem;font-weight:700;z-index:20000;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;max-width:340px}
+#toast.error{border-left-color:var(--red);color:#ff9b9b}
+
+@media(max-width:900px){.grid{grid-template-columns:1fr}.preview-panel{position:static}}
+@media(max-width:700px){.main{padding-top:75px}h1{font-size:2rem}.type-btn{flex:1 0 45%}}
+</style>
+</head>
+<body class="has-sidebar">
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard"><div class="spinner"></div><div class="guard-text" id="guardText">Verifying admin access…</div></div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1><span class="hl">Notifications</span></h1><p class="sub">Send announcements to your members.</p></div>
+    <button class="btn btn-ghost" id="refreshBtn"><i class="fas fa-rotate-right"></i> Refresh</button>
+  </div>
+
+  <div class="grid">
+    <!-- COMPOSER -->
+    <div>
+      <div class="panel">
+        <h2 class="panel-title"><i class="fas fa-pen"></i> Compose</h2>
+
+        <div class="fg">
+          <label>Type</label>
+          <div class="type-row">
+            <button class="type-btn active" data-type="info"><i class="fas fa-circle-info"></i> Info</button>
+            <button class="type-btn" data-type="success"><i class="fas fa-check-circle"></i> Success</button>
+            <button class="type-btn" data-type="warning"><i class="fas fa-triangle-exclamation"></i> Warning</button>
+            <button class="type-btn" data-type="urgent"><i class="fas fa-bell"></i> Urgent</button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label for="notifTitle">Title</label>
+          <input type="text" id="notifTitle" placeholder="Short, clear heading" maxlength="120" />
+        </div>
+
+        <div class="fg">
+          <label for="notifText">Message</label>
+          <textarea id="notifText" placeholder="Write the announcement. Plain text — line breaks are preserved." maxlength="2000"></textarea>
+        </div>
+
+        <div class="fg">
+          <label for="audience">Audience</label>
+          <select id="audience">
+            <option value="all">All members</option>
+            <option value="active">Active members only</option>
+            <option value="pending">Pending members only</option>
+            <option value="rejected">Rejected / inactive only</option>
+            <option value="not-applied">Registered but not applied</option>
+          </select>
+          <div class="audience-info" id="audienceInfo" style="margin-top:.6rem">Selecting audience…</div>
+        </div>
+
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem">
+          <button class="btn btn-gold" id="publishBtn"><i class="fas fa-paper-plane"></i> Publish Announcement</button>
+          <button class="btn btn-ghost" id="clearBtn"><i class="fas fa-eraser"></i> Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-panel">
+      <div class="panel">
+        <h2 class="panel-title"><i class="fas fa-eye"></i> Live Preview</h2>
+        <p style="color:var(--muted);font-size:.76rem;margin-bottom:1rem;line-height:1.5">This is roughly how it will appear on the member's dashboard.</p>
+        <div class="preview-box info" id="previewBox">
+          <div class="preview-icon" id="previewIcon"><i class="fas fa-circle-info"></i></div>
+          <div class="preview-body">
+            <div class="preview-title" id="previewTitle">Your title here</div>
+            <div class="preview-text" id="previewText">Your message will appear here…</div>
+            <div class="preview-time" id="previewTime">Just now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAST ANNOUNCEMENTS -->
+  <div class="panel" style="margin-top:1.2rem">
+    <div class="panel-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.7rem;margin-bottom:1rem">
+      <h2 class="panel-title" style="margin-bottom:0"><i class="fas fa-history"></i> Past Announcements <span id="notifCount" style="font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;background:rgba(255,215,0,.12);color:var(--gold);padding:.15rem .5rem;border-radius:12px;margin-left:.4rem">0</span></h2>
+    </div>
+    <div class="notif-list" id="notifList">
+      <div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading…</div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNWXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();const db=firebase.firestore();
+
+let currentUser=null,currentAdmin=null;
+let selectedType='info';
+let memberCounts={all:0,active:0,pending:0,rejected:0,'not-applied':0};
+
+const toastEl=document.getElementById('toast');let tt=null;
+function toast(m,err){toastEl.textContent=m;toastEl.classList.toggle('error',!!err);toastEl.style.display='block';clearTimeout(tt);tt=setTimeout(()=>toastEl.style.display='none',3200)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function toDate(t){if(!t)return null;try{if(t.toDate)return t.toDate();if(t.seconds)return new Date(t.seconds*1000);return new Date(t)}catch(e){return null}}
+function timeAgo(d){if(!d)return'';const s=Math.floor((Date.now()-d.getTime())/1000);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';if(s<604800)return Math.floor(s/86400)+'d ago';return d.toLocaleDateString()}
+
+/* Sidebar */
+(async function(){
+  try{
+    const r=await fetch('admin-sidebar.html');
+    document.getElementById('sidebar-placeholder').innerHTML=await r.text();
+    const sb=document.getElementById('sidebar'),tg=document.getElementById('sidebarToggle'),cl=document.getElementById('sidebarClose'),ov=document.getElementById('sidebarOverlay'),lo=document.getElementById('sidebarLogout');
+    tg.addEventListener('click',()=>{sb.classList.add('open');ov.classList.add('active')});
+    function c(){sb.classList.remove('open');ov.classList.remove('active')}
+    cl.addEventListener('click',c);ov.addEventListener('click',c);
+    const cur=location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.page===cur));
+    lo.addEventListener('click',async()=>{lo.disabled=true;try{await auth.signOut()}catch(e){}location.href='admin-login.html'});
+  }catch(e){console.error(e)}
+})();
+
+async function logActivity(type,payload){
+  try{await db.collection('activity').add({type,by:currentUser.uid,byEmail:currentUser.email,byName:currentAdmin.name||'',at:firebase.firestore.FieldValue.serverTimestamp(),...payload})}catch(e){}
+}
+
+/* Type selector */
+document.querySelectorAll('.type-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    selectedType=b.dataset.type;
+    document.querySelectorAll('.type-btn').forEach(x=>x.classList.toggle('active',x===b));
+    updatePreview();
+  });
+});
+
+/* Preview */
+const typeIcons={info:'fa-circle-info',success:'fa-check-circle',warning:'fa-triangle-exclamation',urgent:'fa-bell'};
+function updatePreview(){
+  const title=document.getElementById('notifTitle').value.trim();
+  const text=document.getElementById('notifText').value.trim();
+  document.getElementById('previewBox').className='preview-box '+selectedType;
+  document.getElementById('previewIcon').innerHTML='<i class="fas '+typeIcons[selectedType]+'"></i>';
+  document.getElementById('previewTitle').textContent=title||'Your title here';
+  document.getElementById('previewText').textContent=text||'Your message will appear here…';
+  document.getElementById('previewTime').textContent='Just now';
+}
+document.getElementById('notifTitle').addEventListener('input',updatePreview);
+document.getElementById('notifText').addEventListener('input',updatePreview);
+
+/* Audience info */
+function updateAudienceInfo(){
+  const a=document.getElementById('audience').value;
+  const n=memberCounts[a]||0;
+  const label={all:'members',active:'active members',pending:'pending applications',rejected:'rejected/inactive members','not-applied':'registered users without an application'}[a];
+  document.getElementById('audienceInfo').innerHTML=`This announcement will be sent to <strong>${n} ${esc(label)}</strong>.`;
+}
+document.getElementById('audience').addEventListener('change',updateAudienceInfo);
+
+/* Load member counts */
+async function loadCounts(){
+  try{
+    const snap=await db.collection('members').limit(3000).get();
+    const counts={all:0,active:0,pending:0,rejected:0,'not-applied':0};
+    snap.docs.forEach(doc=>{
+      const d=doc.data();
+      counts.all++;
+      const s=(d.status||'pending').toLowerCase();
+      const hasApp=!!(d.application&&(d.application.submittedAt||d.application.firstName));
+      if(s==='active'||s==='approved')counts.active++;
+      else if(s==='pending')counts.pending++;
+      else if(s==='rejected'||s==='inactive')counts.rejected++;
+      if(!hasApp)counts['not-applied']++;
+    });
+    memberCounts=counts;
+    updateAudienceInfo();
+  }catch(err){console.warn('Count load failed',err.message)}
+}
+
+/* Publish */
+document.getElementById('publishBtn').addEventListener('click',async()=>{
+  const title=document.getElementById('notifTitle').value.trim();
+  const text=document.getElementById('notifText').value.trim();
+  const audience=document.getElementById('audience').value;
+
+  if(!title){toast('Title is required.',true);document.getElementById('notifTitle').focus();return}
+  if(!text){toast('Message is required.',true);document.getElementById('notifText').focus();return}
+  if(!confirm(`Publish this announcement to ${memberCounts[audience]||0} members?`))return;
+
+  const btn=document.getElementById('publishBtn');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Publishing…';
+  try{
+    await db.collection('notifications').add({
+      type:selectedType,
+      title:title,
+      text:text,
+      audience:audience,
+      createdBy:currentUser.uid,
+      createdByEmail:currentUser.email,
+      createdByName:currentAdmin.name||'',
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      active:true
+    });
+    await logActivity('notification_sent',{title,audience,type:selectedType});
+    toast('Announcement published.');
+    document.getElementById('notifTitle').value='';
+    document.getElementById('notifText').value='';
+    updatePreview();
+    await loadNotifications();
+  }catch(err){
+    console.error(err);
+    toast('Publish failed: '+(err.code||err.message),true);
+  }finally{
+    btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> Publish Announcement';
+  }
+});
+
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  document.getElementById('notifTitle').value='';
+  document.getElementById('notifText').value='';
+  updatePreview();
+});
+
+/* Load announcements */
+async function loadNotifications(){
+  const list=document.getElementById('notifList');
+  list.innerHTML='<div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading…</div>';
+  try{
+    const snap=await db.collection('notifications').orderBy('createdAt','desc').limit(50).get();
+    document.getElementById('notifCount').textContent=snap.size;
+    if(snap.empty){
+      list.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>No announcements yet. Compose one above.</div>';
+      return;
+    }
+    list.innerHTML=snap.docs.map(doc=>{
+      const n=doc.data();
+      const created=toDate(n.createdAt);
+      const type=n.type||'info';
+      const icon=typeIcons[type]||'fa-circle-info';
+      const audienceLabel={all:'All members',active:'Active',pending:'Pending',rejected:'Rejected/Inactive','not-applied':'Not applied'}[n.audience]||n.audience;
+      return `<div class="notif-card ${type}" data-id="${doc.id}">
+        <div class="preview-icon" style="width:34px;height:34px;font-size:.95rem">
+          <i class="fas ${icon}"></i>
+        </div>
+        <div class="notif-body">
+          <div class="notif-title">${esc(n.title||'Untitled')}</div>
+          <div class="notif-text">${esc(n.text||'')}</div>
+          <div class="notif-meta">
+            <span><i class="fas fa-users"></i> ${esc(audienceLabel)}</span>
+            <span><i class="fas fa-user"></i> ${esc(n.createdByName||n.createdByEmail||'—')}</span>
+            <span><i class="fas fa-clock"></i> ${created?timeAgo(created):'—'}</span>
+          </div>
+        </div>
+        <div class="notif-actions">
+          <button class="del" data-del="${doc.id}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>`;
+    }).join('');
+
+    list.querySelectorAll('[data-del]').forEach(b=>{
+      b.addEventListener('click',async()=>{
+        if(!confirm('Delete this announcement permanently?'))return;
+        try{
+          await db.collection('notifications').doc(b.dataset.del).delete();
+          toast('Deleted.');loadNotifications();
+        }catch(err){toast('Delete failed: '+err.message,true)}
+      });
+    });
+  }catch(err){
+    console.error(err);
+    list.innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle"></i>'+esc(err.message)+'</div>';
+  }
+}
+
+document.getElementById('refreshBtn').addEventListener('click',async e=>{
+  e.target.disabled=true;
+  await loadCounts();
+  await loadNotifications();
+  e.target.disabled=false;
+  toast('Refreshed.');
+});
+
+updatePreview();
+
+auth.onAuthStateChanged(async user=>{
+  const guard=document.getElementById('guard'),gt=document.getElementById('guardText');
+  if(!user){gt.textContent='Not signed in. Redirecting…';setTimeout(()=>location.href='admin-login.html',900);return}
+  currentUser=user;
+  try{
+    const snap=await db.collection('admins').doc(user.uid).get();
+    if(!snap.exists||snap.data().role!=='admin'||snap.data().status!=='active'){gt.textContent='Admin access required.';setTimeout(()=>location.href='admin-login.html',1200);return}
+    currentAdmin=snap.data();
+    const name=currentAdmin.name||user.email.split('@')[0];
+    const av=document.getElementById('sidebarAdminAvatar'),nm=document.getElementById('sidebarAdminName'),em=document.getElementById('sidebarAdminEmail');
+    if(av)av.textContent=name.charAt(0).toUpperCase();if(nm)nm.textContent=name;if(em)em.textContent=user.email||'';
+    guard.classList.add('hidden');
+    await loadCounts();
+    await loadNotifications();
+  }catch(err){console.error(err);gt.textContent='Verification failed.';setTimeout(()=>location.href='admin-login.html',1500)}
+});
+</script>
+</body>
+</html>

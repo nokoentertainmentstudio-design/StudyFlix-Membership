@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Register — StudyFlix Membership</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3e 100%); color: #E8EEFF; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; overflow-x: hidden; }
+:root { --gold: #FFD700; --orange: #FF6B00; --teal: #00D4B4; --blue: #2288FF; --muted: #8892B0; --card: #1C2640; --border: rgba(255,255,255,0.07); --red: #ff5555; }
+.hero-bg { position: fixed; inset: 0; background: radial-gradient(ellipse at 20% 40%, #1e1040 0%, transparent 55%), radial-gradient(ellipse at 80% 70%, #0f2040 0%, transparent 55%); z-index: -2; }
+.hero-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(245,200,66,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(245,200,66,.03) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; }
+.auth-card { width: 100%; max-width: 440px; background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 2.2rem 1.8rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; z-index: 1; }
+.auth-brand { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; text-align: center; background: linear-gradient(135deg, var(--gold), var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: 1px; margin-bottom: 0.2rem; }
+.auth-title { text-align: center; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.3rem; }
+.auth-sub { text-align: center; font-size: 0.8rem; color: var(--muted); margin-bottom: 1.8rem; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; letter-spacing: 0.5px; }
+.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="password"] { width: 100%; padding: 0.8rem 1rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 12px; color: white; font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.3s; }
+.form-group input:focus { border-color: var(--teal); }
+.form-group input::placeholder { color: #5b6788; }
+.input-wrap { position: relative; }
+.input-wrap input { padding-right: 2.6rem; }
+.toggle-pw { position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; padding: 0.3rem; line-height: 1; transition: color 0.2s; }
+.toggle-pw:hover { color: var(--teal); }
+.strength { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; min-height: 1.1rem; }
+.strength-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; }
+.strength-fill { height: 100%; width: 0; border-radius: 5px; transition: width 0.25s ease, background-color 0.25s ease; }
+.strength-text { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); min-width: 60px; text-align: right; }
+.match-hint { display: none; font-size: 0.7rem; font-weight: 700; margin-top: 0.4rem; }
+.match-hint.ok { display: block; color: var(--teal); }
+.match-hint.bad { display: block; color: var(--red); }
+.terms-check { display: flex; align-items: flex-start; gap: 0.6rem; margin: 1.2rem 0 1rem; font-size: 0.78rem; color: var(--muted); line-height: 1.5; cursor: pointer; user-select: none; }
+.terms-check input { width: auto; margin-top: 3px; accent-color: var(--teal); cursor: pointer; flex-shrink: 0; }
+.terms-check a { color: var(--teal); font-weight: 700; text-decoration: none; }
+.terms-check a:hover { text-decoration: underline; }
+.auth-btn { width: 100%; padding: 0.8rem; border: none; border-radius: 40px; background: linear-gradient(135deg, var(--gold), var(--orange)); color: #000; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; transition: transform 0.2s, box-shadow 0.2s; font-family: inherit; }
+.auth-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(255,215,0,0.3); }
+.auth-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+.auth-error, .auth-success { display: none; font-size: 0.8rem; padding: 0.6rem 0.8rem; border-radius: 10px; margin-bottom: 1rem; text-align: center; line-height: 1.4; }
+.auth-error { background: rgba(255,80,80,0.1); border: 1px solid rgba(255,80,80,0.35); color: #ff9b9b; }
+.auth-success { background: rgba(0,212,180,0.1); border: 1px solid rgba(0,212,180,0.35); color: #7ff0dd; }
+.auth-footer { text-align: center; margin-top: 1.4rem; font-size: 0.8rem; color: var(--muted); }
+.auth-footer a { color: var(--teal); font-weight: 700; text-decoration: none; }
+.auth-footer a:hover { text-decoration: underline; }
+.forgot-password {text-align: right;margin-top: 0.2rem;margin-bottom: 1rem;}
+.forgot-password a {color: var(--teal);font-size: 0.75rem;font-weight: 700;text-decoration: none;}
+.forgot-password a:hover {text-decoration: underline;}
+.back-home { display: block; text-align: center; margin-top: 1rem; font-size: 0.75rem; color: var(--muted); text-decoration: none; }
+.back-home:hover { color: var(--teal); }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,0.3); border-top-color: #000; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.closed-panel { text-align: center; padding: 1rem 0; }
+.closed-icon { font-size: 3rem; margin-bottom: 1rem; }
+.closed-panel .auth-brand { font-size: 2rem; }
+.closed-panel .auth-title { margin-bottom: 0.5rem; }
+.closed-panel .auth-sub { margin-bottom: 1.5rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="hero-bg"></div>
+<div class="hero-grid"></div>
+
+<div class="auth-card" id="authCard">
+  <div class="auth-brand">StudyFlix</div>
+  <div class="auth-title">Create Your Account</div>
+  <div class="auth-sub">Join the StudyFlix membership programme</div>
+
+  <div class="auth-error" id="authError" role="alert"></div>
+  <div class="auth-success" id="authSuccess" role="status"></div>
+
+  <form id="registerForm" novalidate>
+    <div class="form-group">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" placeholder="Your full name" required autocomplete="name" />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="you@example.com" required autocomplete="email" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="password" placeholder="Create a password" required minlength="6" autocomplete="new-password" />
+        <button type="button" class="toggle-pw" id="togglePw1" aria-label="Show password"><i class="fas fa-eye"></i></button>
+      </div>
+      <div class="strength">
+        <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+        <span class="strength-text" id="strengthText"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <div class="input-wrap">
+        <input type="password" id="confirmPassword" placeholder="Re-enter your password" required minlength="6" autocomplete="new-password" />
+        <button type="button" class="toggle-pw" id="togglePw2" aria-label="Show password"><i class="fas fa-eye"></i></button>
+      </div>
+      <div class="match-hint" id="matchHint"></div>
+    </div>
+
+    <label class="terms-check">
+      <input type="checkbox" id="terms" required />
+      <span>I agree to the StudyFlix <a href="../admin/terms.html">Terms</a> and <a href="../admin/privacy.html">Privacy Policy</a>.</span>
+    </label>
+
+    <div class="forgot-password">
+      <a href="#" id="forgotPasswordLink">
+        Forgot your password?
+      </a>
+    </div>
+
+    <button type="submit" class="auth-btn" id="registerBtn">
+      <span id="btnText">Create Account</span>
+    </button>
+  </form>
+
+  <div class="auth-footer">Already have an account? <a href="login.html">Sign In</a></div>
+  <a href="index.html" class="back-home"><i class="fas fa-arrow-left"></i> Back to Home</a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+  authDomain: "studyflix-membership.firebaseapp.com",
+  projectId: "studyflix-membership",
+  storageBucket: "studyflix-membership.firebasestorage.app",
+  messagingSenderId: "641080177215",
+  appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+  measurementId: "G-3384WRNWXW"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* ---------- SITE SETTINGS ---------- */
+const SITE_DEFAULTS = {
+  acceptApplications: true,
+  maintenanceMode: false
+};
+
+async function loadSiteSettings() {
+  try {
+    const snap = await db.collection('settings').doc('site').get();
+    return snap.exists ? Object.assign({}, SITE_DEFAULTS, snap.data()) : SITE_DEFAULTS;
+  } catch (err) {
+    console.warn('Settings load failed, using defaults:', err.message);
+    return SITE_DEFAULTS;
+  }
+}
+
+let SITE_SETTINGS = Object.assign({}, SITE_DEFAULTS);
+let settingsLoaded = false;
+
+function showClosedPanel(mode) {
+  const card = document.getElementById('authCard');
+  const isMaint = mode === 'maintenance';
+  card.innerHTML = `
+    <div class="closed-panel">
+      <div class="closed-icon" style="color:#FFD700"><i class="fas ${isMaint ? 'fa-screwdriver-wrench' : 'fa-lock'}"></i></div>
+      <div class="auth-brand">StudyFlix</div>
+      <div class="auth-title">${isMaint ? 'Signups Paused' : 'Applications Closed'}</div>
+      <div class="auth-sub">
+        ${isMaint
+          ? 'We\'re doing a quick bit of maintenance. New registrations are temporarily closed. Please check back shortly.'
+          : 'We are not accepting new members at the moment. Please check back soon.'}
+      </div>
+      <a href="index.html" class="back-home" style="margin-top:1.2rem"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    </div>`;
+}
+
+/* ---------- SETTINGS GATE (runs before anything else) ---------- */
+(async function() {
+  SITE_SETTINGS = await loadSiteSettings();
+  settingsLoaded = true;
+
+  if (SITE_SETTINGS.maintenanceMode === true) {
+    showClosedPanel('maintenance');
+    return;
+  }
+  if (SITE_SETTINGS.acceptApplications === false) {
+    showClosedPanel('closed');
+  }
+})();
+
+/* ---------- DOM ---------- */
+const form         = document.getElementById('registerForm');
+const errorBox     = document.getElementById('authError');
+const successBox   = document.getElementById('authSuccess');
+const registerBtn  = document.getElementById('registerBtn');
+const btnText      = document.getElementById('btnText');
+const nameInput    = document.getElementById('fullName');
+const emailInput   = document.getElementById('email');
+const passInput    = document.getElementById('password');
+const confirmInput = document.getElementById('confirmPassword');
+const termsBox     = document.getElementById('terms');
+const togglePw1    = document.getElementById('togglePw1');
+const togglePw2    = document.getElementById('togglePw2');
+const strengthFill = document.getElementById('strengthFill');
+const strengthText = document.getElementById('strengthText');
+const matchHint    = document.getElementById('matchHint');
+const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+
+function showError(msg) {
+  successBox.style.display = 'none';
+  errorBox.textContent = msg;
+  errorBox.style.display = 'block';
+}
+function showSuccess(msg) {
+  errorBox.style.display = 'none';
+  successBox.textContent = msg;
+  successBox.style.display = 'block';
+}
+function clearMessages() {
+  errorBox.style.display = 'none';
+  successBox.style.display = 'none';
+}
+
+/* ---------- FORGOT PASSWORD ---------- */
+if (forgotPasswordLink) {
+  forgotPasswordLink.addEventListener('click', async (e) => {
+    e.preventDefault();
+    clearMessages();
+
+    const email = emailInput.value.trim();
+
+    if (!email) {
+      showError('Please enter your email address first.');
+      emailInput.focus();
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('Please enter a valid email address.');
+      emailInput.focus();
+      return;
+    }
+
+    try {
+      forgotPasswordLink.style.pointerEvents = 'none';
+      forgotPasswordLink.textContent = 'Sending...';
+
+      await auth.sendPasswordResetEmail(email);
+
+      showSuccess(
+        'Password reset email sent. Please check your inbox and follow the instructions.'
+      );
+
+    } catch (err) {
+      console.error('Password reset error:', err);
+
+      switch (err.code) {
+        case 'auth/user-not-found':
+          showError('No StudyFlix account was found with that email address.');
+          break;
+
+        case 'auth/invalid-email':
+          showError('Please enter a valid email address.');
+          break;
+
+        case 'auth/too-many-requests':
+          showError('Too many attempts. Please try again later.');
+          break;
+
+        case 'auth/network-request-failed':
+          showError('Network error. Please check your internet connection.');
+          break;
+
+        default:
+          showError('Could not send the password reset email. Please try again.');
+      }
+
+    } finally {
+      forgotPasswordLink.style.pointerEvents = '';
+      forgotPasswordLink.textContent = 'Forgot your password?';
+    }
+  });
+}
+
+
+
+function friendlyError(code) {
+  switch (code) {
+    case 'auth/email-already-in-use':   return 'That email is already registered. Try signing in instead.';
+    case 'auth/invalid-email':          return 'That email address looks invalid.';
+    case 'auth/weak-password':          return 'Password is too weak. Use at least 6 characters.';
+    case 'auth/missing-password':       return 'Please enter a password.';
+    case 'auth/operation-not-allowed':  return 'Email registration is currently unavailable.';
+    case 'auth/user-disabled':          return 'This account has been disabled. Contact support.';
+    case 'auth/too-many-requests':      return 'Too many attempts. Please try again later.';
+    case 'auth/network-request-failed': return 'Network error. Check your connection.';
+    default:                            return 'Registration failed. Please try again.';
+  }
+}
+
+/* ---------- REDIRECT IF ALREADY SIGNED IN ---------- */
+let signingUp = false;
+auth.onAuthStateChanged(user => {
+  if (user && !signingUp) window.location.href = 'dashboard.html';
+});
+
+/* ---------- PASSWORD TOGGLES ---------- */
+function wireToggle(btn, input) {
+  if (!btn || !input) return;
+  btn.addEventListener('click', () => {
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.innerHTML = show ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    input.focus();
+  });
+}
+wireToggle(togglePw1, passInput);
+wireToggle(togglePw2, confirmInput);
+
+/* ---------- STRENGTH METER ---------- */
+const STRENGTH = [
+  { label: '', color: 'transparent' },
+  { label: 'Weak', color: '#ff5555' },
+  { label: 'Fair', color: '#ffaa33' },
+  { label: 'Good', color: '#2288FF' },
+  { label: 'Strong', color: '#00D4B4' }
+];
+
+function scorePassword(pw) {
+  if (!pw) return 0;
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  return score;
+}
+
+if (passInput) {
+  passInput.addEventListener('input', () => {
+    const score = scorePassword(passInput.value);
+    const level = STRENGTH[score];
+    const widths = ['0%', '25%', '50%', '75%', '100%'];
+    strengthFill.style.width = passInput.value ? widths[score] : '0%';
+    strengthFill.style.backgroundColor = level.color;
+    strengthText.textContent = passInput.value ? level.label : '';
+    strengthText.style.color = level.color;
+    updateMatch();
+  });
+}
+
+function updateMatch() {
+  const pw = passInput.value;
+  const cf = confirmInput.value;
+  if (!cf) {
+    matchHint.className = 'match-hint';
+    matchHint.textContent = '';
+    return;
+  }
+  if (pw === cf) {
+    matchHint.className = 'match-hint ok';
+    matchHint.innerHTML = '<i class="fas fa-check"></i> Passwords match';
+  } else {
+    matchHint.className = 'match-hint bad';
+    matchHint.innerHTML = '<i class="fas fa-times"></i> Passwords do not match';
+  }
+}
+if (confirmInput) confirmInput.addEventListener('input', updateMatch);
+
+/* ---------- SUBMIT ---------- */
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearMessages();
+
+    /* Re-check settings in case they flipped after page load */
+    if (!settingsLoaded) SITE_SETTINGS = await loadSiteSettings();
+    if (SITE_SETTINGS.maintenanceMode === true || SITE_SETTINGS.acceptApplications === false) {
+      showError('We are not accepting new registrations right now.');
+      return;
+    }
+
+    const name     = nameInput.value.trim();
+    const email    = emailInput.value.trim();
+    const password = passInput.value;
+    const confirm  = confirmInput.value;
+
+    if (!name || !email || !password || !confirm) { showError('Please fill in all fields.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); emailInput.focus(); return; }
+    if (password.length < 6) { showError('Password must be at least 6 characters.'); passInput.focus(); return; }
+    if (password !== confirm) { showError('Passwords do not match.'); confirmInput.focus(); return; }
+    if (!termsBox.checked) { showError('Please accept the Terms and Privacy Policy to continue.'); termsBox.focus(); return; }
+
+    signingUp = true;
+    registerBtn.disabled = true;
+    btnText.innerHTML = '<span class="spinner"></span>Creating account...';
+
+    try {
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+
+      try { localStorage.setItem('studyflix_name_' + cred.user.uid, name); } catch (lsErr) {}
+
+      let firestoreOk = true;
+      try {
+        await db.collection('members').doc(cred.user.uid).set({
+          uid: cred.user.uid,
+          name: name,
+          email: email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          plan: 'studyflix-monthly',
+          status: 'pending',
+          applicationStatus: 'pending',
+          membershipNumber: null
+        });
+      } catch (fsErr) {
+        firestoreOk = false;
+        console.error('Firestore save failed (rules?):', fsErr.message);
+      }
+
+      try { await cred.user.updateProfile({ displayName: name }); } catch (upErr) {}
+
+      btnText.innerHTML = '<i class="fas fa-check"></i> Account created';
+      if (!firestoreOk) {
+        showSuccess('Account created. Some profile data could not be saved — you can update it from your profile page.');
+      } else {
+        showSuccess('Account created. Taking you to your dashboard...');
+      }
+
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1600);
+
+    } catch (err) {
+      console.error(err);
+      signingUp = false;
+      showError(friendlyError(err.code));
+      registerBtn.disabled = false;
+      btnText.textContent = 'Create Account';
+    }
+  });
+}
+</script>
+</body>
+</html>

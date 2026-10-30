@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Application Status — StudyFlix</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --red: #ff5555;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #080C18, #111A2E);
+            color: #E8EEFF;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ---------- MAIN AREA ---------- */
+        .dash-main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 3rem;
+        }
+        @media (max-width: 768px) {
+            .dash-main { padding-top: 75px; }
+        }
+
+        /* ---------- TOP BAR ---------- */
+        .dash-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+        .dash-user { display: flex; align-items: center; gap: 0.8rem; }
+
+        .dash-avatar {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .dash-name { font-weight: 800; font-size: 0.98rem; line-height: 1.2; }
+        .dash-email { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+
+        .dash-logout {
+            background: rgba(255, 80, 80, 0.1);
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            color: #ff9b9b;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .dash-logout:hover { background: rgba(255, 80, 80, 0.2); border-color: rgba(255, 80, 80, 0.5); }
+        .dash-logout i { margin-right: 5px; }
+
+        /* ---------- HEADER ---------- */
+        .dash-header { margin-bottom: 1.6rem; }
+        .dash-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.6rem;
+            letter-spacing: 1.5px;
+            line-height: 1.1;
+        }
+        .dash-header h1 .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .dash-header p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* ---------- LOADING ---------- */
+        .loading-wrap {
+            text-align: center;
+            padding: 5rem 1rem;
+            color: var(--muted);
+        }
+        .loading-wrap i {
+            font-size: 2rem;
+            color: var(--teal);
+            margin-bottom: 1rem;
+        }
+        .loading-wrap p { font-size: 0.9rem; }
+
+        /* ---------- STATUS BANNER ---------- */
+        .status-banner {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1.4rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid;
+            margin-bottom: 1.8rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .status-banner.banner-none {
+            background: rgba(34, 136, 255, 0.08);
+            border-color: rgba(34, 136, 255, 0.3);
+        }
+        .status-banner.banner-pending {
+            background: rgba(255, 215, 0, 0.07);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        .status-banner.banner-approved {
+            background: rgba(0, 212, 180, 0.08);
+            border-color: rgba(0, 212, 180, 0.35);
+        }
+        .status-banner.banner-declined {
+            background: rgba(255, 80, 80, 0.07);
+            border-color: rgba(255, 80, 80, 0.3);
+        }
+
+        .banner-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.6rem;
+        }
+        .banner-none      .banner-icon { background: rgba(34, 136, 255, 0.15); color: var(--blue); }
+        .banner-pending   .banner-icon { background: rgba(255, 215, 0, 0.15);  color: var(--gold); }
+        .banner-approved  .banner-icon { background: rgba(0, 212, 180, 0.15);  color: var(--teal); }
+        .banner-declined  .banner-icon { background: rgba(255, 80, 80, 0.15);  color: var(--red); }
+
+        .banner-body { flex: 1; min-width: 0; }
+        .banner-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.45rem;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+        .banner-none      .banner-title { color: #9cc7ff; }
+        .banner-pending   .banner-title { color: var(--gold); }
+        .banner-approved  .banner-title { color: var(--teal); }
+        .banner-declined  .banner-title { color: #ff9b9b; }
+
+        .banner-text {
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-top: 0.3rem;
+        }
+
+        .banner-action { flex-shrink: 0; }
+
+        .banner-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.4rem;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+            border: none;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .banner-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 22px rgba(255,215,0,0.28);
+        }
+        .banner-approved .banner-btn {
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+        }
+        .banner-approved .banner-btn:hover {
+            box-shadow: 0 0 22px rgba(0,212,180,0.3);
+        }
+        .banner-declined .banner-btn {
+            background: rgba(255,255,255,0.08);
+            color: #E8EEFF;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .banner-declined .banner-btn:hover {
+            box-shadow: 0 0 22px rgba(255,80,80,0.2);
+        }
+
+        /* ---------- STEPPER ---------- */
+        .stepper {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.3rem;
+            padding: 1.4rem 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 1.8rem;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            min-width: 0;
+            gap: 0.55rem;
+        }
+
+        .step-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.85rem;
+            border: 2px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            color: var(--muted);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .step-item.done .step-circle {
+            background: linear-gradient(135deg, var(--teal), #2288FF);
+            border-color: transparent;
+            color: #000;
+        }
+        .step-item.current .step-circle {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border-color: transparent;
+            color: #000;
+            box-shadow: 0 0 0 5px rgba(255,215,0,0.12);
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+        .step-item.failed .step-circle {
+            background: rgba(255, 80, 80, 0.15);
+            border-color: rgba(255, 80, 80, 0.5);
+            color: var(--red);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 5px rgba(255,215,0,0.12); }
+            50%      { box-shadow: 0 0 0 9px rgba(255,215,0,0.04); }
+        }
+
+        .step-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+        .step-item.done .step-label,
+        .step-item.current .step-label {
+            color: #E8EEFF;
+        }
+        .step-item.failed .step-label { color: #ff9b9b; }
+
+        .step-line {
+            flex: 0 0 auto;
+            width: 30px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            align-self: 19px;
+            margin-top: 18px;
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+        .step-line.done {
+            background: linear-gradient(90deg, var(--teal), #2288FF);
+        }
+
+        /* ---------- SECTIONS ---------- */
+        .dash-section { margin-bottom: 1.8rem; }
+
+        .section-head {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .section-head .head-accent {
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--gold), var(--orange));
+            border-radius: 4px;
+        }
+
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.4rem 1.5rem;
+        }
+
+        /* ---------- DETAIL ROWS ---------- */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .detail-row:last-child { border-bottom: none; }
+
+        .detail-label {
+            color: var(--muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            min-width: 140px;
+        }
+
+        .detail-value {
+            font-weight: 700;
+            font-size: 0.92rem;
+            text-align: right;
+            word-break: break-word;
+            flex: 1;
+        }
+        .detail-value.empty {
+            color: var(--muted);
+            font-weight: 600;
+            font-style: italic;
+        }
+        .detail-value.mono {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+            font-size: 0.88rem;
+        }
+
+        /* ---------- BADGES ---------- */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+        }
+        .badge-active   { background: rgba(0, 212, 180, 0.15); color: var(--teal); }
+        .badge-pending  { background: rgba(255, 215, 0, 0.15);  color: var(--gold); }
+        .badge-inactive { background: rgba(255, 100, 100, 0.15); color: #ff8888; }
+        .badge-none     { background: rgba(136, 146, 176, 0.15); color: var(--muted); }
+
+        /* ---------- EMPTY / NO-APPLICATION STATE ---------- */
+        .empty-wrap {
+            display: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .empty-wrap::before {
+            content: "";
+            position: absolute;
+            width: 260px; height: 260px;
+            border-radius: 50%;
+            background: rgba(34, 136, 255, 0.05);
+            top: -140px; right: -100px;
+        }
+        .empty-wrap > * { position: relative; z-index: 1; }
+
+        .empty-icon {
+            width: 90px; height: 90px;
+            margin: 0 auto 1.4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            background: rgba(34, 136, 255, 0.12);
+            color: var(--blue);
+        }
+        .empty-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.9rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .empty-text {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            max-width: 460px;
+            margin: 0 auto 1.6rem;
+        }
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .empty-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 26px rgba(255,215,0,0.28);
+        }
+
+        /* ---------- CONTENTS WRAPPER ---------- */
+        .contents { display: none; }
+        .contents.visible { display: block; }
+
+        /* ---------- DOCUMENTS ---------- */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.9rem;
+        }
+        .doc-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .doc-card:hover {
+            border-color: rgba(0,212,180,0.4);
+            background: rgba(0,212,180,0.05);
+        }
+        .doc-icon {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            background: rgba(0,212,180,0.12);
+            color: var(--teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .doc-info { flex: 1; min-width: 0; }
+        .doc-info h4 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-bottom: 0.15rem;
+        }
+        .doc-info p {
+            color: var(--muted);
+            font-size: 0.7rem;
+        }
+        .doc-arrow {
+            color: var(--muted);
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .doc-missing {
+            opacity: 0.55;
+            pointer-events: none;
+        }
+        .doc-missing .doc-icon {
+            background: rgba(136,146,176,0.1);
+            color: var(--muted);
+        }
+
+        /* ---------- TIMELINE ---------- */
+        .timeline {
+            position: relative;
+            padding-left: 1.6rem;
+        }
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: var(--border);
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.2rem;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-dot {
+            position: absolute;
+            left: -1.6rem;
+            top: 4px;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid var(--card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .timeline-dot.done {
+            background: linear-gradient(135deg, var(--teal), #2288FF);
+        }
+        .timeline-dot.current {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            box-shadow: 0 0 0 4px rgba(255,215,0,0.15);
+        }
+        .timeline-dot.failed {
+            background: linear-gradient(135deg, #ff5555, #cc3333);
+        }
+        .timeline-dot i {
+            font-size: 0.5rem;
+            color: #000;
+        }
+        .timeline-dot.failed i { color: #fff; }
+
+        .timeline-title {
+            font-weight: 800;
+            font-size: 0.88rem;
+            line-height: 1.3;
+        }
+        .timeline-meta {
+            color: var(--muted);
+            font-size: 0.72rem;
+            margin-top: 0.15rem;
+        }
+
+        /* ---------- ADDITIONAL INFO ---------- */
+        .message-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            font-size: 0.87rem;
+            line-height: 1.65;
+            color: #dce2f0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .message-box.empty {
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        /* ---------- ACTIONS ---------- */
+        .actions-row {
+            display: flex;
+            gap: 0.7rem;
+            justify-content: center;
+            margin-top: 1.6rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            color: #000;
+        }
+        .btn-primary:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 24px rgba(0,212,180,0.3);
+        }
+        .btn-ghost {
+            background: rgba(255,255,255,0.06);
+            color: #E8EEFF;
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+        /* ---------- SKELETON ---------- */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: skel 1.4s ease-in-out infinite;
+            border-radius: 6px;
+            display: inline-block;
+            width: 60%;
+            height: 1rem;
+            vertical-align: middle;
+        }
+        @keyframes skel {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 700px) {
+            .dash-header h1 { font-size: 2rem; }
+
+            .status-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.9rem;
+                padding: 1.4rem 1rem;
+            }
+            .banner-action { width: 100%; }
+            .banner-btn { display: flex; width: 100%; justify-content: center; }
+
+            .stepper {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.6rem;
+                padding: 1.2rem 1rem;
+            }
+            .step-item {
+                flex-direction: row;
+                text-align: left;
+                gap: 0.9rem;
+            }
+            .step-line {
+                width: 2px;
+                height: 18px;
+                margin: 0 0 0 18px;
+                align-self: flex-start;
+            }
+            .step-line.done {
+                background: linear-gradient(180deg, var(--teal), #2288FF);
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.3rem;
+            }
+            .detail-label { min-width: 0; }
+            .detail-value { text-align: left; }
+
+            .docs-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .dash-name { font-size: 0.88rem; }
+            .dash-logout { padding: 0.45rem 0.85rem; font-size: 0.72rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .step-item.current .step-circle { animation: none; }
+            .skeleton { animation: none; }
+        }
+    </style>
+</head>
+<body class="has-sidebar">
+
+    <!-- Sidebar injected here -->
+    <div id="sidebar-placeholder"></div>
+
+    <main class="dash-main">
+
+        <!-- ---------- TOP BAR ---------- -->
+        <div class="dash-topbar">
+            <div class="dash-user">
+                <div class="dash-avatar" id="topAvatar">–</div>
+                <div>
+                    <div class="dash-name" id="topName"><span class="skeleton"></span></div>
+                    <div class="dash-email" id="topEmail"></div>
+                </div>
+            </div>
+            <button class="dash-logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- ---------- HEADER ---------- -->
+        <header class="dash-header">
+            <h1>APPLICATION <span class="highlight">STATUS</span></h1>
+            <p>Track the progress of your StudyFlix membership application.</p>
+        </header>
+
+        <!-- ---------- LOADING ---------- -->
+        <div class="loading-wrap" id="loadingWrap">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading your application…</p>
+        </div>
+
+        <!-- ---------- EMPTY (NO APPLICATION) ---------- -->
+        <div class="empty-wrap" id="emptyWrap">
+            <div class="empty-icon">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+            <h2 class="empty-title">No application submitted yet</h2>
+            <p class="empty-text">
+                You haven't applied for StudyFlix membership. Complete the application
+                to get your digital card, partner discounts, and member benefits.
+            </p>
+            <a href="membership-application.html" class="empty-btn">
+                <i class="fas fa-paper-plane"></i> Start Application
+            </a>
+        </div>
+
+        <!-- ---------- CONTENT ---------- -->
+        <div class="contents" id="contents">
+
+            <!-- STATUS BANNER -->
+            <div class="status-banner banner-pending" id="statusBanner">
+                <div class="banner-icon">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="banner-body">
+                    <div class="banner-title" id="bannerTitle">Application under review</div>
+                    <div class="banner-text" id="bannerText">
+                        Your application is being reviewed by our team.
+                    </div>
+                </div>
+                <div class="banner-action" id="bannerAction"></div>
+            </div>
+
+            <!-- STEPPER -->
+            <div class="stepper" id="stepper"></div>
+
+            <!-- APPLICATION DETAILS -->
+            <section class="dash-section">
+                <h2 class="section-head">
+                    <span class="head-accent"></span>
+                    Application Details
+                </h2>
+                <div class="section-card">
+
+                    <div class="detail-row">
+                        <span class="detail-label">Application No.</span>
+                        <span class="detail-value mono" id="valAppNo">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Applicant</span>
+                        <span class="detail-value" id="valApplicant">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value" id="valEmail">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Cellphone</span>
+                        <span class="detail-value" id="valPhone">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">School</span>
+                        <span class="detail-value" id="valSchool">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Location</span>
+                        <span class="detail-value" id="valLocation">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Submitted</span>
+                        <span class="detail-value" id="valSubmitted">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Current Status</span>
+                        <span class="detail-value" id="valCurrentStatus">—</span>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- DOCUMENTS -->
+            <section class="dash-section" id="docsSection">
+                <h2 class="section-head">
+                    <span class="head-accent"></span>
+                    Submitted Documents
+                </h2>
+                <div class="docs-grid">
+
+                    <a class="doc-card" id="docIdentity" href="#" target="_blank" rel="noopener">
+                        <div class="doc-icon"><i class="fas fa-id-card"></i></div>
+                        <div class="doc-info">
+                            <h4>Identity Document</h4>
+                            <p id="docIdentityMeta">—</p>
+                        </div>
+                        <i class="fas fa-external-link-alt doc-arrow"></i>
+                    </a>
+
+                    <a class="doc-card" id="docSchool" href="#" target="_blank" rel="noopener">
+                        <div class="doc-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="doc-info">
+                            <h4>Proof of School</h4>
+                            <p id="docSchoolMeta">—</p>
+                        </div>
+                        <i class="fas fa-external-link-alt doc-arrow"></i>
+                    </a>
+
+                </div>
+            </section>
+
+            <!-- ADDITIONAL INFORMATION -->
+            <section class="dash-section" id="messageSection">
+                <h2 class="section-head">
+                    <span class="head-accent"></span>
+                    Additional Information
+                </h2>
+                <div class="section-card">
+                    <div class="message-box empty" id="valMessage">
+                        No additional information was provided.
+                    </div>
+                </div>
+            </section>
+
+            <!-- TIMELINE -->
+            <section class="dash-section">
+                <h2 class="section-head">
+                    <span class="head-accent"></span>
+                    Timeline
+                </h2>
+                <div class="section-card">
+                    <div class="timeline" id="timeline"></div>
+                </div>
+            </section>
+
+            <!-- ACTIONS -->
+            <div class="actions-row">
+                <a href="dashboard.html" class="btn btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= FIREBASE ================= -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <!-- ================= SIDEBAR LOADER ================= -->
+    <script>
+        (function () {
+            'use strict';
+            const SIDEBAR_PLACEHOLDER_ID = 'sidebar-placeholder';
+            const SIDEBAR_PATH = 'sidebar.html';
+
+            async function loadSidebar() {
+                const placeholder = document.getElementById(SIDEBAR_PLACEHOLDER_ID);
+                if (!placeholder) return;
+                try {
+                    const response = await fetch(SIDEBAR_PATH);
+                    const html = await response.text();
+                    placeholder.innerHTML = html;
+                    initSidebar();
+                } catch (err) {
+                    console.error('Failed to load sidebar:', err);
+                }
+            }
+
+            function initSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebarClose = document.getElementById('sidebarClose');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (!sidebar) return;
+
+                const nav = sidebar.querySelector('.sidebar-nav');
+                if (nav && !nav.querySelector('[data-page="dashboard.html"]')) {
+                    const dashLink = document.createElement('a');
+                    dashLink.href = 'dashboard.html';
+                    dashLink.className = 'sidebar-link';
+                    dashLink.setAttribute('data-page', 'dashboard.html');
+                    dashLink.innerHTML =
+                        '<i class="fas fa-th-large"></i>' +
+                        '<div class="link-content">' +
+                            '<span class="link-title">Dashboard</span>' +
+                            '<span class="link-desc">Your membership overview.</span>' +
+                        '</div>';
+                    nav.prepend(dashLink);
+                }
+
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', () => {
+                        sidebar.classList.add('open');
+                        if (overlay) overlay.classList.add('active');
+                    });
+                }
+                function closeSidebar() {
+                    sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+                if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+                if (overlay) overlay.addEventListener('click', closeSidebar);
+
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+                    if (link.getAttribute('data-page') === currentPath) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadSidebar);
+            } else {
+                loadSidebar();
+            }
+
+            window.StudyFlixSidebar = {
+                load: loadSidebar,
+                close: function () {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    if (sidebar) sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+            };
+        })();
+    </script>
+
+    <!-- ================= APPLICATION STATUS LOGIC ================= -->
+    <script>
+        /* ---------- FIREBASE ---------- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+            authDomain: "studyflix-membership.firebaseapp.com",
+            projectId: "studyflix-membership",
+            storageBucket: "studyflix-membership.firebasestorage.app",
+            messagingSenderId: "641080177215",
+            appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+            measurementId: "G-3384WRNWXW"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        /* ---------- STATE ---------- */
+        const STATE = {
+            NONE:     'none',
+            PENDING:  'pending',
+            APPROVED: 'approved',
+            DECLINED: 'declined'
+        };
+
+        let currentUser = null;
+        let currentData = null;
+        let unsubDoc    = null;
+        let healedOnce  = false;
+
+        /* ---------- DOM ---------- */
+        const els = {
+            topAvatar:   document.getElementById('topAvatar'),
+            topName:     document.getElementById('topName'),
+            topEmail:    document.getElementById('topEmail'),
+            logoutBtn:   document.getElementById('logoutBtn'),
+
+            loadingWrap: document.getElementById('loadingWrap'),
+            emptyWrap:   document.getElementById('emptyWrap'),
+            contents:    document.getElementById('contents'),
+
+            statusBanner:document.getElementById('statusBanner'),
+            bannerTitle: document.getElementById('bannerTitle'),
+            bannerText:  document.getElementById('bannerText'),
+            bannerAction:document.getElementById('bannerAction'),
+            stepper:     document.getElementById('stepper'),
+
+            valAppNo:       document.getElementById('valAppNo'),
+            valApplicant:   document.getElementById('valApplicant'),
+            valEmail:       document.getElementById('valEmail'),
+            valPhone:       document.getElementById('valPhone'),
+            valSchool:      document.getElementById('valSchool'),
+            valLocation:    document.getElementById('valLocation'),
+            valSubmitted:   document.getElementById('valSubmitted'),
+            valCurrentStatus:document.getElementById('valCurrentStatus'),
+
+            docIdentity:     document.getElementById('docIdentity'),
+            docIdentityMeta: document.getElementById('docIdentityMeta'),
+            docSchool:       document.getElementById('docSchool'),
+            docSchoolMeta:   document.getElementById('docSchoolMeta'),
+
+            valMessage:  document.getElementById('valMessage'),
+            timeline:    document.getElementById('timeline')
+        };
+
+        /* ---------- STATE MACHINE (matches dashboard) ---------- */
+        function deriveState(data) {
+            if (!data) return STATE.NONE;
+
+            const appStatus = (data.applicationStatus || '').toString().toLowerCase();
+            const memStatus = (data.status || data.membershipStatus || '').toString().toLowerCase();
+
+            if (memStatus === 'active' || memStatus === 'approved' || appStatus === 'approved') {
+                return STATE.APPROVED;
+            }
+            if (
+                ['declined', 'rejected', 'inactive'].includes(memStatus) ||
+                ['declined', 'rejected'].includes(appStatus)
+            ) {
+                return STATE.DECLINED;
+            }
+
+            const hasApplication = !!(
+                data.application &&
+                (data.application.submittedAt || data.application.firstName)
+            );
+            if (hasApplication && ['pending', 'in review', 'under review'].includes(appStatus)) {
+                return STATE.PENDING;
+            }
+            return STATE.NONE;
+        }
+
+        function hasSubmittedApplication(data) {
+            return !!(
+                data &&
+                data.application &&
+                (data.application.submittedAt || data.application.firstName)
+            );
+        }
+
+        /* ---------- NAME RESOLUTION ---------- */
+        async function resolveName(user, data) {
+            if (data && (data.name || data.fullName || data.displayName)) {
+                return { name: data.name || data.fullName || data.displayName, source: 'firestore' };
+            }
+            try {
+                const stored = localStorage.getItem('studyflix_name_' + user.uid);
+                if (stored && stored.trim()) return { name: stored.trim(), source: 'localStorage' };
+            } catch (e) { /* ignore */ }
+            if (user.displayName && user.displayName.trim()) {
+                return { name: user.displayName.trim(), source: 'auth' };
+            }
+            if (user.email) return { name: user.email.split('@')[0], source: 'email' };
+            return { name: 'Member', source: 'fallback' };
+        }
+
+        /* ---------- HEAL MEMBER DOC ---------- */
+        async function healMemberDoc(user, name, data) {
+            const ref = db.collection('members').doc(user.uid);
+            try {
+                if (!data) {
+                    await ref.set({
+                        uid: user.uid,
+                        name: name,
+                        email: user.email || '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        plan: 'studyflix-monthly',
+                        status: 'pending',
+                        applicationStatus: 'pending',
+                        membershipNumber: null
+                    }, { merge: true });
+                } else {
+                    const hasName = !!(data.name || data.fullName || data.displayName);
+                    if (!hasName) await ref.set({ name: name }, { merge: true });
+                }
+            } catch (err) {
+                console.warn('Could not heal member doc:', err.message);
+            }
+        }
+
+        /* ---------- DATE HELPERS ---------- */
+        function toDate(ts) {
+            if (!ts) return null;
+            try {
+                if (ts.toDate) return ts.toDate();
+                if (ts.seconds) return new Date(ts.seconds * 1000);
+                return new Date(ts);
+            } catch (e) { return null; }
+        }
+
+        function formatDate(d) {
+            if (!d) return '—';
+            return d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function formatDateTime(d) {
+            if (!d) return '—';
+            return d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) +
+                   ' · ' +
+                   d.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        /* ---------- BADGE HELPERS ---------- */
+        function badgeClass(raw) {
+            const t = (raw || '').toString().toLowerCase();
+            if (t === 'active' || t === 'approved')                           return 'badge-active';
+            if (t === 'pending' || t === 'in review' || t === 'under review') return 'badge-pending';
+            if (t === 'inactive' || t === 'declined' || t === 'rejected')     return 'badge-inactive';
+            return 'badge-none';
+        }
+
+        function badgeLabel(raw, fallback) {
+            if (!raw) return fallback || '—';
+            return raw.toString().toUpperCase();
+        }
+
+        /* ---------- STEPPER ---------- */
+        function renderStepper(state) {
+            const map = {
+                [STATE.NONE]:     ['done', 'current',  'upcoming', 'upcoming'],
+                [STATE.PENDING]:  ['done', 'done',     'current',  'upcoming'],
+                [STATE.APPROVED]: ['done', 'done',     'done',     'done'],
+                [STATE.DECLINED]: ['done', 'done',     'done',     'failed']
+            };
+
+            const labels = ['Account Created', 'Application Submitted', 'Under Review', 'Approved'];
+            const statuses = map[state] || map[STATE.NONE];
+
+            let html = '';
+            for (let i = 0; i < labels.length; i++) {
+                const st = statuses[i];
+                const circleContent =
+                    st === 'done'   ? '<i class="fas fa-check"></i>' :
+                    st === 'failed' ? '<i class="fas fa-times"></i>' :
+                                      (i + 1);
+
+                html +=
+                    '<div class="step-item ' + st + '">' +
+                        '<div class="step-circle">' + circleContent + '</div>' +
+                        '<div class="step-label">' + labels[i] + '</div>' +
+                    '</div>';
+
+                if (i < labels.length - 1) {
+                    const lineDone =
+                        statuses[i] === 'done' && (statuses[i + 1] === 'done' || statuses[i + 1] === 'current');
+                    html += '<div class="step-line ' + (lineDone ? 'done' : '') + '"></div>';
+                }
+            }
+
+            els.stepper.innerHTML = html;
+        }
+
+        /* ---------- BANNER ---------- */
+        function renderBanner(state) {
+            let cls, icon, title, text, actionHTML = '';
+
+            if (state === STATE.APPROVED) {
+                cls = 'banner-approved';
+                icon = 'fa-check-circle';
+                title = 'Application approved';
+                text = 'Your membership is active. Your digital card is ready to use.';
+                actionHTML = '<a href="membership-card.html" class="banner-btn"><i class="fas fa-id-card"></i> View Card</a>';
+            } else if (state === STATE.DECLINED) {
+                cls = 'banner-declined';
+                icon = 'fa-times-circle';
+                title = 'Application declined';
+                text = 'Your application was not approved. Contact support if you believe this was a mistake.';
+                actionHTML = '<a href="mailto:support@studyflix.example" class="banner-btn"><i class="fas fa-headset"></i> Contact Support</a>';
+            } else {
+                cls = 'banner-pending';
+                icon = 'fa-hourglass-half';
+                title = 'Application under review';
+                text = 'Your application has been submitted successfully and is being reviewed by our team. We\'ll notify you once a decision has been made.';
+                actionHTML = ''; // no action during pending
+            }
+
+            els.statusBanner.className = 'status-banner ' + cls;
+            els.statusBanner.querySelector('.banner-icon').innerHTML =
+                '<i class="fas ' + icon + '"></i>';
+            els.bannerTitle.textContent = title;
+            els.bannerText.textContent = text;
+            els.bannerAction.innerHTML = actionHTML;
+        }
+
+        /* ---------- APPLICATION DETAILS ---------- */
+        function renderDetails(user, data) {
+            const app = (data && data.application) || {};
+
+            /* Application number — prefer explicit field, then applicationNumber, then uid prefix */
+            const appNo =
+                (data && (data.applicationNumber || data.applicationId)) ||
+                ('APP' + user.uid.slice(0, 8).toUpperCase());
+            els.valAppNo.textContent = appNo;
+
+            /* Applicant — first + last name from application, fallback to member name */
+            const first = app.firstName || '';
+            const last  = app.lastName  || '';
+            let applicant = (first + ' ' + last).trim();
+            if (!applicant) applicant = (data && (data.name || data.fullName)) || '—';
+            els.valApplicant.textContent = applicant;
+
+            /* Contact info */
+            const email = app.email || (data && data.email) || user.email || '';
+            setTextOrEmpty(els.valEmail, email);
+
+            const phone = app.phone || (data && data.phone) || '';
+            setTextOrEmpty(els.valPhone, phone);
+
+            const school = app.school || (data && data.school) || '';
+            setTextOrEmpty(els.valSchool, school);
+
+            const location = app.location || (data && data.location) || '';
+            setTextOrEmpty(els.valLocation, location);
+
+            /* Submitted date */
+            const submitted = toDate(app.submittedAt || (data && data.applicationSubmittedAt));
+            els.valSubmitted.textContent = formatDateTime(submitted);
+
+            /* Current status */
+            const appStatusRaw = (data && data.applicationStatus) || '';
+            els.valCurrentStatus.innerHTML =
+                '<span class="badge ' + badgeClass(appStatusRaw) + '">' +
+                    badgeLabel(appStatusRaw, 'PENDING') +
+                '</span>';
+        }
+
+        function setTextOrEmpty(el, value) {
+            if (value && value.toString().trim()) {
+                el.textContent = value.toString().trim();
+                el.classList.remove('empty');
+            } else {
+                el.textContent = 'Not provided';
+                el.classList.add('empty');
+            }
+        }
+
+        /* ---------- DOCUMENTS ---------- */
+        function renderDocuments(data) {
+            const app = (data && data.application) || {};
+            const docs = app.documents || {};
+
+            wireDoc(
+                els.docIdentity,
+                els.docIdentityMeta,
+                docs.identityUrl,
+                'Uploaded with your application'
+            );
+
+            wireDoc(
+                els.docSchool,
+                els.docSchoolMeta,
+                docs.schoolProofUrl,
+                'Uploaded with your application'
+            );
+        }
+
+        function wireDoc(cardEl, metaEl, url, okText) {
+            if (url) {
+                cardEl.href = url;
+                cardEl.classList.remove('doc-missing');
+                metaEl.textContent = okText;
+            } else {
+                cardEl.href = '#';
+                cardEl.classList.add('doc-missing');
+                metaEl.textContent = 'Not uploaded';
+            }
+        }
+
+        /* ---------- ADDITIONAL MESSAGE ---------- */
+        function renderMessage(data) {
+            const app = (data && data.application) || {};
+            const msg = (app.message || '').toString().trim();
+
+            if (msg) {
+                els.valMessage.textContent = msg;
+                els.valMessage.classList.remove('empty');
+            } else {
+                els.valMessage.textContent = 'No additional information was provided.';
+                els.valMessage.classList.add('empty');
+            }
+        }
+
+        /* ---------- TIMELINE ---------- */
+        function renderTimeline(user, data) {
+            const app = (data && data.application) || {};
+            const state = deriveState(data);
+
+            const items = [];
+
+            /* 1. Account created */
+            const created = toDate(data && data.createdAt);
+            items.push({
+                status: 'done',
+                title: 'Account created',
+                meta: created ? formatDateTime(created) : 'Completed'
+            });
+
+            /* 2. Application submitted */
+            const submitted = toDate(app.submittedAt);
+            if (submitted) {
+                items.push({
+                    status: 'done',
+                    title: 'Application submitted',
+                    meta: formatDateTime(submitted)
+                });
+            }
+
+            /* 3. Under review */
+            if (state === STATE.PENDING) {
+                items.push({
+                    status: 'current',
+                    title: 'Under review',
+                    meta: 'In progress — our team is reviewing your application'
+                });
+            } else if (state === STATE.APPROVED || state === STATE.DECLINED) {
+                items.push({
+                    status: 'done',
+                    title: 'Review complete',
+                    meta: 'Decision has been made'
+                });
+            }
+
+            /* 4. Decision */
+            if (state === STATE.APPROVED) {
+                const approved = toDate(data && (data.approvedAt || data.activatedAt));
+                items.push({
+                    status: 'done',
+                    title: 'Approved',
+                    meta: approved ? formatDateTime(approved) : 'Your membership is active'
+                });
+            } else if (state === STATE.DECLINED) {
+                const declined = toDate(data && data.declinedAt);
+                items.push({
+                    status: 'failed',
+                    title: 'Declined',
+                    meta: declined ? formatDateTime(declined) : 'Your application was not approved'
+                });
+            }
+
+            els.timeline.innerHTML = items.map(it => {
+                const dotClass = 'timeline-dot ' + it.status;
+                const icon =
+                    it.status === 'done'    ? '<i class="fas fa-check"></i>' :
+                    it.status === 'failed'  ? '<i class="fas fa-times"></i>' :
+                    it.status === 'current' ? '<i class="fas fa-circle"></i>' : '';
+                return (
+                    '<div class="timeline-item">' +
+                        '<div class="' + dotClass + '">' + icon + '</div>' +
+                        '<div class="timeline-title">' + it.title + '</div>' +
+                        '<div class="timeline-meta">' + it.meta + '</div>' +
+                    '</div>'
+                );
+            }).join('');
+        }
+
+        /* ---------- MAIN RENDER ---------- */
+        async function renderPage(user, data) {
+            currentData = data;
+
+            /* Top bar */
+            const { name, source } = await resolveName(user, data);
+            els.topName.textContent = name;
+            els.topName.classList.remove('skeleton');
+            els.topAvatar.textContent = name.charAt(0).toUpperCase();
+            els.topEmail.textContent = user.email || '';
+
+            /* Heal doc */
+            if (!healedOnce && source !== 'firestore') {
+                healedOnce = true;
+                healMemberDoc(user, name, data);
+            }
+
+            /* Show loading → empty or contents */
+            els.loadingWrap.style.display = 'none';
+
+            if (!hasSubmittedApplication(data)) {
+                els.emptyWrap.style.display = 'block';
+                els.contents.classList.remove('visible');
+                return;
+            }
+
+            els.emptyWrap.style.display = 'none';
+            els.contents.classList.add('visible');
+
+            const state = deriveState(data);
+            renderBanner(state);
+            renderStepper(state);
+            renderDetails(user, data);
+            renderDocuments(data);
+            renderMessage(data);
+            renderTimeline(user, data);
+        }
+
+        /* ---------- AUTH GUARD + LIVE DATA ---------- */
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+
+            try { await user.reload(); } catch (e) { /* ignore */ }
+            const freshUser = auth.currentUser || user;
+
+            /* Initial read */
+            let initialData = null;
+            try {
+                const snap = await db.collection('members').doc(freshUser.uid).get();
+                if (snap.exists) initialData = snap.data();
+            } catch (err) {
+                console.warn('Firestore read blocked:', err.message);
+            }
+
+            await renderPage(freshUser, initialData);
+
+            /* Live updates */
+            if (unsubDoc) unsubDoc();
+            unsubDoc = db.collection('members').doc(freshUser.uid).onSnapshot(
+                async (snap) => {
+                    const data = snap.exists ? snap.data() : null;
+                    await renderPage(freshUser, data);
+                },
+                (err) => {
+                    console.warn('Live updates unavailable:', err.message);
+                }
+            );
+        });
+
+        /* ---------- LOGOUT ---------- */
+        els.logoutBtn.addEventListener('click', async () => {
+            els.logoutBtn.disabled = true;
+            try {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                await auth.signOut();
+            } catch (err) {
+                console.error(err);
+                els.logoutBtn.disabled = false;
+            }
+            window.location.href = 'login.html';
+        });
+    </script>
+
+</body>
+</html>

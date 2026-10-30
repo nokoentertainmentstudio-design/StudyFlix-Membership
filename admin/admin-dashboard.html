@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Admin Dashboard — StudyFlix</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;
+  --red:#ff5555;--muted:#8892B0;--card:#1C2640;--card-2:#16203a;
+  --border:rgba(255,255,255,.07)
+}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0a0a2a,#1a1a3e);color:#E8EEFF;min-height:100vh;overflow-x:hidden}
+.hero-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.hero-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(245,200,66,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,200,66,.03) 1px,transparent 1px);background-size:50px 50px;z-index:-1}
+
+/* Guard */
+.guard{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,42,.95);z-index:10000;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.guard.hidden{display:none}
+.guard-text{color:var(--muted);font-size:.9rem}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,215,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Layout */
+.main{flex:1;min-width:0;padding:1.5rem 1.5rem 3rem;max-width:1500px;margin:0 auto;width:100%}
+
+/* Topbar */
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:.8rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.navbar-brand{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:1px;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none;display:flex;align-items:center;gap:.6rem}
+.navbar-brand .admin-tag{font-family:'Nunito',sans-serif;font-size:.6rem;font-weight:800;letter-spacing:1px;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--gold);padding:.2rem .55rem;border-radius:20px;text-transform:uppercase}
+.navbar-right{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.admin-chip{display:flex;align-items:center;gap:.6rem;background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:30px;padding:.35rem .9rem .35rem .35rem}
+.admin-chip-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--orange));color:#111;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem}
+.admin-chip-name{font-size:.8rem;font-weight:700}
+.navbar-links{display:flex;gap:.9rem;align-items:center}
+.navbar-links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.8rem;transition:color .2s}
+.navbar-links a:hover{color:var(--teal)}
+.navbar-links a.logout{color:#ff8888}
+.navbar-links a.logout:hover{color:#ff5555}
+
+/* Header */
+.page-header{margin-bottom:1.8rem}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,3vw,3rem);line-height:1.05}
+.page-title .highlight{background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-sub{color:var(--muted);font-size:.9rem;margin-top:.35rem}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.2rem 1.3rem;transition:border-color .3s,transform .3s}
+.stat-card:hover{border-color:rgba(0,212,180,.35);transform:translateY(-3px)}
+.stat-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.stat-icon.gold{background:rgba(255,215,0,.12);color:var(--gold)}
+.stat-icon.teal{background:rgba(0,212,180,.12);color:var(--teal)}
+.stat-icon.blue{background:rgba(34,136,255,.12);color:var(--blue)}
+.stat-icon.red{background:rgba(255,85,85,.12);color:var(--red)}
+.stat-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
+.stat-value{font-size:1.8rem;font-weight:900;line-height:1.1;margin-top:.15rem}
+.stat-value.loading{color:var(--muted);font-size:1rem;font-weight:600}
+
+/* Two-column split */
+.split{display:grid;grid-template-columns:1.4fr 1fr;gap:1.4rem;margin-bottom:2rem}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid var(--border);background:rgba(0,0,0,.15)}
+.panel-head h2{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.8px;color:var(--gold);display:flex;align-items:center;gap:.5rem}
+.panel-head a{color:var(--teal);text-decoration:none;font-size:.75rem;font-weight:800;display:flex;align-items:center;gap:.3rem}
+.panel-head a:hover{text-decoration:underline}
+.panel-body{padding:.4rem 0}
+
+.pending-item{display:flex;justify-content:space-between;align-items:center;gap:.7rem;padding:.8rem 1.2rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.pending-item:last-child{border-bottom:none}
+.pending-item:hover{background:rgba(0,212,180,.04)}
+.pending-main{min-width:0;flex:1}
+.pending-name{font-weight:800;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pending-meta{color:var(--muted);font-size:.72rem;margin-top:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pending-actions{display:flex;gap:.35rem;flex-shrink:0}
+
+.activity-item{display:flex;gap:.8rem;padding:.75rem 1.2rem;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;background:rgba(255,255,255,.05);color:var(--muted)}
+.activity-icon.teal{background:rgba(0,212,180,.12);color:var(--teal)}
+.activity-icon.red{background:rgba(255,85,85,.12);color:#ff9b9b}
+.activity-icon.gold{background:rgba(255,215,0,.12);color:var(--gold)}
+.activity-icon.blue{background:rgba(34,136,255,.12);color:#9cc7ff}
+.activity-body{min-width:0;flex:1}
+.activity-text{font-size:.82rem;line-height:1.4;word-break:break-word}
+.activity-text strong{color:#E8EEFF;font-weight:800}
+.activity-time{font-size:.68rem;color:var(--muted);margin-top:.2rem}
+.empty-mini{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.85rem}
+.empty-mini i{display:block;font-size:1.6rem;color:rgba(255,215,0,.3);margin-bottom:.6rem}
+
+/* Toolbar */
+.toolbar{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap i{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none}
+.search-wrap input{width:100%;padding:.7rem 1rem .7rem 2.4rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;color:#E8EEFF;font-size:.85rem;font-family:inherit;outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:var(--teal)}
+.search-wrap input::placeholder{color:#5b6788}
+.filter-select{padding:.7rem 2rem .7rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;color:#E8EEFF;font-size:.85rem;font-family:inherit;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238892B0'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right .6rem center;background-size:18px}
+.filter-select:focus{border-color:var(--teal)}
+.refresh-btn{background:rgba(0,212,180,.1);border:1px solid rgba(0,212,180,.3);color:var(--teal);padding:.7rem 1.1rem;border-radius:12px;font-weight:800;font-size:.8rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:.45rem;transition:.2s}
+.refresh-btn:hover{background:rgba(0,212,180,.18);border-color:var(--teal)}
+.refresh-btn:disabled{opacity:.6;cursor:not-allowed}
+
+/* Table */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.member-table{width:100%;border-collapse:collapse}
+.member-table thead th{background:rgba(0,0,0,.2);text-align:left;padding:.9rem 1rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--border);white-space:nowrap}
+.member-table tbody td{padding:.95rem 1rem;font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.member-table tbody tr:last-child td{border-bottom:none}
+.member-table tbody tr:hover{background:rgba(0,212,180,.04)}
+.member-name{font-weight:800;color:#E8EEFF}
+.member-email{color:var(--muted);font-size:.78rem}
+.badge{display:inline-block;padding:.22rem .7rem;border-radius:20px;font-size:.68rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+.badge-active{background:rgba(0,212,180,.15);color:var(--teal)}
+.badge-pending{background:rgba(255,215,0,.15);color:var(--gold)}
+.badge-inactive{background:rgba(255,85,85,.15);color:#ff9b9b}
+.badge-rejected{background:rgba(255,85,85,.15);color:#ff9b9b}
+.badge-approved{background:rgba(0,212,180,.15);color:var(--teal)}
+.badge-default{background:rgba(255,255,255,.08);color:var(--muted)}
+.row-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+.btn-sm{padding:.35rem .75rem;border-radius:8px;font-size:.72rem;font-weight:800;cursor:pointer;border:1px solid transparent;font-family:inherit;display:inline-flex;align-items:center;gap:.35rem;transition:transform .15s,background .2s}
+.btn-sm:hover{transform:translateY(-1px)}
+.btn-sm:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-approve{background:rgba(0,212,180,.12);color:var(--teal);border-color:rgba(0,212,180,.35)}
+.btn-approve:hover{background:rgba(0,212,180,.22)}
+.btn-reject{background:rgba(255,85,85,.12);color:#ff9b9b;border-color:rgba(255,85,85,.35)}
+.btn-reject:hover{background:rgba(255,85,85,.22)}
+.btn-delete{background:rgba(180,20,40,.22);color:#ff8080;border-color:rgba(220,40,60,.55)}
+.btn-delete:hover{background:rgba(220,40,60,.35);color:#ffb0b0}
+.btn-view{background:rgba(255,255,255,.05);color:#E8EEFF;border-color:var(--border)}
+.btn-view:hover{background:rgba(255,255,255,.1)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-state i{font-size:2.2rem;color:rgba(255,215,0,.35);margin-bottom:.8rem;display:block}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:5000;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-overlay.show{display:flex}
+.modal-card{width:100%;max-width:560px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.7rem;box-shadow:0 25px 60px rgba(0,0,0,.6);position:relative;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
+.modal-header h3{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.5px;color:var(--gold);display:flex;align-items:center;gap:.5rem}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--teal)}
+.detail-row{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid var(--border);font-size:.85rem}
+.detail-row:last-child{border-bottom:none}
+.detail-label{color:var(--muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.4px}
+.detail-value{text-align:right;word-break:break-word}
+.modal-actions{display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap}
+.modal-actions .btn-sm{flex:1;justify-content:center;padding:.7rem 1rem;font-size:.82rem;border-radius:12px}
+.document-section{margin-top:1.3rem;padding-top:1.1rem;border-top:1px solid var(--border)}
+.document-section-title{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.6px;color:var(--gold);display:flex;align-items:center;gap:.5rem;margin-bottom:.8rem}
+.document-card{display:flex;align-items:center;justify-content:space-between;gap:.8rem;background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:12px;padding:.8rem .9rem;margin-bottom:.6rem}
+.document-info{min-width:0;flex:1}
+.document-name{font-weight:800;font-size:.82rem;word-break:break-word}
+.document-meta{color:var(--muted);font-size:.68rem;margin-top:.2rem}
+.document-actions{display:flex;gap:.4rem;flex-shrink:0;flex-wrap:wrap}
+.document-empty{color:var(--muted);font-size:.8rem;background:rgba(255,255,255,.03);border:1px dashed var(--border);border-radius:12px;padding:1rem;text-align:center}
+.document-loading{color:var(--muted);font-size:.8rem;padding:.6rem 0}
+
+
+/* Danger modal variant */
+.modal-card.danger{border-color:rgba(220,40,60,.45);box-shadow:0 25px 60px rgba(120,0,20,.35)}
+.modal-header.danger h3{color:#ff8080}
+.danger-warning{display:flex;gap:.75rem;align-items:flex-start;background:rgba(220,40,60,.1);border:1px solid rgba(220,40,60,.3);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem}
+.danger-warning i{color:#ff8080;font-size:1.1rem;margin-top:.1rem}
+.danger-warning p{color:#ffc0c0;font-size:.82rem;line-height:1.5;text-align:left}
+.danger-target{background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:12px;padding:.9rem 1rem;margin-bottom:1rem}
+.danger-target-name{font-weight:800;font-size:.95rem;color:#E8EEFF}
+.danger-target-meta{color:var(--muted);font-size:.75rem;margin-top:.2rem;word-break:break-word}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;background:rgba(28,38,64,.98);border:1px solid var(--border);border-left:3px solid var(--teal);padding:.9rem 1.2rem;border-radius:12px;font-size:.85rem;font-weight:700;color:#E8EEFF;z-index:20000;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;max-width:340px}
+#toast.error{border-left-color:var(--red);color:#ff9b9b}
+
+/* Responsive */
+@media (max-width:1200px){.split{grid-template-columns:1fr}}
+@media (max-width:980px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:720px){
+  .main{padding:1rem;padding-top:75px}
+  .navbar{flex-direction:column;align-items:stretch;gap:.8rem}
+  .navbar-right{justify-content:space-between}
+  .page-title{font-size:2rem}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:.8rem}
+  .stat-card{padding:1rem}
+  .stat-value{font-size:1.4rem}
+  .member-table thead{display:none}
+  .member-table,.member-table tbody,.member-table tr,.member-table td{display:block;width:100%}
+  .member-table tbody tr{padding:1rem;border-bottom:1px solid var(--border)}
+  .member-table tbody td{border:none;padding:.25rem 0}
+  .member-table tbody td::before{content:attr(data-label);display:block;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.15rem}
+  .row-actions{margin-top:.5rem}
+  .pending-item{flex-wrap:wrap}
+  .pending-actions{width:100%;justify-content:flex-end}
+}
+@media (max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .navbar-brand{font-size:1.5rem}
+}
+</style>
+</head>
+<body class="has-sidebar">
+
+<div class="hero-bg"></div>
+<div class="hero-grid"></div>
+
+<!-- Guard -->
+<div class="guard" id="guard">
+  <div class="spinner"></div>
+  <div class="guard-text" id="guardText">Verifying admin access…</div>
+</div>
+
+<!-- Sidebar placeholder — filled by fetch -->
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+
+  <!-- TOPBAR -->
+  <nav class="navbar">
+    <a href="admin-dashboard.html" class="navbar-brand">
+      StudyFlix <span class="admin-tag">Admin</span>
+    </a>
+    <div class="navbar-right">
+      <div class="admin-chip">
+        <div class="admin-chip-avatar" id="chipAvatar">–</div>
+        <div class="admin-chip-name" id="chipName">Loading…</div>
+      </div>
+      <div class="navbar-links">
+        <a href="index.html">Home</a>
+        <a href="#" id="logoutBtn" class="logout">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1 class="page-title"><span class="highlight">Admin</span> Dashboard</h1>
+    <p class="page-sub">Review applications, manage members, and track membership activity.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-head"><div class="stat-icon gold"><i class="fas fa-users"></i></div></div>
+      <div class="stat-label">Total Members</div>
+      <div class="stat-value loading" id="statTotal">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-head"><div class="stat-icon teal"><i class="fas fa-check-circle"></i></div></div>
+      <div class="stat-label">Active</div>
+      <div class="stat-value loading" id="statActive">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-head"><div class="stat-icon gold"><i class="fas fa-hourglass-half"></i></div></div>
+      <div class="stat-label">Pending</div>
+      <div class="stat-value loading" id="statPending">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-head"><div class="stat-icon red"><i class="fas fa-times-circle"></i></div></div>
+      <div class="stat-label">Rejected / Inactive</div>
+      <div class="stat-value loading" id="statRejected">—</div>
+    </div>
+  </div>
+
+  <!-- SPLIT: pending review + activity -->
+  <div class="split">
+    <div class="panel">
+      <div class="panel-head">
+        <h2><i class="fas fa-clock"></i> Awaiting Review</h2>
+        <a href="admin-applications.html">View all <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="panel-body" id="pendingPanel">
+        <div class="empty-mini"><i class="fas fa-spinner fa-spin"></i> Loading…</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2><i class="fas fa-stream"></i> Recent Activity</h2>
+        <a href="admin-activity-log.html">View all <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="panel-body" id="activityPanel">
+        <div class="empty-mini"><i class="fas fa-spinner fa-spin"></i> Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by name, email, or membership number…" />
+    </div>
+    <select class="filter-select" id="statusFilter">
+      <option value="all">All statuses</option>
+      <option value="pending">Pending</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <button class="refresh-btn" id="refreshBtn"><i class="fas fa-rotate-right"></i> Refresh</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table class="member-table">
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Province</th>
+          <th>Membership #</th>
+          <th>Plan</th>
+          <th>Status</th>
+          <th>Application</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="memberTableBody">
+        <tr><td colspan="7" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading members…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- MODAL: MEMBER DETAILS -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modalTitle">Member Details</h3>
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- MODAL: DELETE CONFIRMATION -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-card danger" style="max-width:460px">
+    <div class="modal-header danger">
+      <h3><i class="fas fa-triangle-exclamation"></i> Delete Member</h3>
+      <button class="modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="danger-warning">
+      <i class="fas fa-circle-exclamation"></i>
+      <p>This action is permanent and cannot be undone. The member record and their public verification entry will both be removed.</p>
+    </div>
+
+    <div class="danger-target">
+      <div class="danger-target-name" id="deleteMemberName">—</div>
+      <div class="danger-target-meta" id="deleteMemberMeta"></div>
+    </div>
+
+    <div class="modal-actions" id="deleteModalActions">
+      <button class="btn-sm btn-delete" id="deleteConfirmBtn">
+        <i class="fas fa-trash"></i> Delete Permanently
+      </button>
+      <button class="btn-sm btn-view" id="deleteCancelBtn">
+        <i class="fas fa-xmark"></i> Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
+<script>
+/* ---------- FIREBASE ---------- */
+const firebaseConfig={
+  apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+  authDomain:"studyflix-membership.firebaseapp.com",
+  projectId:"studyflix-membership",
+  storageBucket:"studyflix-membership.firebasestorage.app",
+  messagingSenderId:"641080177215",
+  appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",
+  measurementId:"G-3384WRNWXW"
+};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+const storage = firebase.storage();
+
+/* ---------- STATE ---------- */
+let allMembers=[];
+let filteredMembers=[];
+let currentAdmin=null;
+let memberToDelete=null;
+
+/* ---------- HELPERS ---------- */
+function esc(s){
+  return String(s==null?'':s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function statusBadgeClass(s){
+  s=(s||'').toLowerCase();
+  if(s==='active'||s==='approved')return 'badge-active';
+  if(s==='pending')return 'badge-pending';
+  if(s==='rejected')return 'badge-rejected';
+  if(s==='inactive')return 'badge-inactive';
+  return 'badge-default';
+}
+function toDate(ts){
+  if(!ts)return null;
+  try{
+    if(ts.toDate)return ts.toDate();
+    if(ts.seconds)return new Date(ts.seconds*1000);
+    return new Date(ts);
+  }catch(e){return null}
+}
+function timeAgo(d){
+  if(!d)return '—';
+  const s=Math.floor((Date.now()-d.getTime())/1000);
+  if(s<60)return 'just now';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  if(s<604800)return Math.floor(s/86400)+'d ago';
+  return d.toLocaleDateString();
+}
+
+/* ---------- TOAST ---------- */
+const toastEl=document.getElementById('toast');
+let toastTimer=null;
+function toast(msg,isError=false){
+  toastEl.textContent=msg;
+  toastEl.classList.toggle('error',isError);
+  toastEl.style.display='block';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{toastEl.style.display='none'},3200);
+}
+
+/* ---------- MODALS ---------- */
+const modal=document.getElementById('detailModal');
+const modalBody=document.getElementById('modalBody');
+const modalActions=document.getElementById('modalActions');
+const modalTitle=document.getElementById('modalTitle');
+document.getElementById('modalClose').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+
+const deleteModal=document.getElementById('deleteModal');
+document.getElementById('deleteModalClose').addEventListener('click',closeDeleteConfirm);
+document.getElementById('deleteCancelBtn').addEventListener('click',closeDeleteConfirm);
+deleteModal.addEventListener('click',e=>{if(e.target===deleteModal)closeDeleteConfirm()});
+document.getElementById('deleteConfirmBtn').addEventListener('click',confirmDelete);
+
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if(deleteModal.classList.contains('show'))return closeDeleteConfirm();
+  closeModal();
+});
+
+function closeModal(){
+  modal.classList.remove('show');
+  modalBody.innerHTML='';
+  modalActions.innerHTML='';
+}
+
+/* ---------- ACTIVITY LOG ---------- */
+async function logActivity(type,payload){
+  try{
+    await db.collection('activity').add({
+      type,
+      by:auth.currentUser.uid,
+      byEmail:auth.currentUser.email,
+      byName:currentAdmin&&currentAdmin.name?currentAdmin.name:'',
+      at:firebase.firestore.FieldValue.serverTimestamp(),
+      ...payload
+    });
+  }catch(e){console.warn('Activity log failed:',e.message)}
+}
+
+/* ---------- SIDEBAR LOADER ---------- */
+(async function loadSidebar(){
+  const ph=document.getElementById('sidebar-placeholder');
+  if(!ph)return;
+  try{
+    const res=await fetch('admin-sidebar.html');
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    ph.innerHTML=await res.text();
+    initSidebar();
+  }catch(err){
+    console.error('Sidebar load failed:',err);
+  }
+})();
+
+function initSidebar(){
+  const sb=document.getElementById('sidebar');
+  const tg=document.getElementById('sidebarToggle');
+  const cl=document.getElementById('sidebarClose');
+  const ov=document.getElementById('sidebarOverlay');
+  const lo=document.getElementById('sidebarLogout');
+  if(!sb)return;
+
+  if(tg)tg.addEventListener('click',()=>{sb.classList.add('open');if(ov)ov.classList.add('active')});
+  function close(){sb.classList.remove('open');if(ov)ov.classList.remove('active')}
+  if(cl)cl.addEventListener('click',close);
+  if(ov)ov.addEventListener('click',close);
+
+  const current=(location.pathname.split('/').pop()||'admin-dashboard.html');
+  sb.querySelectorAll('.sidebar-link').forEach(a=>{
+    if(a.dataset.page===current)a.classList.add('active');
+    else a.classList.remove('active');
+  });
+
+  if(lo){
+    lo.addEventListener('click',async()=>{
+      lo.disabled=true;
+      lo.innerHTML='<i class="fas fa-spinner fa-spin"></i><span>Signing out…</span>';
+      try{await auth.signOut()}catch(e){console.error(e)}
+      window.location.href='index.html';
+    });
+  }
+}
+
+/* ---------- AUTH GUARD ---------- */
+auth.onAuthStateChanged(async user=>{
+  const guard=document.getElementById('guard');
+  const guardText=document.getElementById('guardText');
+
+  if(!user){
+    guardText.textContent='Not signed in. Redirecting…';
+    setTimeout(()=>window.location.href='index.html',900);
+    return;
+  }
+
+  try{
+    const snap=await db.collection('admins').doc(user.uid).get();
+
+    if(!snap.exists){
+      guardText.textContent='This account is not an admin. Redirecting…';
+      setTimeout(()=>window.location.href='index.html',1400);
+      return;
+    }
+
+    const adminData=snap.data();
+    if(adminData.role!=='admin'||adminData.status!=='active'){
+      guardText.textContent='Admin access required. Redirecting…';
+      setTimeout(()=>window.location.href='index.html',1400);
+      return;
+    }
+
+    currentAdmin=adminData;
+    const name=adminData.name||user.displayName||user.email.split('@')[0];
+
+    document.getElementById('chipName').textContent=name;
+    document.getElementById('chipAvatar').textContent=name.charAt(0).toUpperCase();
+
+    const sAv=document.getElementById('sidebarAdminAvatar');
+    const sNm=document.getElementById('sidebarAdminName');
+    const sEm=document.getElementById('sidebarAdminEmail');
+    if(sAv)sAv.textContent=name.charAt(0).toUpperCase();
+    if(sNm)sNm.textContent=name;
+    if(sEm)sEm.textContent=user.email||'';
+
+    guard.classList.add('hidden');
+    await loadMembers();
+    await loadActivity();
+
+  }catch(err){
+    console.error('Admin verification failed:',err);
+    guardText.textContent='Admin check failed. Redirecting…';
+    setTimeout(()=>window.location.href='index.html',1500);
+  }
+});
+
+/* ---------- LOGOUT ---------- */
+document.getElementById('logoutBtn').addEventListener('click',async e=>{
+  e.preventDefault();
+  try{await auth.signOut()}catch(err){console.error(err)}
+  window.location.href='index.html';
+});
+
+/* ---------- LOAD MEMBERS ---------- */
+async function loadMembers(){
+  const body=document.getElementById('memberTableBody');
+  body.innerHTML=`<tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading members…</td></tr>`;
+
+  try{
+    const snap=await db.collection('members').limit(500).get();
+    allMembers=snap.docs.map(d=>({id:d.id,data:d.data()}));
+    computeStats(allMembers);
+    applyFilters();
+    renderPendingPanel();
+
+  }catch(err){
+    console.error('loadMembers failed:',err);
+    let msg='Could not load members.';
+    if(err.code==='permission-denied')msg='Permission denied. Check Firestore rules for admin read access.';
+    else if(err.code==='unavailable')msg='Network error. Try Refresh.';
+    else msg='Could not load members: '+err.message;
+
+    body.innerHTML=`<tr><td colspan="6" class="empty-state"><i class="fas fa-exclamation-triangle"></i> ${esc(msg)}</td></tr>`;
+    toast(msg,true);
+  }
+}
+
+/* ---------- STATS ---------- */
+function computeStats(list){
+  let active=0,pending=0,rejected=0;
+  list.forEach(m=>{
+    const s=(m.data.status||'pending').toLowerCase();
+    if(s==='active'||s==='approved')active++;
+    else if(s==='pending')pending++;
+    else if(s==='rejected'||s==='inactive')rejected++;
+  });
+  document.getElementById('statTotal').textContent=list.length;
+  document.getElementById('statActive').textContent=active;
+  document.getElementById('statPending').textContent=pending;
+  document.getElementById('statRejected').textContent=rejected;
+  ['statTotal','statActive','statPending','statRejected'].forEach(id=>{
+    document.getElementById(id).classList.remove('loading');
+  });
+
+  const badge=document.getElementById('pendingCount');
+  if(badge){
+    if(pending>0){badge.textContent=pending;badge.style.display='inline-block'}
+    else badge.style.display='none';
+  }
+}
+
+/* ---------- PENDING PANEL ---------- */
+function renderPendingPanel(){
+  const panel=document.getElementById('pendingPanel');
+  const pending=allMembers.filter(m=>{
+    const d=m.data;
+    const hasApp=!!(d.application&&(d.application.submittedAt||d.application.firstName));
+    const st=(d.status||'pending').toLowerCase();
+    return hasApp&&st==='pending';
+  }).slice(0,6);
+
+  if(!pending.length){
+    panel.innerHTML=`<div class="empty-mini"><i class="fas fa-check-circle"></i> No pending applications. All caught up!</div>`;
+    return;
+  }
+
+  panel.innerHTML=pending.map(m=>{
+    const d=m.data;
+    const app=d.application||{};
+    const name=((app.firstName||'')+' '+(app.lastName||'')).trim()||d.name||d.fullName||d.email||'(no name)';
+    const submitted=toDate(app.submittedAt);
+    return `
+      <div class="pending-item" data-id="${m.id}">
+        <div class="pending-main">
+          <div class="pending-name">${esc(name)}</div>
+          <div class="pending-meta">${esc(d.email||app.email||'')} · ${submitted?timeAgo(submitted):'—'}</div>
+        </div>
+        <div class="pending-actions">
+          <button class="btn-sm btn-approve" data-action="approve" data-id="${m.id}" title="Approve">
+            <i class="fas fa-check"></i>
+          </button>
+          <button class="btn-sm btn-reject" data-action="reject" data-id="${m.id}" title="Reject">
+            <i class="fas fa-times"></i>
+          </button>
+          <button class="btn-sm btn-view" data-action="view" data-id="${m.id}" title="View">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  panel.querySelectorAll('.pending-item').forEach(item=>{
+    item.addEventListener('click',e=>{
+      const btn=e.target.closest('button[data-action]');
+      if(btn){
+        e.stopPropagation();
+        handleRowAction(btn.dataset.action,btn.dataset.id,btn);
+        return;
+      }
+      openDetails(allMembers.find(m=>m.id===item.dataset.id));
+    });
+  });
+}
+
+/* ---------- ACTIVITY ---------- */
+async function loadActivity(){
+  const panel=document.getElementById('activityPanel');
+  try{
+    const snap=await db.collection('activity').orderBy('at','desc').limit(8).get();
+    if(snap.empty){
+      panel.innerHTML=`<div class="empty-mini"><i class="fas fa-history"></i> No activity yet.</div>`;
+      return;
+    }
+    panel.innerHTML=snap.docs.map(doc=>{
+      const a=doc.data();
+      const when=toDate(a.at);
+      const type=a.type||'activity';
+      let icon='fa-circle-info',cls='';
+      if(type==='member_deleted'){icon='fa-trash';cls='red'}
+      else if(type.includes('approve')||type==='status_change'&&a.to==='active'){icon='fa-check';cls='teal'}
+      else if(type.includes('reject')){icon='fa-times';cls='red'}
+      else if(type.includes('admin')){icon='fa-user-shield';cls='gold'}
+      else if(type.includes('bulk')){icon='fa-layer-group';cls='blue'}
+      else if(type==='application_info_requested'){icon='fa-circle-question';cls='blue'}
+      else if(type==='login'){icon='fa-right-to-bracket';cls='gold'}
+
+      const text=describeActivity(a);
+      return `
+        <div class="activity-item">
+          <div class="activity-icon ${cls}"><i class="fas ${icon}"></i></div>
+          <div class="activity-body">
+            <div class="activity-text">${text}</div>
+            <div class="activity-time">${when?timeAgo(when):''}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }catch(err){
+    console.warn('Activity load failed:',err.message);
+    panel.innerHTML=`<div class="empty-mini"><i class="fas fa-exclamation-triangle"></i> Could not load activity.</div>`;
+  }
+}
+
+function describeActivity(a){
+  const who=a.byName||a.byEmail||'An admin';
+  const t=(a.type||'').toLowerCase();
+  if(t==='member_deleted'){
+    const label=a.membershipNumber?` (${esc(a.membershipNumber)})`:'';
+    return `<strong>${esc(who)}</strong> deleted member <strong>${esc(a.memberName||'Unknown')}</strong>${label}.`;
+  }
+  if(t==='application_active'||t==='status_change'&&a.to==='active')
+    return `<strong>${esc(who)}</strong> approved a member.`;
+  if(t==='application_rejected'||t==='status_change'&&a.to==='rejected')
+    return `<strong>${esc(who)}</strong> rejected an application.`;
+  if(t==='application_info_requested')
+    return `<strong>${esc(who)}</strong> requested more info.`;
+  if(t==='bulk_active')
+    return `<strong>${esc(who)}</strong> bulk approved ${a.count||'some'} members.`;
+  if(t==='bulk_rejected')
+    return `<strong>${esc(who)}</strong> bulk rejected ${a.count||'some'} members.`;
+  if(t==='admin_created')
+    return `<strong>${esc(a.adminName||'A new admin')}</strong> was added as an admin.`;
+  if(t==='login')
+    return `<strong>${esc(who)}</strong> signed in.`;
+  return `<strong>${esc(who)}</strong> performed an action.`;
+}
+
+/* ---------- FILTERS ---------- */
+function applyFilters(){
+  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  const status=document.getElementById('statusFilter').value;
+
+  filteredMembers=allMembers.filter(m=>{
+    const d=m.data;
+    const s=(d.status||'pending').toLowerCase();
+
+    if(status!=='all'){
+      if(status==='active'&&!(s==='active'||s==='approved'))return false;
+      if(status==='pending'&&s!=='pending')return false;
+      if(status==='inactive'&&s!=='inactive')return false;
+      if(status==='rejected'&&s!=='rejected')return false;
+    }
+
+    if(q){
+      const haystack=[d.name,d.fullName,d.email,d.membershipNumber,m.id]
+        .filter(Boolean).join(' ').toLowerCase();
+      if(!haystack.includes(q))return false;
+    }
+    return true;
+  });
+
+  renderTable(filteredMembers);
+}
+
+document.getElementById('searchInput').addEventListener('input',()=>{
+  clearTimeout(window._searchTimer);
+  window._searchTimer=setTimeout(applyFilters,180);
+});
+document.getElementById('statusFilter').addEventListener('change',applyFilters);
+document.getElementById('refreshBtn').addEventListener('click',async()=>{
+  const btn=document.getElementById('refreshBtn');
+  btn.disabled=true;
+  await loadMembers();
+  await loadActivity();
+  btn.disabled=false;
+  toast('Refreshed.');
+});
+
+/* ---------- TABLE ---------- */
+function renderTable(list){
+  const body=document.getElementById('memberTableBody');
+
+  if(!list.length){
+    body.innerHTML=`<tr><td colspan="6" class="empty-state">
+      <i class="fas fa-inbox"></i> No members match your filters.
+    </td></tr>`;
+    return;
+  }
+
+  body.innerHTML=list.map(m=>{
+    const d=m.data;
+    const name=esc(d.name||d.fullName||d.email||'(no name)');
+    const email=esc(d.email||'');
+    const status=(d.status||'pending').toLowerCase();
+    const appStatus=(d.applicationStatus||'pending').toLowerCase();
+    const num = esc(d.membershipNumber || 'Not assigned');
+    const plan=esc((d.plan||'free').toUpperCase());
+
+    return `
+      <tr>
+        <td data-label="Member">
+          <div class="member-name">${name}</div>
+          <div class="member-email">${email}</div>
+        </td>
+        <td data-label="Province">${esc(d.province || (d.application && d.application.province) || '—')}</td>
+        <td data-label="Membership #">${num}</td>
+        <td data-label="Plan">${plan}</td>
+        <td data-label="Status"><span class="badge ${statusBadgeClass(status)}">${esc(status)}</span></td>
+        <td data-label="Application"><span class="badge ${statusBadgeClass(appStatus)}">${esc(appStatus)}</span></td>
+        
+        <td data-label="Actions">
+          <div class="row-actions">
+            <button class="btn-sm btn-view" data-action="view" data-id="${m.id}">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn-sm btn-approve" data-action="approve" data-id="${m.id}" title="Approve">
+              <i class="fas fa-check"></i>
+            </button>
+            <button class="btn-sm btn-reject" data-action="reject" data-id="${m.id}" title="Reject">
+              <i class="fas fa-times"></i>
+            </button>
+            <button class="btn-sm btn-delete" data-action="delete" data-id="${m.id}" title="Delete member">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ---------- ROW ACTIONS ---------- */
+document.getElementById('memberTableBody').addEventListener('click',e=>{
+  const btn=e.target.closest('button[data-action]');
+  if(!btn)return;
+  handleRowAction(btn.dataset.action,btn.dataset.id,btn);
+});
+
+function handleRowAction(action,id,btn){
+  const member=allMembers.find(m=>m.id===id);
+  if(!member)return;
+  if(action==='view')return openDetails(member);
+  if(action==='approve')return updateMemberStatus(member,'active','approved',btn);
+  if(action==='reject')return updateMemberStatus(member,'rejected','rejected',btn);
+  if(action==='delete')return openDeleteConfirm(member);
+}
+
+async function updateMemberStatus(member, newStatus, newAppStatus, btn) {
+
+  console.log("UPDATE MEMBER STATUS FUNCTION CALLED");
+  console.log("Member:", member);
+  console.log("New status:", newStatus);
+  console.log("New application status:", newAppStatus);
+
+  const oldHtml = btn.innerHTML;
+
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+
+  try {
+
+    const memberRef = db.collection('members').doc(member.id);
+
+    // -----------------------------------------
+    // CREATE MEMBERSHIP NUMBER WHEN APPROVED
+    // -----------------------------------------
+
+    let membershipNumber = member.data.membershipNumber;
+
+    if (newStatus === 'active') {
+
+      if (!membershipNumber) {
+
+        const year = new Date().getFullYear();
+
+        // Last 6 characters of Firebase UID
+        const uidPart = String(member.id)
+          .slice(-6)
+          .toUpperCase();
+
+        membershipNumber = `SF${year}${uidPart}`;
+      }
+
+      console.log(
+        "MEMBERSHIP NUMBER:",
+        membershipNumber
+      );
+    }
+
+    // -----------------------------------------
+    // UPDATE MEMBER DOCUMENT
+    // -----------------------------------------
+
+    const updateData = {
+      status: newStatus,
+      applicationStatus: newAppStatus,
+      reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      reviewedBy: auth.currentUser.uid
+    };
+
+    if (newStatus === 'active') {
+      updateData.membershipNumber = membershipNumber;
+    }
+
+    await memberRef.update(updateData);
+
+    console.log("Member document updated.");
+
+    // -----------------------------------------
+    // CREATE PUBLIC VERIFICATION RECORD
+    // -----------------------------------------
+
+    if (newStatus === 'active') {
+
+      const memberData = member.data;
+
+      const memberName =
+        memberData.name ||
+        memberData.fullName ||
+        (
+          (memberData.application?.firstName || '') +
+          ' ' +
+          (memberData.application?.lastName || '')
+        ).trim() ||
+        memberData.email ||
+        'Unknown Member';
+
+      const school =
+        memberData.school ||
+        memberData.schoolName ||
+        memberData.application?.school ||
+        'Not available';
+
+      const validUntil = new Date();
+      validUntil.setFullYear(validUntil.getFullYear() + 1);
+
+      await db.collection('memberVerification')
+        .doc(membershipNumber)
+        .set({
+          membershipNumber: membershipNumber,
+          memberName: memberName,
+          school: school,
+          status: 'active',
+          validUntil: firebase.firestore.Timestamp.fromDate(validUntil),
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+      console.log(
+        "MEMBER VERIFICATION RECORD CREATED:",
+        membershipNumber
+      );
+    }
+
+    // -----------------------------------------
+    // UPDATE LOCAL DATA
+    // -----------------------------------------
+
+    member.data.status = newStatus;
+    member.data.applicationStatus = newAppStatus;
+
+    if (newStatus === 'active') {
+      member.data.membershipNumber = membershipNumber;
+    }
+
+    // -----------------------------------------
+    // ACTIVITY LOG
+    // -----------------------------------------
+
+    await logActivity(
+      newStatus === 'active'
+        ? 'application_active'
+        : 'application_rejected',
+      {
+        memberId: member.id,
+
+        memberName:
+          member.data.name ||
+          member.data.fullName ||
+          member.data.email ||
+          '',
+
+        membershipNumber:
+          newStatus === 'active'
+            ? membershipNumber
+            : ''
+      }
+    );
+
+    // -----------------------------------------
+    // REFRESH DASHBOARD
+    // -----------------------------------------
+
+    computeStats(allMembers);
+    applyFilters();
+    renderPendingPanel();
+    loadActivity();
+
+    toast(
+      newStatus === 'active'
+        ? `Member approved. Membership number: ${membershipNumber}`
+        : 'Member rejected.'
+    );
+
+    closeModal();
+
+  } catch (err) {
+
+    console.error(
+      "updateMemberStatus failed:",
+      err
+    );
+
+    btn.disabled = false;
+    btn.innerHTML = oldHtml;
+
+    toast(
+      'Update failed: ' +
+      (err.code || err.message),
+      true
+    );
+  }
+}
+
+/* 
+   DELETE MEMBER
+  */
+
+function openDeleteConfirm(member){
+  if(!member)return;
+
+  memberToDelete=member;
+
+  const d=member.data||{};
+  const name=
+    d.name||d.fullName||d.email||
+    ((d.application?.firstName||'')+' '+(d.application?.lastName||'')).trim()||
+    '(no name)';
+
+  document.getElementById('deleteMemberName').textContent=name;
+
+  const metaParts=[];
+  if(d.email)metaParts.push(d.email);
+  if(d.membershipNumber)metaParts.push('#'+d.membershipNumber);
+  if(d.school||d.schoolName)metaParts.push(d.school||d.schoolName);
+  document.getElementById('deleteMemberMeta').textContent=metaParts.join(' · ');
+
+  const btn=document.getElementById('deleteConfirmBtn');
+  btn.disabled=false;
+  btn.innerHTML='<i class="fas fa-trash"></i> Delete Permanently';
+
+  deleteModal.classList.add('show');
+}
+
+function closeDeleteConfirm(){
+  deleteModal.classList.remove('show');
+  memberToDelete=null;
+
+  const btn=document.getElementById('deleteConfirmBtn');
+  btn.disabled=false;
+  btn.innerHTML='<i class="fas fa-trash"></i> Delete Permanently';
+}
+
+async function confirmDelete(){
+  if(!memberToDelete)return;
+  const btn=document.getElementById('deleteConfirmBtn');
+  const member=memberToDelete;
+
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Deleting…';
+
+  const ok=await deleteMember(member);
+
+  if(ok){
+    closeDeleteConfirm();
+  }else{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-trash"></i> Delete Permanently';
+  }
+}
+
+async function deleteMember(member){
+  const d=member.data||{};
+
+  const memberName=
+    d.name||d.fullName||d.email||
+    ((d.application?.firstName||'')+' '+(d.application?.lastName||'')).trim()||
+    'Unknown Member';
+
+  const membershipNumber=d.membershipNumber||'';
+
+  try{
+    // 1. Delete the member document
+    await db.collection('members').doc(member.id).delete();
+
+    // 2. Delete the public verification record (if it exists)
+    if(membershipNumber){
+      try{
+        await db.collection('memberVerification').doc(membershipNumber).delete();
+      }catch(e){
+        // Non-fatal — the member doc is gone, which is the primary goal
+        console.warn('Verification record delete failed:',e.message);
+      }
+    }
+
+    // 3. Remove from local state
+    allMembers=allMembers.filter(m=>m.id!==member.id);
+
+    // 4. Log activity
+    await logActivity('member_deleted',{
+      memberId:member.id,
+      memberName:memberName,
+      membershipNumber:membershipNumber
+    });
+
+    // 5. Refresh dashboard
+    computeStats(allMembers);
+    applyFilters();
+    renderPendingPanel();
+    loadActivity();
+
+    closeModal();
+
+    toast(
+      membershipNumber
+        ? `Deleted ${memberName} (#${membershipNumber}).`
+        : `Deleted ${memberName}.`
+    );
+
+    return true;
+
+  }catch(err){
+    console.error('deleteMember failed:',err);
+    let msg='Delete failed: '+(err.code||err.message);
+    if(err.code==='permission-denied')msg='Permission denied. Check Firestore rules for admin delete access.';
+    toast(msg,true);
+    return false;
+  }
+}
+
+/* ---------- DOCUMENT VIEWER ---------- */
+function normaliseDocuments(d){
+  const candidates=[d&&d.documents,d&&d.application&&d.application.documents];
+  let docs=candidates.find(v=>Array.isArray(v)&&v.length) ||
+           candidates.find(v=>v&&typeof v==='object'&&Object.keys(v).length);
+
+  if(!docs){
+    const legacy=[];
+    const idDoc=d&&(d.identityDocument||d.idDocument);
+    const schoolDoc=d&&(d.schoolProof||d.proofOfSchool||d.schoolDocument);
+    if(idDoc)legacy.push({...idDoc,type:idDoc.type||'Identity Document'});
+    if(schoolDoc)legacy.push({...schoolDoc,type:schoolDoc.type||'Proof of School / Institution'});
+    docs=legacy;
+  }
+
+  if(!docs)return [];
+  if(!Array.isArray(docs)){
+    docs=Object.entries(docs).map(([key,value])=>({...value||{},type:(value&&value.type)||key}));
+  }
+  return docs.filter(Boolean);
+}
+
+function documentLabel(doc,index){
+  return doc.label||doc.name||doc.title||doc.type||`Document ${index+1}`;
+}
+function documentUrl(doc){
+  return doc.downloadURL||doc.downloadUrl||doc.url||doc.fileUrl||'';
+}
+function documentPath(doc){
+  return doc.storagePath||doc.path||doc.fullPath||'';
+}
+function documentSize(doc){
+  const bytes=Number(doc.sizeBytes||doc.size||0);
+  if(!bytes)return '';
+  if(bytes<1024*1024)return Math.round(bytes/1024)+' KB';
+  return (bytes/(1024*1024)).toFixed(1)+' MB';
+}
+
+async function resolveDocumentUrl(doc) {
+  const direct = documentUrl(doc);
+  if (direct) return direct;
+
+  const path = documentPath(doc);
+  if (!path) return "";
+
+  try {
+    // Confirm the admin is signed in.
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      console.warn("Cannot open documents: no signed-in user.");
+      return "";
+    }
+
+    // This requests a download URL. It will work only if the
+    // applicable Storage rules permit this read.
+    return await storage.ref(path).getDownloadURL();
+  } catch (err) {
+    console.warn("Could not get document URL:", err.code, err.message);
+    return "";
+  }
+}
+ 
+
+async function renderMemberDocuments(member){
+  const docs=normaliseDocuments(member.data||{});
+  const container=document.getElementById('memberDocuments');
+  if(!container)return;
+
+  if(!docs.length){
+    container.innerHTML='<div class="document-empty"><i class="fas fa-file-circle-xmark"></i> No documents have been uploaded.</div>';
+    return;
+  }
+
+  container.innerHTML=docs.map((doc,index)=>`
+    <div class="document-card">
+      <div class="document-info">
+        <div class="document-name"><i class="fas fa-file"></i> ${esc(documentLabel(doc,index))}</div>
+        <div class="document-meta">
+          ${esc(doc.fileName||doc.filename||doc.originalName||'')}
+          ${documentSize(doc)?' · '+esc(documentSize(doc)):''}
+        </div>
+      </div>
+      <div class="document-actions" id="document-actions-${index}">
+        <span class="document-loading"><i class="fas fa-spinner fa-spin"></i> Loading…</span>
+      </div>
+    </div>
+  `).join('');
+
+  await Promise.all(docs.map(async(doc,index)=>{
+    const url=await resolveDocumentUrl(doc);
+    const actions=document.getElementById(`document-actions-${index}`);
+    if(!actions)return;
+
+    if(!url){
+      actions.innerHTML='<span class="document-loading"><i class="fas fa-triangle-exclamation"></i> File unavailable</span>';
+      return;
+    }
+
+    actions.innerHTML=`
+      <a class="btn-sm btn-view" href="${esc(url)}" target="_blank" rel="noopener">
+        <i class="fas fa-eye"></i> View
+      </a>
+      <a class="btn-sm btn-view" href="${esc(url)}" target="_blank" rel="noopener" download>
+        <i class="fas fa-download"></i> Download
+      </a>
+    `;
+  }));
+}
+
+/* ---------- MODAL DETAILS ---------- */
+function openDetails(member){
+  if(!member)return;
+  const d=member.data;
+  const name=d.name||d.fullName||d.email||'(no name)';
+
+  modalTitle.textContent=name;
+
+  const rows=[
+    ['Email',d.email],
+    ['Phone',d.phone||d.phoneNumber],
+    ['Gender',d.gender||(d.application&&d.application.gender)],
+    ['Province',d.province||(d.application&&d.application.province)],
+    ['City / Town',d.location],
+    ['Address',d.address||(d.application&&d.application.address)],
+    ['School',d.school],
+    ['Location',d.location],
+    ['Membership #',d.membershipNumber||'Not assigned'],
+    ['Plan',(d.plan||'free').toUpperCase()],
+    ['Status',(d.status||'pending').toUpperCase()],
+    ['Application',(d.applicationStatus||'pending').toUpperCase()],
+    ['Paid',d.paid?'Yes':'No'],
+    ['Member since',d.createdAt&&d.createdAt.toDate?d.createdAt.toDate().toLocaleString():'—'],
+    ['Reviewed at',d.reviewedAt&&d.reviewedAt.toDate?d.reviewedAt.toDate().toLocaleString():'—'],
+    ['Document ID',member.id]
+  ];
+
+  modalBody.innerHTML=rows.map(([label,value])=>`
+    <div class="detail-row">
+      <div class="detail-label">${esc(label)}</div>
+      <div class="detail-value">${esc(value||'—')}</div>
+    </div>
+  `).join('')+`
+    <div class="document-section">
+      <div class="document-section-title"><i class="fas fa-folder-open"></i> Documents</div>
+      <div id="memberDocuments">
+        <div class="document-loading"><i class="fas fa-spinner fa-spin"></i> Loading documents…</div>
+      </div>
+    </div>
+  `;
+
+  const status=(d.status||'pending').toLowerCase();
+
+  modalActions.innerHTML=`
+    ${status!=='active'?`<button class="btn-sm btn-approve" data-modal-action="approve"><i class="fas fa-check"></i> Approve</button>`:''}
+    ${status!=='rejected'?`<button class="btn-sm btn-reject" data-modal-action="reject"><i class="fas fa-times"></i> Reject</button>`:''}
+    <button class="btn-sm btn-delete" data-modal-action="delete"><i class="fas fa-trash"></i> Delete</button>
+    <button class="btn-sm btn-view" data-modal-action="close"><i class="fas fa-xmark"></i> Close</button>
+  `;
+
+  modalActions.querySelectorAll('button[data-modal-action]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const act=b.dataset.modalAction;
+      if(act==='close')return closeModal();
+      if(act==='approve')return updateMemberStatus(member,'active','approved',b);
+      if(act==='reject')return updateMemberStatus(member,'rejected','rejected',b);
+      if(act==='delete'){
+        closeModal();
+        openDeleteConfirm(member);
+      }
+    });
+  });
+
+  modal.classList.add('show');
+  renderMemberDocuments(member);
+}
+</script>
+
+</body>
+</html>

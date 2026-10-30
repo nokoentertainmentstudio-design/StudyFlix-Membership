@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>StudyFlix Admin — Staff Portal</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --red: #ff5555;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3e 100%);
+            color: #E8EEFF;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero-bg {
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 40%, #1e1040 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, #0f2040 0%, transparent 55%);
+            z-index: -2;
+        }
+        .hero-grid {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(245,200,66,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245,200,66,.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        /* Fluid container — grows with the viewport */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* ============================================================
+           NAVBAR
+           ============================================================ */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .navbar-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+        .navbar-links { display: flex; flex-wrap: wrap; gap: 0.8rem 1.2rem; align-items: center; }
+        .navbar-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+            white-space: nowrap;
+        }
+        .navbar-links a:hover { color: var(--teal); }
+        .navbar-links a.active { color: var(--gold); }
+        .navbar-links a.nav-cta {
+            color: var(--gold);
+            border: 1px solid rgba(255,215,0,0.3);
+            padding: 0.35rem 0.9rem;
+            border-radius: 30px;
+            font-weight: 800;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .navbar-links a.nav-cta:hover {
+            background: rgba(255,215,0,0.1);
+            border-color: var(--gold);
+        }
+
+        /* ============================================================
+           HERO
+           ============================================================ */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 3rem;
+            align-items: center;
+            padding: 1rem 0 4rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: var(--gold);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            padding: 0.4rem 0.9rem;
+            border-radius: 30px;
+            margin-bottom: 1.2rem;
+        }
+
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4.2rem);
+            line-height: 1.02;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .page-title .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .page-title .highlight2 {
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .page-sub {
+            color: var(--muted);
+            font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+            line-height: 1.7;
+            max-width: 540px;
+            margin-bottom: 1.8rem;
+        }
+
+        .hero-points {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin-bottom: 1.4rem;
+        }
+        .hero-point {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.88rem;
+            color: #dce2f0;
+        }
+        .hero-point i {
+            color: var(--teal);
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ============================================================
+           LOGIN CARD
+           ============================================================ */
+        .login-card {
+            background: var(--card);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 22px;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+            position: relative;
+            overflow: hidden;
+            max-width: 460px;
+            width: 100%;
+            justify-self: center;
+        }
+        .login-card::before {
+            content: "";
+            position: absolute;
+            width: 240px; height: 240px;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.05);
+            top: -130px; right: -90px;
+            pointer-events: none;
+        }
+        .login-card > * { position: relative; z-index: 1; }
+
+        .admin-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: var(--gold);
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 0.28rem 0.75rem;
+            border-radius: 30px;
+            margin: 0 auto 0.9rem;
+            width: fit-content;
+        }
+
+        .login-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.9rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.15rem;
+        }
+        .login-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+        .login-sub {
+            text-align: center;
+            font-size: 0.76rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 0.9rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.78rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 0.88rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: var(--teal); }
+        .form-group input::placeholder { color: #5b6788; }
+
+        .input-wrap { position: relative; }
+        .input-wrap input { padding-right: 2.6rem; }
+
+        .toggle-pw {
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.3rem;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .toggle-pw:hover { color: var(--teal); }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 0.2rem 0 1.1rem;
+            font-size: 0.76rem;
+            flex-wrap: wrap;
+        }
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--muted);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+        }
+        .remember input {
+            accent-color: var(--teal);
+            cursor: pointer;
+        }
+        .forgot-link {
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+
+        .auth-btn {
+            width: 100%;
+            padding: 0.82rem;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #000;
+            font-weight: 800;
+            font-size: 0.98rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .auth-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255,215,0,0.3);
+        }
+        .auth-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .auth-msg {
+            display: none;
+            font-size: 0.78rem;
+            padding: 0.6rem 0.85rem;
+            border-radius: 10px;
+            margin-bottom: 0.9rem;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .auth-msg.error {
+            background: rgba(255,80,80,0.1);
+            border: 1px solid rgba(255,80,80,0.35);
+            color: #ff9b9b;
+        }
+        .auth-msg.success {
+            background: rgba(0,212,180,0.1);
+            border: 1px solid rgba(0,212,180,0.35);
+            color: #7ff0dd;
+        }
+
+        .login-footer {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 1.3rem;
+            padding-top: 1.3rem;
+            border-top: 1px solid var(--border);
+        }
+        .login-footer a {
+            color: var(--teal);
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .login-footer a:hover { text-decoration: underline; }
+
+        .spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(0,0,0,0.25);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ============================================================
+           SECTIONS
+           ============================================================ */
+        section { padding: 3.5rem 0; }
+
+        .section-head {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2rem, 3.2vw, 2.6rem);
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+        .section-title .highlight { color: var(--gold); }
+        .section-sub {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* BENEFITS */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4rem;
+        }
+        .benefit-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.8rem 1.4rem;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .benefit-card:hover {
+            transform: translateY(-7px);
+            border-color: var(--gold);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        .benefit-icon {
+            width: 62px; height: 62px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .benefit-icon i { font-size: 26px; color: var(--gold); }
+        .benefit-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        .benefit-text {
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* STEPS */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4rem;
+        }
+        .step {
+            text-align: center;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.8rem 1.4rem;
+        }
+        .step-number {
+            width: 44px; height: 44px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.05rem;
+        }
+        .step h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.35rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+        .step p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* PRICING */
+        .pricing-band {
+            max-width: 460px;
+            margin: 0 auto;
+            background: var(--card);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 22px;
+            padding: 2.4rem 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            overflow: hidden;
+        }
+        .pricing-band::before {
+            content: "";
+            position: absolute;
+            width: 260px; height: 260px;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.05);
+            top: -140px; right: -90px;
+        }
+        .pricing-band > * { position: relative; z-index: 1; }
+
+        .plan-icon {
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin-bottom: 0.8rem;
+        }
+        .plan-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+        .plan-price {
+            font-size: 2.6rem;
+            font-weight: 900;
+            color: var(--teal);
+            margin: 0.6rem 0 0.1rem;
+        }
+        .plan-duration {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: 1.6rem;
+        }
+        .plan-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.8rem;
+        }
+        .plan-features li {
+            padding: 0.7rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+            color: #dce2f0;
+        }
+        .plan-features li:last-child { border-bottom: none; }
+        .plan-features i { color: var(--teal); margin-right: 0.6rem; }
+
+        .plan-btn {
+            display: block;
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.95rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .plan-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(255,215,0,0.25); }
+
+        /* FAQ */
+        .faq-list {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+        .faq-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .faq-item:hover { border-color: rgba(0,212,180,0.3); }
+        .faq-item summary {
+            cursor: pointer;
+            padding: 1.1rem 1.3rem;
+            font-weight: 800;
+            font-size: 0.92rem;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-item summary::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--teal);
+            font-size: 0.72rem;
+            transition: transform 0.25s;
+            flex-shrink: 0;
+        }
+        .faq-item[open] summary { color: var(--gold); }
+        .faq-item[open] summary::after { transform: rotate(180deg); }
+        .faq-item p {
+            padding: 0 1.3rem 1.2rem;
+            color: var(--muted);
+            font-size: 0.87rem;
+            line-height: 1.7;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .footer-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+        .footer-social { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.2rem; }
+        .footer-social a { color: var(--muted); font-size: 1.3rem; transition: all 0.3s; }
+        .footer-social a:hover { color: var(--teal); transform: translateY(-3px); }
+        .footer-copyright { font-size: 0.75rem; color: var(--muted); }
+
+        /* ============================================================
+           LARGE SCREENS — scale up so the page fills wide monitors
+           ============================================================ */
+        @media (min-width: 1440px) {
+            .container { max-width: 1400px; padding: 2.5rem 2.5rem; }
+            .hero { gap: 4.5rem; padding: 2rem 0 5rem; }
+            .login-card { max-width: 500px; padding: 2.4rem 2.2rem; }
+            .navbar-brand { font-size: 2.4rem; }
+            .navbar-links a { font-size: 0.95rem; }
+            .form-group input { padding: 0.9rem 1.1rem; font-size: 0.95rem; }
+            .auth-btn { padding: 0.95rem; font-size: 1.05rem; }
+            .login-brand { font-size: 2.2rem; }
+            .login-title { font-size: 1.25rem; }
+            .login-sub { font-size: 0.85rem; }
+            .benefits-grid, .steps { gap: 1.8rem; }
+            .benefit-card, .step { padding: 2.2rem 1.8rem; }
+            .section-title { font-size: 3rem; }
+            .pricing-band { max-width: 520px; padding: 2.8rem 2.4rem; }
+            .plan-price { font-size: 3rem; }
+            footer { padding: 4rem 0 2.5rem; }
+            .footer-brand { font-size: 1.9rem; }
+            .footer-social a { font-size: 1.6rem; }
+            .footer-copyright { font-size: 0.85rem; }
+        }
+
+        @media (min-width: 1920px) {
+            .container { max-width: 1600px; }
+            .hero { gap: 6rem; }
+            .login-card { max-width: 540px; }
+        }
+
+        /* ============================================================
+           TABLET / MEDIUM
+           ============================================================ */
+        @media (max-width: 980px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                text-align: center;
+                padding-bottom: 3rem;
+            }
+            .page-sub { margin-left: auto; margin-right: auto; }
+            .hero-points { align-items: center; }
+            .login-card { justify-self: center; }
+        }
+
+        @media (max-width: 850px) {
+            .benefits-grid,
+            .steps {
+                grid-template-columns: 1fr;
+                max-width: 480px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+            .navbar-links { justify-content: center; gap: 0.6rem 1rem; }
+            .navbar-links a { font-size: 0.75rem; }
+        }
+
+        /* ============================================================
+           PHONES
+           ============================================================ */
+        @media (max-width: 480px) {
+            .container { padding: 1.25rem 1rem; }
+            .navbar { margin-bottom: 1.75rem; }
+            .navbar-brand { font-size: 1.6rem; }
+            .navbar-links { gap: 0.5rem 0.9rem; }
+            .navbar-links a { font-size: 0.72rem; }
+            .navbar-links a.nav-cta { padding: 0.3rem 0.75rem; }
+            .page-title { font-size: 2.2rem; }
+            .section-title { font-size: 2rem; }
+            .login-card {
+                padding: 1.6rem 1.3rem;
+                border-radius: 18px;
+                max-width: 100%;
+            }
+            .login-brand { font-size: 1.7rem; }
+            .login-title { font-size: 1rem; }
+            .login-sub { font-size: 0.72rem; margin-bottom: 1.2rem; }
+            .form-group input { padding: 0.72rem 0.9rem; font-size: 0.85rem; }
+            .auth-btn { padding: 0.78rem; font-size: 0.92rem; }
+            .form-row { font-size: 0.72rem; }
+            .hero-point { font-size: 0.82rem; }
+            .benefit-card, .step { padding: 1.5rem 1.2rem; }
+            .pricing-band { padding: 2rem 1.5rem; }
+            .plan-price { font-size: 2.2rem; }
+            .faq-item summary { padding: 0.95rem 1.1rem; font-size: 0.86rem; }
+            .faq-item p { padding: 0 1.1rem 1rem; font-size: 0.82rem; }
+            .footer-brand { font-size: 1.4rem; }
+            .footer-social { gap: 1.2rem; }
+            .footer-social a { font-size: 1.15rem; }
+            .footer-copyright { font-size: 0.7rem; }
+        }
+
+        @media (max-width: 360px) {
+            .container { padding: 1rem 0.8rem; }
+            .page-title { font-size: 1.9rem; }
+            .login-card { padding: 1.4rem 1.1rem; }
+            .auth-btn { font-size: 0.88rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="container">
+
+        <!-- ======== HERO WITH LOGIN ======== -->
+        <div class="hero">
+
+            <div class="hero-copy">
+
+                <div class="hero-badge">
+                    <i class="fas fa-shield-halved"></i>
+                    Unauthorised access is prohibited
+                </div>
+
+            </div>
+
+            <!-- ADMIN LOGIN CARD -->
+            <div class="login-card">
+
+                <div class="admin-badge">
+                    <i class="fas fa-shield-halved"></i> Admin Access
+                </div>
+
+                <div class="login-brand">STUDYFLIX</div>
+                <div class="login-title">Admin Sign In</div>
+                <div class="login-sub">Sign in with your administrator account</div>
+
+                <div class="auth-msg error"   id="authError"   role="alert"></div>
+                <div class="auth-msg success" id="authSuccess" role="status"></div>
+
+                <form id="loginForm" novalidate>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="admin@studyflix.com"
+                            required
+                            autocomplete="username"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrap">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                                autocomplete="current-password"
+                            />
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="remember">
+                            <input type="checkbox" id="remember" checked />
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="auth-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt" id="loginIcon"></i>
+                        <span id="loginText">Sign In as Admin</span>
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======== FOOTER ======== -->
+        <footer>
+
+            <div class="footer-brand">STUDYFLIX</div>
+
+            <div class="footer-social">
+                <a href="https://youtube.com/@studyflix-noko?si=2NUceG6DI6hwUWa8" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@studyflixnokoente" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61591802301419" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            </div>
+
+            <div class="footer-copyright">
+                &copy; 2025 Noko Entertainment Studio &middot; StudyFlix &middot; All rights reserved
+            </div>
+
+        </footer>
+
+    </div>
+
+    <!-- ======== FIREBASE ======== -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+    /* ============================================================
+       PATHS — point to the admin pages
+       ============================================================ */
+    const PATHS = {
+        adminLogin:     'index.html',
+        adminRegister:  'admin-register.html',
+        adminDashboard: 'admin-dashboard.html'   // ← updated
+    };
+
+    /* ---------- FIREBASE ---------- */
+    const firebaseConfig = {
+        apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+        authDomain: "studyflix-membership.firebaseapp.com",
+        projectId: "studyflix-membership",
+        storageBucket: "studyflix-membership.firebasestorage.app",
+        messagingSenderId: "641080177215",
+        appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+        measurementId: "G-3384WRNWXW"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+
+    /* ---------- DOM ---------- */
+    const els = {
+        form:         document.getElementById('loginForm'),
+        email:        document.getElementById('email'),
+        password:     document.getElementById('password'),
+        remember:     document.getElementById('remember'),
+        togglePw:     document.getElementById('togglePw'),
+        forgotLink:   document.getElementById('forgotLink'),
+        loginBtn:     document.getElementById('loginBtn'),
+        loginText:    document.getElementById('loginText'),
+        loginIcon:    document.getElementById('loginIcon'),
+        authError:    document.getElementById('authError'),
+        authSuccess:  document.getElementById('authSuccess'),
+        navRegister:  document.getElementById('navRegister'),
+        navDashboard: document.getElementById('navDashboard'),
+        navLogout:    document.getElementById('navLogout')
+    };
+
+    function setDisplay(el, value) {
+        if (el) el.style.display = value;
+    }
+
+    /* ---------- HELPERS ---------- */
+    function showError(msg) {
+        els.authSuccess.style.display = 'none';
+        els.authError.textContent = msg;
+        els.authError.style.display = 'block';
+    }
+    function showSuccess(msg) {
+        els.authError.style.display = 'none';
+        els.authSuccess.textContent = msg;
+        els.authSuccess.style.display = 'block';
+    }
+    function clearMessages() {
+        els.authError.style.display = 'none';
+        els.authSuccess.style.display = 'none';
+    }
+    function friendlyError(code) {
+        switch (code) {
+            case 'auth/invalid-email':          return 'That email address looks invalid.';
+            case 'auth/user-not-found':         return 'No account found with that email.';
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential':     return 'Incorrect email or password.';
+            case 'auth/missing-password':       return 'Please enter your password.';
+            case 'auth/user-disabled':          return 'This account has been disabled. Contact support.';
+            case 'auth/too-many-requests':      return 'Too many attempts. Please try again later.';
+            case 'auth/network-request-failed': return 'Network error. Check your connection.';
+            default:                            return 'Sign in failed. Please try again.';
+        }
+    }
+
+    async function isAdmin(uid) {
+        const snap = await db.collection('admins').doc(uid).get();
+        if (!snap.exists) return false;
+        const d = snap.data();
+        return d.role === 'admin' && d.status === 'active';
+    }
+    
+
+    /* ---------- FORGOT PASSWORD ---------- */
+    els.forgotLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        clearMessages();
+
+        const email = els.email.value.trim();
+        if (!email) {
+            showError('Enter your email address above first, then tap "Forgot password".');
+            els.email.focus();
+            return;
+        }
+
+        els.forgotLink.style.pointerEvents = 'none';
+        els.forgotLink.style.opacity = '0.6';
+
+        try {
+            await auth.sendPasswordResetEmail(email);
+            showSuccess('Reset link sent to ' + email + '. Check your inbox.');
+        } catch (err) {
+            console.error(err);
+            showError(friendlyError(err.code));
+        } finally {
+            els.forgotLink.style.pointerEvents = '';
+            els.forgotLink.style.opacity = '';
+        }
+    });
+
+    /* ---------- AUTH STATE ---------- */
+    auth.onAuthStateChanged(async user => {
+        try {
+            let admin = false;
+
+            if (user) {
+                admin = await isAdmin(user.uid);
+            }
+
+            setDisplay(els.navRegister,  admin ? 'none'   : 'inline');
+            setDisplay(els.navDashboard, admin ? 'inline' : 'none');
+            setDisplay(els.navLogout,    admin ? 'inline' : 'none');
+        } catch (err) {
+            console.error('Auth state handling failed:', err);
+            setDisplay(els.navRegister,  'inline');
+            setDisplay(els.navDashboard, 'none');
+            setDisplay(els.navLogout,    'none');
+        }
+    });
+
+    /* ---------- LOGOUT ---------- */
+    if (els.navLogout) {
+        els.navLogout.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try { await auth.signOut(); } catch (err) { console.error(err); }
+            clearMessages();
+        });
+    }
+
+    /* ---------- LOGIN SUBMIT ---------- */
+    els.form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearMessages();
+
+        const email    = els.email.value.trim();
+        const password = els.password.value;
+
+        if (!email || !password) {
+            showError('Please fill in all fields.');
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showError('Please enter a valid email address.');
+            els.email.focus();
+            return;
+        }
+
+        els.loginBtn.disabled = true;
+        els.loginText.textContent = 'Signing in…';
+        els.loginIcon.className = 'fas fa-spinner fa-spin';
+
+        try {
+            const persistence = els.remember.checked
+                ? firebase.auth.Auth.Persistence.LOCAL
+                : firebase.auth.Auth.Persistence.SESSION;
+            try { await auth.setPersistence(persistence); }
+            catch (pErr) { console.warn('setPersistence failed:', pErr.message); }
+
+            /* 1. Sign in */
+            const cred = await auth.signInWithEmailAndPassword(email, password);
+
+            /* 2. Verify admin status */
+            els.loginText.textContent = 'Verifying admin access…';
+
+            let admin = false;
+            try {
+                admin = await isAdmin(cred.user.uid);
+            } catch (adminErr) {
+                console.error('isAdmin threw:', adminErr);
+                await auth.signOut();
+                showError('Admin check failed. Please try again.');
+                els.loginBtn.disabled = false;
+                els.loginText.textContent = 'Sign In as Admin';
+                els.loginIcon.className = 'fas fa-sign-in-alt';
+                return;
+            }
+
+            if (!admin) {
+                await auth.signOut();
+                showError('This account does not have administrator access.');
+                els.loginBtn.disabled = false;
+                els.loginText.textContent = 'Sign In as Admin';
+                els.loginIcon.className = 'fas fa-sign-in-alt';
+                return;
+            }
+
+            /* 3. Go to admin dashboard */
+            showSuccess('Welcome back. Opening admin dashboard…');
+            els.loginText.textContent = 'Signed in';
+            els.loginIcon.className = 'fas fa-check';
+
+            setTimeout(() => {
+                window.location.href = PATHS.adminDashboard;
+            }, 700);
+
+        } catch (err) {
+            console.error(err);
+            showError(friendlyError(err.code));
+            els.loginBtn.disabled = false;
+            els.loginText.textContent = 'Sign In as Admin';
+            els.loginIcon.className = 'fas fa-sign-in-alt';
+        }
+    });
+</script>
+
+</body>
+</html>

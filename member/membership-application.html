@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Membership Application — StudyFlix</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --gold: #FFD700; --orange: #FF6B00; --teal: #00D4B4; --blue: #2288FF; --red: #ff5555; --muted: #8892B0; --card: #1C2640; --border: rgba(255,255,255,0.07); }
+body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #080C18, #111A2E); color: #E8EEFF; min-height: 100vh; overflow-x: hidden; }
+.dash-main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+@media (max-width: 768px) { .dash-main { padding-top: 75px; } }
+.dash-topbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border); margin-bottom: 1.8rem; flex-wrap: wrap; }
+.dash-user { display: flex; align-items: center; gap: 0.8rem; }
+.dash-avatar { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #00FFCC, #2288FF); display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 900; color: #000; flex-shrink: 0; }
+.dash-name { font-weight: 800; font-size: 0.98rem; line-height: 1.2; }
+.dash-email { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+.dash-logout { background: rgba(255,80,80,0.1); border: 1px solid rgba(255,80,80,0.3); color: #ff9b9b; padding: 0.5rem 1rem; border-radius: 30px; font-family: inherit; font-weight: 800; font-size: 0.78rem; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+.dash-logout:hover { background: rgba(255,80,80,0.2); border-color: rgba(255,80,80,0.5); }
+.dash-logout i { margin-right: 5px; }
+.dash-header { margin-bottom: 1.6rem; }
+.dash-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; letter-spacing: 1.5px; line-height: 1.1; }
+.dash-header h1 .highlight { background: linear-gradient(135deg, var(--gold), var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.dash-header p { color: var(--muted); font-size: 0.9rem; margin-top: 0.3rem; }
+.loading-wrap { text-align: center; padding: 5rem 1rem; color: var(--muted); }
+.loading-wrap i { font-size: 2rem; color: var(--teal); margin-bottom: 1rem; }
+.loading-wrap p { font-size: 0.9rem; }
+.locked-wrap { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; }
+.locked-wrap::before { content: ""; position: absolute; width: 280px; height: 280px; border-radius: 50%; background: rgba(255,215,0,0.05); top: -140px; right: -100px; }
+.locked-wrap > * { position: relative; z-index: 1; }
+.locked-icon { width: 90px; height: 90px; margin: 0 auto 1.4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+.locked-icon.locked-approved { background: rgba(0,212,180,0.12); color: var(--teal); }
+.locked-icon.locked-pending  { background: rgba(255,215,0,0.12);  color: var(--gold); }
+.locked-icon.locked-closed   { background: rgba(255,215,0,0.12);  color: var(--gold); }
+.locked-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 1px; margin-bottom: 0.6rem; }
+.locked-text { color: var(--muted); font-size: 0.9rem; line-height: 1.7; max-width: 500px; margin: 0 auto 1.8rem; }
+.locked-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.8rem; border-radius: 30px; background: linear-gradient(135deg, var(--gold), var(--orange)); color: #111; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; margin: 0 0.3rem; }
+.locked-btn:hover { transform: scale(1.04); box-shadow: 0 0 26px rgba(255,215,0,0.28); }
+.locked-btn.ghost { background: rgba(255,255,255,0.06); color: #E8EEFF; border: 1px solid var(--border); }
+.locked-btn.ghost:hover { background: rgba(255,255,255,0.1); box-shadow: none; }
+.form-wrap { display: none; }
+.reapply-notice { display: none; background: rgba(34,136,255,0.08); border: 1px solid rgba(34,136,255,0.3); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.4rem; font-size: 0.85rem; color: #9cc7ff; line-height: 1.55; }
+.reapply-notice i { margin-right: 0.5rem; }
+.prefill-notice { display: none; background: rgba(0,212,180,0.06); border: 1px solid rgba(0,212,180,0.25); border-radius: 12px; padding: 0.8rem 1rem; margin-bottom: 1.4rem; font-size: 0.8rem; color: #7ff0dd; line-height: 1.5; }
+.prefill-notice i { margin-right: 0.5rem; }
+.section-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem 1.6rem; margin-bottom: 1.4rem; }
+.section-head { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 1px; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem; }
+.section-head .head-accent { display: inline-block; width: 4px; height: 20px; background: linear-gradient(180deg, var(--gold), var(--orange)); border-radius: 4px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { display: flex; flex-direction: column; }
+.form-group.full-width { grid-column: 1 / -1; }
+.form-group label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.prefill-badge { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.3px; color: var(--teal); background: rgba(0,212,180,0.1); padding: 0.15rem 0.5rem; border-radius: 20px; text-transform: uppercase; }
+.prefill-badge i { font-size: 0.55rem; }
+.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"], .form-group textarea, .form-group select { width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+.form-group select{cursor: pointer; appearance: none; padding-right: 2.4rem; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238892B0'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 20px;}
+.form-group select:focus { border-color: var(--teal); }
+.form-group select:invalid { color: #5b6788; border-color: #ff5555; box-shadow: 0 0 0 2px rgba(255,85,85,0.15);}
+.form-group select:invalid:focus {
+  border-color: #ff5555;
+  box-shadow: 0 0 0 2px rgba(255,85,85,0.15);
+}
+.form-group select:valid {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 1px rgba(0,212,180,0.1);
+  color: #E8EEFF;
+}
+.form-group select option { background: #1C2640; color: #E8EEFF; }  
+.form-group input:focus, .form-group textarea:focus { border-color: var(--teal); }
+.form-group input::placeholder, .form-group textarea::placeholder { color: #5b6788; }
+.form-group input:required:placeholder-shown, .form-group textarea:required:placeholder-shown { border-color: #ff5555; box-shadow: 0 0 0 1px rgba(255,85,85,0.15); }
+.form-group input:required:placeholder-shown::placeholder, .form-group textarea:required:placeholder-shown::placeholder { color: #ff7777; }
+.form-group input:required:not(:placeholder-shown), .form-group textarea:required:not(:placeholder-shown) { border-color: var(--border); box-shadow: none; }
+.form-group input:required:focus:placeholder-shown, .form-group textarea:required:focus:placeholder-shown { border-color: #ff5555; box-shadow: 0 0 0 2px rgba(255,85,85,0.15); }
+.form-group input:required:valid:not(:placeholder-shown), .form-group textarea:required:valid:not(:placeholder-shown) { border-color: var(--teal); box-shadow: 0 0 0 1px rgba(0,212,180,0.1); }
+textarea { min-height: 100px; resize: vertical; }
+.code-input { font-family: 'Courier New', monospace !important; font-size: 1.05rem !important; font-weight: 800 !important; letter-spacing: 3px !important; text-transform: uppercase; text-align: center; }
+.code-input::placeholder { letter-spacing: 3px !important; font-weight: 700 !important; }
+.code-feedback { display: none; align-items: center; gap: 0.45rem; margin-top: 0.55rem; font-size: 0.72rem; font-weight: 700; line-height: 1.4; }
+.code-feedback.neutral { color: var(--muted); }
+.code-feedback.valid   { color: var(--teal); }
+.code-feedback.invalid { color: var(--red); }
+.code-feedback i { flex-shrink: 0; }
+.terms-box { display: flex; align-items: flex-start; gap: 0.7rem; font-size: 0.82rem; color: var(--muted); line-height: 1.6; cursor: pointer; user-select: none; }
+.terms-box input { width: auto; margin-top: 4px; accent-color: var(--teal); cursor: pointer; flex-shrink: 0; }
+.terms-box a { color: var(--teal); font-weight: 700; text-decoration: none; }
+.terms-box a:hover { text-decoration: underline; }
+.submit-row { display: flex; gap: 0.7rem; justify-content: flex-end; margin-top: 1.6rem; flex-wrap: wrap; }
+.btn { padding: 0.8rem 1.6rem; border-radius: 30px; font-family: inherit; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; border: none; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+.btn-primary { background: linear-gradient(135deg, var(--gold), var(--orange)); color: #111; }
+.btn-primary:hover:not(:disabled) { transform: scale(1.03); box-shadow: 0 0 26px rgba(255,215,0,0.3); }
+.btn-primary:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+.btn-ghost { background: rgba(255,255,255,0.06); color: #E8EEFF; border: 1px solid var(--border); }
+.btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+.msg { display: none; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1.2rem; line-height: 1.5; }
+.msg.error { background: rgba(255,80,80,0.1); border: 1px solid rgba(255,80,80,0.35); color: #ff9b9b; }
+.msg.success { background: rgba(0,212,180,0.1); border: 1px solid rgba(0,212,180,0.35); color: #7ff0dd; }
+.info-strip { display: flex; gap: 0.7rem; align-items: flex-start; background: rgba(34,136,255,0.06); border: 1px solid rgba(34,136,255,0.25); border-radius: 12px; padding: 0.9rem 1.1rem; font-size: 0.82rem; color: #9cc7ff; line-height: 1.55; margin-bottom: 1.4rem; }
+.info-strip i { color: var(--blue); margin-top: 2px; flex-shrink: 0; }
+.skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: skel 1.4s ease-in-out infinite; border-radius: 6px; display: inline-block; width: 60%; height: 1rem; vertical-align: middle; }
+@keyframes skel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@media (max-width: 700px) { .dash-header h1 { font-size: 2rem; } .form-grid { grid-template-columns: 1fr; } .form-group.full-width { grid-column: auto; } .section-card { padding: 1.2rem 1.1rem; } .submit-row { flex-direction: column-reverse; } .submit-row .btn { width: 100%; justify-content: center; } .code-input { font-size: 0.95rem !important; letter-spacing: 2px !important; } }
+@media (max-width: 480px) { .dash-name { font-size: 0.88rem; } .dash-logout { padding: 0.45rem 0.85rem; font-size: 0.72rem; } .code-input { font-size: 0.85rem !important; letter-spacing: 1.5px !important; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+/* ---------- PLAN PICKER ---------- */
+.plan-picker { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.2rem; }
+.plan-option {
+  display: flex; align-items: flex-start; gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.plan-option:hover { background: rgba(255,255,255,0.06); }
+.plan-option input[type="radio"] {
+  margin-top: 0.3rem; accent-color: var(--teal); flex-shrink: 0; cursor: pointer;
+}
+.plan-option input[type="radio"]:checked ~ .plan-option-body .plan-option-title { color: var(--gold); }
+.plan-option:has(input:checked) {
+  border-color: var(--gold);
+  background: rgba(255,215,0,0.06);
+}
+.plan-option-body { flex: 1; min-width: 0; }
+.plan-option-title { font-weight: 800; font-size: 0.92rem; transition: color .2s; }
+.plan-option-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem; letter-spacing: 0.5px;
+  color: var(--gold);
+  line-height: 1.1; margin: 0.15rem 0 0.25rem;
+}
+.plan-option-price span {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem; font-weight: 700;
+  color: var(--muted); margin-left: 0.25rem;
+}
+.plan-option-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+.plan-option-desc strong { color: var(--teal); }
+
+@media (max-width: 480px) {
+  .plan-option { padding: 0.8rem 0.85rem; }
+  .plan-option-price { font-size: 1.3rem; }
+}
+
+/* ---------- DOCUMENT UPLOADS ---------- */
+.document-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.document-upload input[type="file"] {
+  width: 100%;
+  padding: 0.7rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px dashed rgba(255,255,255,0.16);
+  border-radius: 10px;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.document-upload input[type="file"]::file-selector-button {
+  margin-right: 0.7rem;
+  padding: 0.5rem 0.8rem;
+  border: 0;
+  border-radius: 7px;
+  background: rgba(255,215,0,0.14);
+  color: var(--gold);
+  font-family: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.document-help {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+.document-name {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--teal);
+  font-size: 0.74rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+.document-name i { flex-shrink: 0; }
+.billing-period-wrap {
+  margin-bottom: 1.8rem;
+}
+
+.billing-period-label {
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #FFD700;
+}
+
+.billing-period-toggle {
+  display: inline-flex;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.billing-period-option {
+  cursor: pointer;
+}
+
+.billing-period-option span {
+  display: block;
+  padding: 0.55rem 1.1rem;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
+}
+
+.billing-period-option input {
+  display: none;
+}
+
+.billing-period-option input:checked + span {
+  background: #FFD700;
+  color: #111;
+  font-weight: 700;
+}
+
+</style>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AXGlm5UZ1akPpw4GKxFra_qfPmvnHmuKro5B0ygVRZ7k11cGf_mcs26RbW503f41thqypCk0ubec8Mel&components=buttons&vault=true&intent=subscription&currency=USD"></script>
+
+</head>
+<body class="has-sidebar">
+
+<div id="sidebar-placeholder"></div>
+
+<main class="dash-main">
+
+  <div class="dash-topbar">
+    <div class="dash-user">
+      <div class="dash-avatar" id="topAvatar">–</div>
+      <div>
+        <div class="dash-name" id="topName"><span class="skeleton"></span></div>
+        <div class="dash-email" id="topEmail"></div>
+      </div>
+    </div>
+    <button class="dash-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+
+  <header class="dash-header">
+    <h1>MEMBERSHIP <span class="highlight">APPLICATION</span></h1>
+    <p>Complete your application to become a StudyFlix member.</p>
+  </header>
+
+  <div class="msg error" id="msgError" role="alert"></div>
+  <div class="msg success" id="msgSuccess" role="status"></div>
+
+  <div class="loading-wrap" id="loadingWrap">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading your application…</p>
+  </div>
+
+  <div class="locked-wrap" id="lockedWrap">
+    <div class="locked-icon" id="lockedIcon"><i class="fas fa-lock"></i></div>
+    <h2 class="locked-title" id="lockedTitle">Already submitted</h2>
+    <p class="locked-text" id="lockedText">Your application has already been submitted.</p>
+    <div id="lockedActions"></div>
+  </div>
+
+  <div class="form-wrap" id="formWrap">
+
+    <div class="reapply-notice" id="reapplyNotice">
+      <i class="fas fa-info-circle"></i>
+      Your previous application was not approved. You can reapply below — your previous details have been pre-filled for you.
+    </div>
+
+    <div class="prefill-notice" id="prefillNotice">
+      <i class="fas fa-magic"></i>
+      <span id="prefillNoticeText">We've pre-filled the form with your account details where possible.</span>
+    </div>
+
+    <form id="appForm" novalidate>
+
+      <section class="section-card">
+        <h3 class="section-head"><span class="head-accent"></span>Personal Information</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name <span class="prefill-badge" id="badgeFirstName" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required autocomplete="given-name" />
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name <span class="prefill-badge" id="badgeLastName" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required autocomplete="family-name" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address <span class="prefill-badge" id="badgeEmail" style="display:none;"><i class="fas fa-magic"></i> Account</span></label>
+            <input type="email" id="email" name="email" placeholder="Enter your email address" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Cellphone Number <span class="prefill-badge" id="badgePhone" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="e.g. 071 234 5678" required autocomplete="tel" />
+          </div>
+
+
+          <div class="form-group">
+            <label for="gender">Gender <span class="prefill-badge" id="badgeGender" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+            <select id="gender" name="gender" required>
+              <option value="" disabled selected>Select your gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+         </div>
+
+         <div class="form-group">
+            <label for="province">Province <span class="prefill-badge" id="badgeProvince" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+            <select id="province" name="province" required>
+              <option value="" disabled selected>Select your province</option>
+              <option value="Eastern Cape">Eastern Cape</option>
+              <option value="Free State">Free State</option>
+              <option value="Gauteng">Gauteng</option>
+              <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+              <option value="Limpopo">Limpopo</option>
+              <option value="Mpumalanga">Mpumalanga</option>
+              <option value="Northern Cape">Northern Cape</option>
+              <option value="North West">North West</option>
+              <option value="Western Cape">Western Cape</option>
+            </select>
+          </div>
+
+
+          <div class="form-group">
+            <label for="school">Name of School <span class="prefill-badge" id="badgeSchool" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+            <input type="text" id="school" name="school" placeholder="Enter your school name" required autocomplete="organization" />
+          </div>
+
+          <div class="form-group">
+              <label for="location">City / Town <span class="prefill-badge" id="badgeLocation" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+              <input type="text" id="location" name="location" placeholder="e.g. Pretoria" required autocomplete="address-level2" />
+          </div>
+          
+          <div class="form-group full-width">
+              <label for="address">Residential Address <span class="prefill-badge" id="badgeAddress" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+              <textarea id="address" name="address" placeholder="Street address, suburb, postal code" required autocomplete="street-address" style="min-height:80px"></textarea>
+          </div>
+          
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h3 class="section-head"><span class="head-accent"></span>School Verification</h3>
+        <div class="form-group full-width">
+          <label for="schoolCode">School Code <span class="prefill-badge" id="badgeSchoolCode" style="display:none;"><i class="fas fa-magic"></i> Pre-filled</span></label>
+          <input type="text" id="schoolCode" name="schoolCode" class="code-input" maxlength="14" placeholder="SFSANBOK7F3K9M" autocomplete="off" autocapitalize="characters" spellcheck="false" required />
+          <div class="code-feedback" id="codeFeedback"></div>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section class="section-card">
+        <h3 class="section-head"><span class="head-accent"></span>Documents</h3>
+        <div class="info-strip">
+          <i class="fas fa-file-upload"></i>
+          <div>Upload the documents required for your membership application. Accepted formats are PDF, JPG, JPEG and PNG. Maximum size is 5 MB per document.</div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="identityDocument">Identity Document</label>
+            <div class="document-upload">
+              <input type="file" id="identityDocument" name="identityDocument" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required />
+              <div class="document-help">Upload a clear copy of your ID document.</div>
+              <div class="document-name" id="identityDocumentName"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="schoolProof">Proof of School</label>
+            <div class="document-upload">
+              <input type="file" id="schoolProof" name="schoolProof" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required />
+              <div class="document-help">Upload a valid document showing that you attend your school.</div>
+              <div class="document-name" id="schoolProofName"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h3 class="section-head"><span class="head-accent"></span>Additional Information</h3>
+        <div class="form-group full-width">
+          <label for="message">Additional Information (optional)</label>
+          <textarea id="message" name="message" placeholder="Anything else you'd like us to know?"></textarea>
+        </div>
+      </section>
+
+      <!-- MEMBERSHIP PLAN -->
+<section class="section-card">
+
+  <h3 class="section-head">
+    <span class="head-accent"></span>
+    Membership Plan
+  </h3>
+
+  <div class="billing-period-wrap">
+    <div class="billing-period-label">Billing Period</div>
+
+    <div class="billing-period-toggle" id="billingPeriodToggle">
+
+      <label class="billing-period-option">
+        <input
+          type="radio"
+          name="billingPeriod"
+          value="monthly"
+          checked
+        />
+        <span>Monthly</span>
+      </label>
+
+      <label class="billing-period-option">
+        <input
+          type="radio"
+          name="billingPeriod"
+          value="annual"
+        />
+        <span>Annual</span>
+      </label>
+
+    </div>
+  </div>
+
+  <div class="plan-picker" id="planPicker">
+
+    <label class="plan-option">
+
+      <input
+        type="radio"
+        name="membershipPlan"
+        value="standard"
+        checked
+      />
+
+      <div class="plan-option-body">
+
+        <div class="plan-option-title">
+          StudyFlix Student Membership
+        </div>
+
+        <div class="plan-option-price">
+          R100<span>/month</span>
+        </div>
+
+        <div class="plan-option-desc">
+          Digital card · Partner benefits · Discounts
+        </div>
+
+      </div>
+
+    </label>
+
+
+    <label class="plan-option">
+
+      <input
+        type="radio"
+        name="membershipPlan"
+        value="plus-data"
+      />
+
+      <div class="plan-option-body">
+
+        <div class="plan-option-title">
+          StudyFlix Student Membership + Data
+        </div>
+
+        <div class="plan-option-price">
+          R300<span>/month</span>
+        </div>
+
+        <div class="plan-option-desc">
+          Everything in Standard ·
+          <strong>+ Telkom Mobile Data</strong>
+        </div>
+
+      </div>
+
+    </label>
+
+  </div>
+
+</section>
+
+
+      
+
+      <section class="section-card">
+        <label class="terms-box">
+          <input type="checkbox" id="terms" required />
+          <span>I confirm that the information provided is correct and I agree to the StudyFlix <a href="../admin/terms.html">Terms</a> and <a href="../admin/privacy-policy.html">Privacy Policy</a>.</span>
+        </label>
+      </section>
+
+      
+
+      <div class="submit-row">
+        <a href="dashboard.html" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> Cancel</a>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <i class="fas fa-paper-plane" id="submitIcon"></i>
+          <span id="submitText">Submit Application</span>
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="section-card" id="paymentSection" style="margin-top:2.5rem; display:none;">
+
+  <h3 class="section-head">
+    <span class="head-accent"></span>
+    Membership Payment
+  </h3>
+
+  <div class="info-strip" id="paymentInfoStrip">
+    <i class="fas fa-lock"></i>
+    <div id="paymentInfoText">
+      Complete your application above to continue to payment.
+    </div>
+  </div>
+
+  
+
+
+       
+
+  <div
+    id="paypalButtonContainer"
+    style="margin-top:1rem; opacity:1; pointer-events:auto;"
+  ></div>
+
+  <div
+    id="paymentStatus"
+    style="margin-top:1rem; font-size:0.85rem; color:var(--muted);"
+  >
+    <i class="fas fa-circle-info"></i>
+    Complete your application above to continue.
+  </div>
+
+</div>
+
+
+
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+  authDomain: "studyflix-membership.firebaseapp.com",
+  projectId: "studyflix-membership",
+  storageBucket: "studyflix-membership.firebasestorage.app",
+  messagingSenderId: "641080177215",
+  appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+  measurementId: "G-3384WRNXW"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+console.log("StudyFlix Storage diagnostic:", {
+  bucket: storage.app.options.storageBucket,
+  signedInUid: auth.currentUser?.uid
+});
+
+const EMAILJS_SERVICE_ID = "service_4old1u6";
+const EMAILJS_PUBLIC_KEY = "YKPTwMGj_bID6h9sk";
+
+const EMAILJS_APPLICATION_TEMPLATE_ID = "template_981mhxd";
+const EMAILJS_APPROVAL_TEMPLATE_ID = "template_kedzwfs";
+
+emailjs.init({
+  publicKey: EMAILJS_PUBLIC_KEY
+});
+
+/* ---------- SITE SETTINGS ---------- */
+const SITE_DEFAULTS = {
+  acceptApplications: true,
+  maintenanceMode: false,
+
+  // Monthly prices
+  priceMonthly: 100,
+  priceWithData: 300,
+
+  // Annual prices
+  priceAnnual: 1200,
+  priceWithDataAnnual: 3600,
+
+  currencySymbol: 'R',
+  schoolCodePrefix: 'SF',
+  schoolCodeLength: 14
+};
+
+async function loadSiteSettings() {
+  try {
+    const snap = await db.collection('settings').doc('site').get();
+    return snap.exists ? Object.assign({}, SITE_DEFAULTS, snap.data()) : SITE_DEFAULTS;
+  } catch (err) {
+    console.warn('Settings load failed, using defaults:', err.message);
+    return SITE_DEFAULTS;
+  }
+}
+
+let SITE_SETTINGS = Object.assign({}, SITE_DEFAULTS);
+
+/* Dynamic school code regex */
+let SCHOOL_CODE_REGEX = /^SF[A-Z]{6}[A-Z0-9]{6}$/;
+function buildSchoolCodeRegex(prefix, length) {
+  const p = (prefix || 'SF').toUpperCase();
+  const total = parseInt(length, 10) || 14;
+  const suffixLen = Math.max(1, total - p.length);
+  return new RegExp('^' + p + '[A-Z0-9]{' + suffixLen + '}$');
+}
+
+const PAYPAL_PLANS = {
+  'standard-monthly': {
+    planId: 'P-4M207833SW0061541NKYOBQQ',
+    name: 'StudyFlix Student Membership',
+    billingPeriod: 'monthly',
+    priceSetting: 'priceMonthly',
+    defaultPriceZAR: 100,
+    priceUSD: 6.16
+  },
+
+  'standard-annual': {
+    planId: 'P-6GK41801196058811NK6QNTI',
+    name: 'StudyFlix Student Membership',
+    billingPeriod: 'annual',
+    priceSetting: 'priceAnnual',
+    defaultPriceZAR: 1200,
+    priceUSD: 73.92
+  },
+
+  'plus-data-monthly': {
+    planId: 'P-68800109GT083772LNKYOFPA',
+    name: 'StudyFlix Student Membership + Data',
+    billingPeriod: 'monthly',
+    priceSetting: 'priceWithData',
+    defaultPriceZAR: 300,
+    priceUSD: 18.48
+  },
+
+  'plus-data-annual': {
+    planId: 'P-76Y177913D3206319NK6QV2A',
+    name: 'StudyFlix Student Membership + Data',
+    billingPeriod: 'annual',
+    priceSetting: 'priceWithDataAnnual',
+    defaultPriceZAR: 3600,
+    priceUSD: 221.76
+  }
+};
+
+let selectedMembershipType = 'standard';
+let selectedBillingPeriod = 'monthly';
+let selectedPlanKey = 'standard-monthly';
+
+function syncSelectedPlanKey() {
+  selectedPlanKey =
+    selectedMembershipType + "-" + selectedBillingPeriod;
+}
+
+/* ---------- SIDEBAR LOADER ---------- */
+(function() {
+  'use strict';
+  const SIDEBAR_PLACEHOLDER_ID = 'sidebar-placeholder';
+  const SIDEBAR_PATH = 'sidebar.html';
+  async function loadSidebar() {
+    const placeholder = document.getElementById(SIDEBAR_PLACEHOLDER_ID);
+    if (!placeholder) return;
+    try {
+      const response = await fetch(SIDEBAR_PATH);
+      const html = await response.text();
+      placeholder.innerHTML = html;
+      initSidebar();
+    } catch (err) { console.error('Failed to load sidebar:', err); }
+  }
+  function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarClose = document.getElementById('sidebarClose');
+    const overlay = document.getElementById('sidebarOverlay');
+    const logoutBtn = document.getElementById('sidebarLogout');
+    if (!sidebar) return;
+    if (sidebarToggle) sidebarToggle.addEventListener('click', () => { sidebar.classList.add('open'); if (overlay) overlay.classList.add('active'); });
+    function closeSidebar() { sidebar.classList.remove('open'); if (overlay) overlay.classList.remove('active'); }
+    if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+    sidebar.querySelectorAll('.sidebar-link').forEach(link => { link.addEventListener('click', closeSidebar); });
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    sidebar.querySelectorAll('.sidebar-link').forEach(link => { link.classList.toggle('active', link.getAttribute('data-page') === currentPath); });
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        if (!window.firebase || typeof firebase.auth !== 'function') { window.location.href = 'login.html'; return; }
+        logoutBtn.disabled = true;
+        logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Signing out…</span>';
+        try { await firebase.auth().signOut(); } catch (err) {}
+        window.location.href = 'login.html';
+      });
+    }
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', loadSidebar); } else { loadSidebar(); }
+  window.StudyFlixSidebar = {
+    load: loadSidebar,
+    close: function() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      if (sidebar) sidebar.classList.remove('open');
+      if (overlay) overlay.classList.remove('active');
+    }
+  };
+})();
+
+/* ---------- STATE ---------- */
+const STATE = { NONE: 'none', PENDING: 'pending', APPROVED: 'approved', DECLINED: 'declined' };
+let currentUser = null;
+let currentData = null;
+let unsubDoc = null;
+let healedOnce = false;
+let submitting = false;
+
+const els = {
+  topAvatar: document.getElementById('topAvatar'),
+  topName: document.getElementById('topName'),
+  topEmail: document.getElementById('topEmail'),
+  logoutBtn: document.getElementById('logoutBtn'),
+  msgError: document.getElementById('msgError'),
+  msgSuccess: document.getElementById('msgSuccess'),
+  loadingWrap: document.getElementById('loadingWrap'),
+  lockedWrap: document.getElementById('lockedWrap'),
+  lockedIcon: document.getElementById('lockedIcon'),
+  lockedTitle: document.getElementById('lockedTitle'),
+  lockedText: document.getElementById('lockedText'),
+  lockedActions: document.getElementById('lockedActions'),
+  formWrap: document.getElementById('formWrap'),
+  form: document.getElementById('appForm'),
+  reapplyNotice: document.getElementById('reapplyNotice'),
+  prefillNotice: document.getElementById('prefillNotice'),
+  prefillNoticeText: document.getElementById('prefillNoticeText'),
+  firstName: document.getElementById('firstName'),
+  lastName: document.getElementById('lastName'),
+  email: document.getElementById('email'),
+  phone: document.getElementById('phone'),
+  school: document.getElementById('school'),
+  location: document.getElementById('location'),
+  schoolCode: document.getElementById('schoolCode'),
+  message: document.getElementById('message'),
+  terms: document.getElementById('terms'),
+  codeFeedback: document.getElementById('codeFeedback'),
+  submitBtn: document.getElementById('submitBtn'),
+  submitText: document.getElementById('submitText'),
+  submitIcon: document.getElementById('submitIcon'),
+  badgeFirstName: document.getElementById('badgeFirstName'),
+  badgeLastName: document.getElementById('badgeLastName'),
+  badgeEmail: document.getElementById('badgeEmail'),
+  badgePhone: document.getElementById('badgePhone'),
+  badgeSchool: document.getElementById('badgeSchool'),
+  badgeLocation: document.getElementById('badgeLocation'),
+  badgeSchoolCode: document.getElementById('badgeSchoolCode'),
+  gender: document.getElementById('gender'),
+  province: document.getElementById('province'),
+  address: document.getElementById('address'),
+  identityDocument: document.getElementById('identityDocument'),
+  schoolProof: document.getElementById('schoolProof'),
+  identityDocumentName: document.getElementById('identityDocumentName'),
+  schoolProofName: document.getElementById('schoolProofName'),
+  badgeGender: document.getElementById('badgeGender'),
+  badgeProvince: document.getElementById('badgeProvince'),
+  badgeAddress: document.getElementById('badgeAddress'),
+  paymentSection:         document.getElementById('paymentSection'),
+  paypalButtonContainer:  document.getElementById('paypalButtonContainer'),
+  paymentStatus:          document.getElementById('paymentStatus'),
+  paymentInfoStrip: document.getElementById('paymentInfoStrip'),
+  paymentInfoText: document.getElementById('paymentInfoText'),
+  submitRow:              document.querySelector('.submit-row')
+};
+
+/* ---------- STATE MACHINE ---------- */
+function deriveState(data) {
+  if (!data) return STATE.NONE;
+  const appStatus = (data.applicationStatus || '').toString().toLowerCase();
+  const memStatus = (data.status || data.membershipStatus || '').toString().toLowerCase();
+  if (memStatus === 'active' || memStatus === 'approved' || appStatus === 'approved') return STATE.APPROVED;
+  if (['declined', 'rejected', 'inactive'].includes(memStatus) || ['declined', 'rejected'].includes(appStatus)) return STATE.DECLINED;
+  const hasApplication = !!(data.application && (data.application.submittedAt || data.application.firstName));
+  if (hasApplication && ['pending', 'in review', 'under review'].includes(appStatus)) return STATE.PENDING;
+  return STATE.NONE;
+}
+function hasSubmittedApplication(data) {
+  return !!(data && data.application && (data.application.submittedAt || data.application.firstName));
+}
+
+/* ---------- NAME RESOLUTION ---------- */
+async function resolveName(user, data) {
+  if (data && (data.name || data.fullName || data.displayName)) return { name: data.name || data.fullName || data.displayName, source: 'firestore' };
+  try { const stored = localStorage.getItem('studyflix_name_' + user.uid); if (stored && stored.trim()) return { name: stored.trim(), source: 'localStorage' }; } catch (e) {}
+  if (user.displayName && user.displayName.trim()) return { name: user.displayName.trim(), source: 'auth' };
+  if (user.email) return { name: user.email.split('@')[0], source: 'email' };
+  return { name: 'Member', source: 'fallback' };
+}
+
+/* ---------- HEAL MEMBER DOC ---------- */
+async function healMemberDoc(user, name, data) {
+  const ref = db.collection('members').doc(user.uid);
+  try {
+    if (!data) {
+      await ref.set({
+        uid: user.uid, name: name, email: user.email || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        plan: 'studyflix-monthly', status: 'pending', applicationStatus: 'pending', membershipNumber: null
+      }, { merge: true });
+    } else {
+      const hasName = !!(data.name || data.fullName || data.displayName);
+      if (!hasName) await ref.set({ name: name }, { merge: true });
+    }
+  } catch (err) {}
+}
+
+/* ---------- MESSAGES ---------- */
+function showError(msg) { els.msgSuccess.style.display = 'none'; els.msgError.textContent = msg; els.msgError.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function showSuccess(msg) { els.msgError.style.display = 'none'; els.msgSuccess.textContent = msg; els.msgSuccess.style.display = 'block'; }
+function clearMessages() { els.msgError.style.display = 'none'; els.msgSuccess.style.display = 'none'; }
+
+/* ---------- SCHOOL CODE ---------- */
+function sanitiseCode(raw) {
+  const maxLen = parseInt(SITE_SETTINGS.schoolCodeLength, 10) || 14;
+  return (raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, maxLen);
+}
+function updateCodeFeedback() {
+  const value = els.schoolCode.value;
+  const fb = els.codeFeedback;
+  const total = parseInt(SITE_SETTINGS.schoolCodeLength, 10) || 14;
+  const prefix = SITE_SETTINGS.schoolCodePrefix || 'SF';
+  if (!value) { fb.className = 'code-feedback'; fb.innerHTML = ''; fb.style.display = 'none'; return; }
+  fb.style.display = 'flex';
+  if (SCHOOL_CODE_REGEX.test(value)) {
+    fb.className = 'code-feedback valid';
+    fb.innerHTML = '<i class="fas fa-check-circle"></i><span>Format looks good.</span>';
+    return;
+  }
+  if (value.length < total) {
+    fb.className = 'code-feedback neutral';
+    fb.innerHTML = '<i class="fas fa-pencil-alt"></i><span>' + value.length + ' of ' + total + ' characters</span>';
+    return;
+  }
+  fb.className = 'code-feedback invalid';
+  fb.innerHTML = '<i class="fas fa-times-circle"></i><span>Invalid format. Code should be ' + total + ' characters, starting with ' + prefix + '.</span>';
+}
+els.schoolCode.addEventListener('input', () => {
+  const cursorAtEnd = els.schoolCode.selectionStart === els.schoolCode.value.length;
+  const cleaned = sanitiseCode(els.schoolCode.value);
+  if (cleaned !== els.schoolCode.value) {
+    els.schoolCode.value = cleaned;
+    if (cursorAtEnd) els.schoolCode.setSelectionRange(cleaned.length, cleaned.length);
+  }
+  updateCodeFeedback();
+});
+
+/* ---------- PREFILL ---------- */
+function markPrefilled(el) { if (el) el.style.display = 'inline-flex'; }
+function splitName(full) { if (!full) return { first: '', last: '' }; const parts = full.trim().split(/\s+/); if (parts.length === 1) return { first: parts[0], last: '' }; return { first: parts[0], last: parts.slice(1).join(' ') }; }
+function prefillForm(user, data) {
+  const app = (data && data.application) || {};
+  const nameFromMember = (data && (data.name || data.fullName)) || user.displayName || '';
+  const nameSplit = splitName(nameFromMember);
+  const filled = { firstName: false, lastName: false, email: false, phone: false, school: false, location: false, schoolCode: false, gender: false, province: false, address: false };
+  if (app.firstName) { els.firstName.value = app.firstName; filled.firstName = true; }
+  else if (nameSplit.first) { els.firstName.value = nameSplit.first; filled.firstName = true; }
+  if (app.lastName) { els.lastName.value = app.lastName; filled.lastName = true; }
+  else if (nameSplit.last) { els.lastName.value = nameSplit.last; filled.lastName = true; }
+  const email = app.email || (data && data.email) || user.email || '';
+  if (email) { els.email.value = email; filled.email = true; }
+  const phone = app.phone || (data && data.phone) || '';
+  if (phone) { els.phone.value = phone; filled.phone = true; }
+  const school = app.school || (data && data.school) || '';
+  if (school) { els.school.value = school; filled.school = true; }
+  const location = app.location || (data && data.location) || '';
+  if (location) { els.location.value = location; filled.location = true; }
+  const gender = app.gender || (data && data.gender) || '';
+  if (gender) { els.gender.value = gender; filled.gender = true; }
+  const province = app.province || (data && data.province) || '';
+  if (province) { els.province.value = province; filled.province = true; }
+  const address = app.address || (data && data.address) || '';
+  if (address) { els.address.value = address; filled.address = true;}
+  const code = app.schoolCode || (data && data.schoolCode) || '';
+  if (code) { els.schoolCode.value = sanitiseCode(code); filled.schoolCode = true; updateCodeFeedback(); }
+  if (app.message) els.message.value = app.message;
+  if (filled.firstName) markPrefilled(els.badgeFirstName);
+  if (filled.lastName) markPrefilled(els.badgeLastName);
+  if (filled.email) markPrefilled(els.badgeEmail);
+  if (filled.phone) markPrefilled(els.badgePhone);
+  if (filled.school) markPrefilled(els.badgeSchool);
+  if (filled.location) markPrefilled(els.badgeLocation);
+  if (filled.schoolCode) markPrefilled(els.badgeSchoolCode);
+  if (filled.gender)   markPrefilled(els.badgeGender);
+  if (filled.province) markPrefilled(els.badgeProvince);
+  if (filled.address)  markPrefilled(els.badgeAddress);
+  const anyFilled = Object.values(filled).some(Boolean);
+  if (anyFilled) els.prefillNotice.style.display = 'block';
+  els.prefillNoticeText.textContent = hasSubmittedApplication(data)
+    ? 'Your previous application details are shown below. Update anything that has changed.'
+    : 'We\'ve pre-filled the form with your account details where possible.';
+}
+
+/* ---------- PANELS ---------- */
+function showClosedPanel(reason) {
+  els.loadingWrap.style.display = 'none';
+  els.formWrap.style.display = 'none';
+  els.lockedWrap.style.display = 'block';
+  const icon = els.lockedIcon;
+  icon.className = 'locked-icon locked-closed';
+  icon.innerHTML = '<i class="fas ' + (reason === 'maintenance' ? 'fa-screwdriver-wrench' : 'fa-lock') + '"></i>';
+  els.lockedTitle.textContent = reason === 'maintenance' ? 'Under maintenance' : 'Applications closed';
+  els.lockedText.textContent = reason === 'maintenance'
+    ? 'StudyFlix is currently undergoing maintenance. Applications are temporarily closed. Please check back shortly.'
+    : 'We are not accepting new membership applications at the moment. Please check back soon.';
+  els.lockedActions.innerHTML = '<a href="dashboard.html" class="locked-btn"><i class="fas fa-th-large"></i> Back to Dashboard</a>';
+}
+
+function showLockedPanel(state, data) {
+  els.loadingWrap.style.display = 'none';
+  els.formWrap.style.display = 'none';
+  els.lockedWrap.style.display = 'block';
+  const icon = els.lockedIcon;
+  icon.className = 'locked-icon';
+  if (state === STATE.APPROVED) {
+    icon.classList.add('locked-approved');
+    icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+    els.lockedTitle.textContent = 'You\'re already a member';
+    els.lockedText.textContent = 'Your membership is active. There\'s no need to submit another application.';
+    els.lockedActions.innerHTML = '<a href="membership-card.html" class="locked-btn"><i class="fas fa-id-card"></i> View My Card</a><a href="dashboard.html" class="locked-btn ghost"><i class="fas fa-th-large"></i> Dashboard</a>';
+  } else if (state === STATE.PENDING) {
+    icon.classList.add('locked-pending');
+    icon.innerHTML = '<i class="fas fa-hourglass-half"></i>';
+    els.lockedTitle.textContent = 'Application already submitted';
+    els.lockedText.textContent = 'Your application is currently under review. You can check its progress on the Application Status page.';
+    els.lockedActions.innerHTML = '<a href="application-status.html" class="locked-btn"><i class="fas fa-file-alt"></i> View Application Status</a>';
+  }
+}
+function showForm(state, data) {
+  els.loadingWrap.style.display = 'none';
+  els.lockedWrap.style.display = 'none';
+  els.formWrap.style.display = 'block';
+  els.reapplyNotice.style.display = (state === STATE.DECLINED && hasSubmittedApplication(data)) ? 'block' : 'none';
+}
+
+/* ---------- MAIN RENDER ---------- */
+async function renderPage(user, data) {
+  currentData = data;
+  const { name, source } = await resolveName(user, data);
+  els.topName.textContent = name;
+  els.topName.classList.remove('skeleton');
+  els.topAvatar.textContent = name.charAt(0).toUpperCase();
+  els.topEmail.textContent = user.email || '';
+
+  if (!healedOnce && source !== 'firestore') { healedOnce = true; healMemberDoc(user, name, data); }
+
+  const state = deriveState(data);
+  const submitted = hasSubmittedApplication(data);
+  if (state === STATE.APPROVED || (state === STATE.PENDING && submitted)) { showLockedPanel(state, data); return; }
+  showForm(state, data);
+  prefillForm(user, data);
+}
+
+/* ---------- DOCUMENT UPLOADS ---------- */
+const MAX_DOCUMENT_SIZE = 5 * 1024 * 1024;
+const ALLOWED_DOCUMENT_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
+
+function showSelectedDocument(input, output, label) {
+  if (!input || !output) return;
+  const file = input.files && input.files[0];
+  if (!file) {
+    output.style.display = 'none';
+    output.innerHTML = '';
+    return;
+  }
+  output.style.display = 'inline-flex';
+  output.innerHTML = '<i class="fas fa-file"></i><span>' + label + ': ' + file.name + '</span>';
+}
+
+els.identityDocument.addEventListener('change', () => {
+  showSelectedDocument(els.identityDocument, els.identityDocumentName, 'Selected');
+});
+
+els.schoolProof.addEventListener('change', () => {
+  showSelectedDocument(els.schoolProof, els.schoolProofName, 'Selected');
+});
+
+function validateDocument(file, label) {
+  if (!file) {
+    throw new Error('Please upload your ' + label + '.');
+  }
+  if (!ALLOWED_DOCUMENT_TYPES.includes(file.type)) {
+    throw new Error(label + ' must be a PDF, JPG, JPEG or PNG file.');
+  }
+  if (file.size > MAX_DOCUMENT_SIZE) {
+    throw new Error(label + ' must be 5 MB or smaller.');
+  }
+}
+
+
+async function uploadApplicationDocument(uid, file, documentType) {
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+  const path =
+    "members/" + uid + "/documents/" +
+    documentType + "_" + Date.now() + "_" + safeName;
+
+  const ref = storage.ref(path);
+
+  await ref.put(file, {
+    contentType: file.type
+  });
+
+  return {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    path: path,
+    uploadedAt: new Date()
+  };
+}
+
+
+async function uploadApplicationDocuments(uid) {
+  const identityFile = els.identityDocument.files && els.identityDocument.files[0];
+  const schoolProofFile = els.schoolProof.files && els.schoolProof.files[0];
+
+  validateDocument(identityFile, 'your identity document');
+  validateDocument(schoolProofFile, 'your proof of school / institution');
+
+  els.submitText.textContent = 'Uploading documents…';
+
+  const identity = await uploadApplicationDocument(uid, identityFile, 'identity');
+  const schoolProof = await uploadApplicationDocument(uid, schoolProofFile, 'school-proof');
+
+  return { identity, schoolProof };
+}
+
+async function sendApplicationReceivedEmail(fullName, email, membershipPlan) {
+  const applicationDate = new Date().toLocaleDateString("en-ZA", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
+
+  console.log("Sending application email...");
+  console.log("Email:", email);
+  console.log("Plan:", membershipPlan);
+
+  const response = await emailjs.send(
+    EMAILJS_SERVICE_ID,
+    EMAILJS_APPLICATION_TEMPLATE_ID,
+    {
+      to_name: fullName,
+      student_name: fullName,
+      student_email: email,
+      membership_plan: membershipPlan,
+      application_date: applicationDate
+    }
+  );
+
+  console.log("EmailJS response:", response);
+
+  return response;
+}
+
+/* ---------- SUBMIT ---------- */
+els.form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (submitting) return;
+  clearMessages();
+
+  
+  if (!currentUser) {
+    showError('You appear to be signed out. Please sign in again.');
+    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+    return;
+  }
+
+  
+  SITE_SETTINGS = await loadSiteSettings();
+  if (SITE_SETTINGS.maintenanceMode === true || SITE_SETTINGS.acceptApplications === false) {
+    showError('Applications are currently closed. Please try again later.');
+    return;
+  }
+
+  const firstName = els.firstName.value.trim();
+  const lastName = els.lastName.value.trim();
+  const email = els.email.value.trim();
+  const phone = els.phone.value.trim();
+  const school = els.school.value.trim();
+  const location = els.location.value.trim();
+  const gender   = els.gender.value;
+  const province = els.province.value;
+  const address  = els.address.value.trim();
+  const schoolCode = sanitiseCode(els.schoolCode.value);
+  const message = els.message.value.trim();
+
+  if (!firstName || !lastName || !email || !phone || !school || !location) { showError('Please fill in all required fields.'); return; }
+  if (!gender)   { showError('Please select your gender.'); els.gender.focus(); return; }
+  if (!province) { showError('Please select your province.'); els.province.focus(); return; }
+  if (!address || address.length < 5) {
+    showError('Please enter your residential address.');
+    els.address.focus();
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); els.email.focus(); return; }
+  if (phone.replace(/\D/g, '').length < 9) { showError('Please enter a valid cellphone number.'); els.phone.focus(); return; }
+  if (!schoolCode) { showError('Please enter your school code.'); els.schoolCode.focus(); return; }
+  if (!SCHOOL_CODE_REGEX.test(schoolCode)) {
+    const total = parseInt(SITE_SETTINGS.schoolCodeLength, 10) || 14;
+    const prefix = SITE_SETTINGS.schoolCodePrefix || 'SF';
+    showError('That school code doesn\'t look right. It should be ' + total + ' characters and start with ' + prefix + '.');
+    els.schoolCode.focus();
+    return;
+  }
+  if (!els.terms.checked) { showError('Please accept the Terms and Privacy Policy to continue.'); return; }
+
+  const identityFile = els.identityDocument.files && els.identityDocument.files[0];
+  const schoolProofFile = els.schoolProof.files && els.schoolProof.files[0];
+  try {
+    validateDocument(identityFile, 'your identity document');
+    validateDocument(schoolProofFile, 'your proof of school / institution');
+  } catch (documentError) {
+    showError(documentError.message);
+    return;
+  }
+
+  submitting = true;
+  els.submitBtn.disabled = true;
+  els.submitText.textContent = 'Saving application…';
+  els.submitIcon.className = 'fas fa-spinner fa-spin';
+
+  try {
+    const uid = currentUser.uid;
+    const fullName = (firstName + ' ' + lastName).trim();
+
+    const documents = await uploadApplicationDocuments(uid);
+
+    els.submitText.textContent = 'Saving application…';
+
+await db.collection('members').doc(uid).set({
+  name: fullName,
+  fullName: fullName,
+  email: email,
+  phone: phone,
+  school: school,
+  location: location,
+  schoolCode: schoolCode,
+  gender: gender,
+  province: province,
+  address: address,
+  documents: documents,
+
+  paypalPlanKey: selectedPlanKey,
+  membershipType: PAYPAL_PLANS[selectedPlanKey].name,
+  plan: PAYPAL_PLANS[selectedPlanKey].name,
+
+  billingPeriod: selectedBillingPeriod,
+  membershipBillingPeriod: selectedBillingPeriod,
+  membershipPriceZAR: getPlanPriceZAR(
+    PAYPAL_PLANS[selectedPlanKey]
+  ),
+
+  paid: false,
+
+  application: {
+    firstName,
+    lastName,
+    email,
+    phone,
+    school,
+    location,
+    schoolCode,
+    gender,
+    province,
+    address,
+    message,
+    documents,
+    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    version: 2
+  },
+
+  applicationStatus: 'pending',
+  status: 'pending',
+  applicationUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+
+}, { merge: true });
+
+
+
+currentData = {
+  ...(currentData || {}),
+  name: fullName,
+  fullName: fullName,
+  email: email,
+  phone: phone,
+  school: school,
+  location: location,
+  schoolCode: schoolCode,
+  gender: gender,
+  province: province,
+  address: address,
+  documents: documents,
+
+  paypalPlanKey: selectedPlanKey,
+  membershipType: PAYPAL_PLANS[selectedPlanKey].name,
+  plan: PAYPAL_PLANS[selectedPlanKey].name,
+
+  billingPeriod: selectedBillingPeriod,
+  membershipBillingPeriod: selectedBillingPeriod,
+  membershipPriceZAR: getPlanPriceZAR(
+    PAYPAL_PLANS[selectedPlanKey]
+  ),
+
+  paid: false,
+
+  application: {
+    firstName,
+    lastName,
+    email,
+    phone,
+    school,
+    location,
+    schoolCode,
+    gender,
+    province,
+    address,
+    message,
+    documents,
+    submittedAt: new Date(),
+    version: 2
+  },
+
+  applicationStatus: 'pending',
+  status: 'pending'
+};
+
+submitting = false;
+
+  let confirmationEmailSent = false;
+
+  try {
+    await sendApplicationReceivedEmail(
+      fullName,
+      email,
+      PAYPAL_PLANS[selectedPlanKey].name
+    );
+
+    confirmationEmailSent = true;
+    console.log("Application received email sent successfully.");
+  } catch (emailError) {
+      console.error("Application email failed:", emailError);
+
+      showError(
+        "Your application was saved, but the confirmation email could not be sent. Please check your email address or contact StudyFlix support."
+      );
+    }
+
+    if (confirmationEmailSent) {
+      showSuccess(
+        'Application saved successfully. A confirmation email has been sent to your email address. Complete your payment below to activate your membership.'
+      );
+    } else {
+      showSuccess(
+        'Application saved successfully. We could not send the confirmation email right now, but your application was saved. Complete your payment below to activate your membership.'
+      );
+    }
+
+    unlockPaymentSection();
+
+els.paymentSection.scrollIntoView({
+  behavior: 'smooth',
+  block: 'center'
+});
+
+renderPayPalButton(uid);
+
+  } catch (err) {
+    console.error(err);
+    submitting = false;
+    els.submitBtn.disabled = false;
+    els.submitText.textContent = 'Submit Application';
+    els.submitIcon.className = 'fas fa-paper-plane';
+    showError(err && err.message ? err.message : 'Could not submit your application. Please try again.');
+  }
+
+});
+
+function unlockPaymentSection() {
+
+  if (!els.paymentSection) return;
+
+  els.paymentSection.style.display = 'block';
+
+  if (els.paymentInfoText) {
+    els.paymentInfoText.innerHTML =
+      '<strong>Application submitted successfully.</strong> ' +
+      'Your application has been saved. Please complete your membership payment below.';
+  }
+
+  if (els.paymentInfoStrip) {
+    els.paymentInfoStrip.innerHTML =
+      '<i class="fas fa-check-circle"></i>' +
+      '<div id="paymentInfoText">' +
+      '<strong>Application submitted successfully.</strong> ' +
+      'Your application has been saved. Please complete your membership payment below.' +
+      '</div>';
+  }
+
+  if (els.paymentStatus) {
+    els.paymentStatus.innerHTML =
+      '<i class="fas fa-lock"></i> Complete your payment to activate your membership.';
+  }
+
+  els.paypalButtonContainer.style.opacity = '1';
+  els.paypalButtonContainer.style.pointerEvents = 'auto';
+}
+
+
+/* ---------- PAYPAL SUBSCRIPTION BUTTON ---------- */
+let paypalRendered = false;
+
+/* ---------- PAYPAL SUBSCRIPTION BUTTON ---------- */
+function renderPayPalButton(uid) {
+  const container = document.getElementById("paypalButtonContainer");
+  const status = document.getElementById("paymentStatus");
+
+  if (!container || !status) {
+    console.error("PayPal container or payment status element is missing.");
+    return;
+  }
+
+  container.innerHTML = "";
+
+  // Learner must submit the application first
+
+
+  const plan = PAYPAL_PLANS[selectedPlanKey];
+
+  if (!plan) {
+    console.error("No PayPal plan found for:", selectedPlanKey);
+
+    status.innerHTML =
+      '<i class="fas fa-triangle-exclamation"></i> The selected membership plan could not be found.';
+
+    return;
+  }
+
+  // Annual PayPal plan has not been created yet
+  if (!plan.planId) {
+    container.style.opacity = "0.45";
+    container.style.pointerEvents = "none";
+
+    status.innerHTML =
+      '<i class="fas fa-circle-info"></i> The Annual PayPal plan has not been configured yet. Monthly payment is currently available.';
+
+    return;
+  }
+
+  // Check that PayPal SDK actually loaded
+  if (!window.paypal || typeof paypal.Buttons !== "function") {
+    console.error("PayPal SDK has not loaded.");
+
+    container.style.opacity = "1";
+    container.style.pointerEvents = "auto";
+
+    status.innerHTML =
+      '<i class="fas fa-triangle-exclamation"></i> PayPal could not be loaded. Please refresh the page and try again.';
+
+    return;
+  }
+
+  container.style.opacity = "1";
+  container.style.pointerEvents = "auto";
+
+  const price = getPlanPriceZAR(plan);
+
+  status.innerHTML =
+    '<i class="fas fa-lock"></i> ' +
+    plan.name +
+    " — " +
+    money(price) +
+    (selectedBillingPeriod === "annual" ? "/year" : "/month");
+
+  paypal.Buttons({
+
+    style: {
+      layout: "vertical",
+      shape: "rect",
+      label: "paypal"
+    },
+
+    createSubscription: function(data, actions) {
+      console.log("Creating PayPal subscription:", {
+        planId: plan.planId,
+        planKey: selectedPlanKey
+      });
+
+      return actions.subscription.create({
+        plan_id: plan.planId,
+        custom_id: uid
+      });
+    },
+
+onApprove: async function(data) {
+
+  console.log("PayPal approved:", data);
+
+  status.innerHTML =
+    '<i class="fas fa-spinner fa-spin"></i> PayPal payment approved. Waiting for payment confirmation...';
+
+  try {
+
+    /*
+     * IMPORTANT:
+     *
+     * Do NOT mark the member as paid here.
+     *
+     * The Firebase PayPal webhook will receive
+     * PAYMENT.SALE.COMPLETED from PayPal and will
+     * securely update Firestore.
+     */
+
+    await db.collection("members").doc(uid).set({
+
+      paypalSubscriptionId:
+        data.subscriptionID,
+
+      paypalPlanId:
+        plan.planId,
+
+      paypalPlanKey:
+        selectedPlanKey,
+
+      membershipType:
+        plan.name,
+
+      plan:
+        plan.name,
+
+      billingPeriod:
+        selectedBillingPeriod,
+
+      membershipBillingPeriod:
+        selectedBillingPeriod,
+
+      membershipPriceZAR:
+        price,
+
+      /*
+       * Do NOT set paid:true here.
+       *
+       * Do NOT set applicationStatus:approved here.
+       *
+       * Do NOT set status:active here.
+       */
+
+      paypalStatus:
+        "APPROVED",
+
+      paypalUpdatedAt:
+        firebase.firestore.FieldValue
+          .serverTimestamp()
+
+    }, {
+      merge: true
+    });
+
+    currentData = {
+      ...(currentData || {}),
+
+      paypalSubscriptionId:
+        data.subscriptionID,
+
+      paypalPlanId:
+        plan.planId,
+
+      paypalPlanKey:
+        selectedPlanKey,
+
+      billingPeriod:
+        selectedBillingPeriod,
+
+      membershipBillingPeriod:
+        selectedBillingPeriod,
+
+      membershipPriceZAR:
+        price,
+    };
+
+    status.innerHTML =
+      '<i class="fas fa-circle-check"></i> ' +
+      'PayPal payment approved. Your membership is being activated automatically.';
+
+  } catch (error) {
+
+    console.error(
+      "Error saving PayPal subscription information:",
+      error
+    );
+
+    status.innerHTML =
+      '<i class="fas fa-triangle-exclamation"></i> ' +
+      'PayPal approved your payment, but StudyFlix could not save the subscription information. ' +
+      'Subscription ID: ' +
+      data.subscriptionID;
+
+  }
+
+},
+
+
+    onCancel: function() {
+      status.innerHTML =
+        '<i class="fas fa-circle-info"></i> PayPal payment was cancelled. You can try again when you are ready.';
+    },
+
+    onError: function(error) {
+      console.error("PayPal error:", error);
+
+      status.innerHTML =
+        '<i class="fas fa-triangle-exclamation"></i> PayPal could not complete the payment. Please try again.';
+    }
+
+  }).render("#paypalButtonContainer")
+    .then(function() {
+      console.log("PayPal buttons rendered successfully.");
+    })
+    .catch(function(error) {
+      console.error("PayPal render error:", error);
+
+      status.innerHTML =
+        '<i class="fas fa-triangle-exclamation"></i> PayPal buttons could not be displayed.';
+    });
+}
+
+
+
+function getPlanPriceZAR(plan) {
+  if (!plan) return 0;
+
+  const configuredPrice = Number(
+    SITE_SETTINGS[plan.priceSetting]
+  );
+
+  if (Number.isFinite(configuredPrice) && configuredPrice > 0) {
+    return configuredPrice;
+  }
+
+  return Number(plan.defaultPriceZAR || 0);
+}
+
+function money(value) {
+  const symbol = SITE_SETTINGS.currencySymbol || "R";
+
+  return symbol + Number(value || 0).toLocaleString("en-ZA", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
+}
+
+
+document.querySelectorAll('input[name="membershipPlan"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+
+    selectedMembershipType = radio.value;
+
+    syncSelectedPlanKey();
+
+    console.log("Selected membership:", selectedMembershipType);
+    console.log("Selected billing period:", selectedBillingPeriod);
+    console.log("Selected PayPal plan:", selectedPlanKey);
+
+    updatePlanPrices();
+
+    if (currentUser) {
+      renderPayPalButton(currentUser.uid);
+    }
+  });
+});
+
+document.querySelectorAll('input[name="billingPeriod"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+
+    selectedBillingPeriod = radio.value;
+
+    syncSelectedPlanKey();
+
+    console.log("Selected membership:", selectedMembershipType);
+    console.log("Selected billing period:", selectedBillingPeriod);
+    console.log("Selected PayPal plan:", selectedPlanKey);
+
+    updatePlanPrices();
+
+    if (currentUser) {
+      renderPayPalButton(currentUser.uid);
+    }
+  });
+});
+
+function updatePlanPrices() {
+  const standardPlanKey =
+    selectedMembershipType === 'standard'
+      ? `standard-${selectedBillingPeriod}`
+      : `standard-${selectedBillingPeriod}`;
+
+  const plusDataPlanKey =
+    `plus-data-${selectedBillingPeriod}`;
+
+  const standardPlan = PAYPAL_PLANS[standardPlanKey];
+  const plusDataPlan = PAYPAL_PLANS[plusDataPlanKey];
+
+  const standardPriceElement =
+    document.querySelector(
+      'input[name="membershipPlan"][value="standard"]'
+    )?.closest('.plan-option')
+     ?.querySelector('.plan-option-price');
+
+  const plusDataPriceElement =
+    document.querySelector(
+      'input[name="membershipPlan"][value="plus-data"]'
+    )?.closest('.plan-option')
+     ?.querySelector('.plan-option-price');
+
+  if (standardPlan && standardPriceElement) {
+    standardPriceElement.innerHTML =
+      `${money(getPlanPriceZAR(standardPlan))}<span>/${selectedBillingPeriod === 'annual' ? 'year' : 'month'}</span>`;
+  }
+
+  if (plusDataPlan && plusDataPriceElement) {
+    plusDataPriceElement.innerHTML =
+      `${money(getPlanPriceZAR(plusDataPlan))}<span>/${selectedBillingPeriod === 'annual' ? 'year' : 'month'}</span>`;
+  }
+}
+
+/* ---------- AUTH GUARD ---------- */
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+    window.location.href = 'login.html';
+    return;
+  }
+
+  currentUser = user;
+
+  /* Fire settings + member doc in parallel */
+  const settingsPromise = loadSiteSettings();
+  const memberPromise = db.collection('members').doc(user.uid).get()
+    .catch(() => null);
+
+  SITE_SETTINGS = await settingsPromise;
+  SCHOOL_CODE_REGEX = buildSchoolCodeRegex(
+    SITE_SETTINGS.schoolCodePrefix,
+    SITE_SETTINGS.schoolCodeLength
+  );
+
+  if (SITE_SETTINGS.maintenanceMode === true) { showClosedPanel('maintenance'); return; }
+  if (SITE_SETTINGS.acceptApplications === false) { showClosedPanel('closed'); return; }
+
+  const snap = await memberPromise;
+  const initialData = snap && snap.exists ? snap.data() : null;
+
+  await renderPage(user, initialData);
+
+  // Restore previously chosen plan, if any
+if (
+  initialData &&
+  initialData.paypalPlanKey &&
+  PAYPAL_PLANS[initialData.paypalPlanKey]
+) {
+  selectedPlanKey = initialData.paypalPlanKey;
+
+  const savedPlan = PAYPAL_PLANS[selectedPlanKey];
+
+  selectedBillingPeriod =
+    savedPlan.billingPeriod || 'monthly';
+
+  if (selectedPlanKey.startsWith('plus-data-')) {
+    selectedMembershipType = 'plus-data';
+  } else {
+    selectedMembershipType = 'standard';
+  }
+
+  const membershipRadio = document.querySelector(
+    `input[name="membershipPlan"][value="${selectedMembershipType}"]`
+  );
+
+  if (membershipRadio) {
+    membershipRadio.checked = true;
+  }
+
+  const billingRadio = document.querySelector(
+    `input[name="billingPeriod"][value="${selectedBillingPeriod}"]`
+  );
+
+  if (billingRadio) {
+    billingRadio.checked = true;
+  }
+
+  syncSelectedPlanKey();
+  updatePlanPrices();
+}
+
+  
+  const hasApp =
+  initialData &&
+  initialData.application &&
+  (
+    initialData.application.submittedAt ||
+    initialData.application.firstName
+  );
+
+  const isApproved =
+  initialData &&
+  (
+    initialData.status === 'active' ||
+    initialData.applicationStatus === 'approved'
+  );
+
+  if (hasApp || isApproved) {
+
+  els.paymentSection.style.display = 'block';
+
+  els.paypalButtonContainer.style.opacity = '1';
+  els.paypalButtonContainer.style.pointerEvents = 'auto';
+
+  if (initialData.paid === true) {
+
+    els.paymentStatus.innerHTML =
+      '<i class="fas fa-circle-check"></i> ' +
+      'Your membership payment has already been recorded.';
+
+  } else {
+
+    els.paymentStatus.innerHTML =
+      '<i class="fas fa-lock"></i> Complete your membership payment to activate your membership.';
+
+    renderPayPalButton(user.uid);
+  }
+
+} else {
+
+  els.paymentSection.style.display = 'none';
+
+}
+
+  if (hasApp || isApproved) {
+    els.paypalButtonContainer.style.opacity = '1';
+    els.paypalButtonContainer.style.pointerEvents = 'auto';
+  }
+
+  if (unsubDoc) unsubDoc();
+  unsubDoc = db.collection('members').doc(user.uid).onSnapshot(
+    async (snap) => {
+      if (submitting) return;
+      const data = snap.exists ? snap.data() : null;
+      await renderPage(user, data);
+    },
+    () => {}
+  );
+});
+
+/* ---------- LOGOUT ---------- */
+els.logoutBtn.addEventListener('click', async () => {
+  els.logoutBtn.disabled = true;
+  try {
+    if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+    await auth.signOut();
+  } catch (err) {
+    els.logoutBtn.disabled = false;
+  }
+  window.location.href = 'login.html';
+});
+</script>
+
+</body>
+</html>

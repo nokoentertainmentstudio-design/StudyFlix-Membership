@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a2a" />
+<title>StudyFlix Membership — Your Student Card, Every Benefit</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;
+  --muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,0.07);
+  --pad-x:clamp(1rem,4vw,1.5rem);
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:24px;
+  -webkit-text-size-adjust:100%;
+  overflow-x:hidden;
+}
+
+body{
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,#0a0a2a 0%,#1a1a3e 100%);
+  color:#E8EEFF;
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+.hero-bg{
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 40%,#1e1040 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 70%,#0f2040 0%,transparent 55%);
+  z-index:-2;
+}
+
+.hero-grid{
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(245,200,66,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(245,200,66,.03) 1px,transparent 1px);
+  background-size:50px 50px;
+  z-index:-1;
+}
+
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:clamp(1.25rem,4vw,2rem)
+          max(var(--pad-x),env(safe-area-inset-right,0px))
+          clamp(1.25rem,4vw,2rem)
+          max(var(--pad-x),env(safe-area-inset-left,0px));
+}
+
+
+
+.navbar{
+  position: relative;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0.8rem 0;
+  border-bottom:1px solid var(--border);
+  margin-bottom:clamp(1.5rem,4vw,2.5rem);
+  flex-wrap:wrap;
+  gap:clamp(0.6rem,2vw,1rem);
+}
+
+.navbar-brand{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(1.6rem,5vw,2rem);
+  letter-spacing:1px;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-decoration:none;
+  line-height:1;
+}
+
+.navbar-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.35rem 1.1rem;
+  align-items:center;
+}
+
+.navbar-links a{
+  color:var(--muted);
+  text-decoration:none;
+  font-weight:600;
+  font-size:0.85rem;
+  transition:color 0.3s;
+  white-space:nowrap;
+  min-height:36px;
+  display:inline-flex;
+  align-items:center;
+  padding:4px 0;
+  touch-action:manipulation;
+}
+
+.navbar-links a:hover{color:var(--teal)}
+.navbar-links a.active{color:var(--gold)}
+.navbar-links a.logout{color:#ff8888}
+.navbar-links a.logout:hover{color:#ff5555}
+
+
+.nav-toggle{
+  display:none;                /* hidden on desktop */
+  width:46px;
+  height:46px;
+  flex-shrink:0;
+  align-items:center;
+  justify-content:center;
+  font-size:1.15rem;
+  color:#E8EEFF;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:11px;
+  cursor:pointer;
+  font-family:inherit;
+  transition:0.2s;
+  touch-action:manipulation;
+}
+.nav-toggle:hover,
+.nav-toggle:focus-visible{
+  border-color:var(--gold);
+  color:var(--gold);
+}
+
+/* ---------------- hero ---------------- */
+
+.hero{
+  display:grid;
+  grid-template-columns:1.05fr 1fr;
+  gap:clamp(2rem,5vw,3rem);
+  align-items:center;
+  padding:1rem 0 clamp(2.5rem,6vw,4.5rem);
+}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  background:rgba(0,212,180,0.1);
+  border:1px solid rgba(0,212,180,0.25);
+  color:var(--teal);
+  font-size:0.7rem;
+  font-weight:800;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+  padding:0.4rem 0.9rem;
+  border-radius:30px;
+  margin-bottom:1.2rem;
+  max-width:100%;
+}
+
+.hero-badge span{white-space:normal}
+
+.page-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2.2rem,8vw,4.2rem);
+  line-height:1.02;
+  margin-bottom:1rem;
+  letter-spacing:0.5px;
+  word-break:break-word;
+}
+
+.page-title .highlight{
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.page-title .highlight2{
+  background:linear-gradient(135deg,#00FFCC,#2288FF);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+.page-sub{
+  color:var(--muted);
+  font-size:clamp(0.95rem,2.6vw,1.02rem);
+  line-height:1.7;
+  max-width:540px;
+  margin-bottom:1.8rem;
+}
+
+.hero-cta-group{
+  display:flex;
+  gap:0.8rem;
+  flex-wrap:wrap;
+}
+
+.btn-primary,
+.btn-secondary{
+  border:none;
+  padding:0.85rem 1.9rem;
+  border-radius:40px;
+  color:#000;
+  font-weight:800;
+  font-size:clamp(0.85rem,2.4vw,0.95rem);
+  cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.2s;
+  font-family:inherit;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.5rem;
+  min-height:48px;
+  touch-action:manipulation;
+  white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,#00FFCC,#2288FF)}
+.btn-primary:hover{transform:scale(1.04);box-shadow:0 0 30px rgba(0,212,180,0.3)}
+.btn-secondary{background:linear-gradient(135deg,var(--gold),var(--orange))}
+.btn-secondary:hover{transform:scale(1.04);box-shadow:0 0 30px rgba(255,215,0,0.3)}
+
+.hero-note{
+  margin-top:1.1rem;
+  font-size:0.75rem;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:0.45rem;
+  line-height:1.5;
+}
+.hero-note i{color:var(--teal);flex-shrink:0}
+
+/* ---------------- floating card ---------------- */
+
+.card-visual{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-width:0;
+}
+
+.card-visual::before{
+  content:"";
+  position:absolute;
+  width:min(330px,80%);
+  height:min(330px,80%);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,215,0,0.16),transparent 70%);
+  filter:blur(30px);
+  z-index:0;
+}
+
+.mini-card{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:min(350px,calc(100vw - 2 * var(--pad-x)));
+  background:linear-gradient(135deg,#1C2640,#243253);
+  border:1px solid rgba(255,215,0,0.35);
+  border-radius:20px;
+  padding:clamp(18px,5vw,24px);
+  box-shadow:0 25px 60px rgba(0,0,0,0.55);
+  overflow:hidden;
+  animation:float 6s ease-in-out infinite;
+}
+
+.mini-card::before{
+  content:"";
+  position:absolute;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:rgba(255,215,0,0.05);
+  top:-100px;right:-70px;
+}
+
+@keyframes float{
+  0%,100%{transform:rotate(-2.5deg) translateY(0)}
+  50%{transform:rotate(-2.5deg) translateY(-14px)}
+}
+
+.mini-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;z-index:1;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.mini-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(1.4rem,4.5vw,1.7rem);
+  color:var(--gold);
+  letter-spacing:2px;
+}
+.mini-label{
+  color:var(--muted);
+  font-size:0.6rem;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  white-space:nowrap;
+}
+.mini-icon{
+  text-align:center;
+  margin:22px 0 10px;
+  position:relative;z-index:1;
+}
+.mini-icon i{font-size:52px;color:var(--gold)}
+.mini-name{
+  text-align:center;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.7rem;
+  letter-spacing:1px;
+  position:relative;z-index:1;
+  word-break:break-word;
+}
+.mini-status{
+  text-align:center;
+  margin:6px 0 20px;
+  position:relative;z-index:1;
+}
+.mini-status span{
+  display:inline-block;
+  padding:4px 14px;
+  border-radius:20px;
+  background:rgba(0,212,180,0.12);
+  color:var(--teal);
+  font-weight:800;
+  font-size:0.62rem;
+  letter-spacing:0.5px;
+}
+.mini-details{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  position:relative;z-index:1;
+}
+.mini-detail{
+  background:rgba(255,255,255,0.04);
+  border-radius:9px;
+  padding:10px 12px;
+  min-width:0;
+}
+.mini-detail span{
+  display:block;
+  color:var(--muted);
+  font-size:0.58rem;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  margin-bottom:4px;
+}
+.mini-detail strong{
+  font-size:0.82rem;
+  font-weight:800;
+  word-break:break-word;
+}
+.mini-qr{
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:14px;
+  position:relative;z-index:1;
+}
+.mini-qr-box{
+  width:56px;height:56px;
+  background:#fff;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.mini-qr-box i{font-size:38px;color:#111}
+.mini-qr p{color:var(--muted);font-size:0.68rem;line-height:1.45}
+
+/* ---------------- sections ---------------- */
+
+section{padding:clamp(2rem,6vw,3.5rem) 0}
+
+.section-head{
+  text-align:center;
+  margin-bottom:clamp(1.8rem,4vw,2.5rem);
+}
+
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(1.8rem,5vw,2.6rem);
+  letter-spacing:1px;
+  line-height:1.1;
+}
+.section-title .highlight{color:var(--gold)}
+
+.section-sub{
+  color:var(--muted);
+  font-size:clamp(0.85rem,2.4vw,0.92rem);
+  margin-top:0.5rem;
+  max-width:560px;
+  margin-left:auto;
+  margin-right:auto;
+  line-height:1.6;
+}
+
+/* ---------------- benefits ---------------- */
+
+.benefits-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(1rem,2.5vw,1.4rem);
+}
+.benefit-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:clamp(1.4rem,3vw,1.8rem) clamp(1.1rem,2.5vw,1.4rem);
+  text-align:center;
+  transition:0.3s;
+}
+.benefit-card:hover{
+  transform:translateY(-7px);
+  border-color:var(--gold);
+  box-shadow:0 15px 30px rgba(0,0,0,0.3);
+}
+.benefit-icon{
+  width:64px;height:64px;
+  margin:0 auto 1rem;
+  border-radius:50%;
+  background:rgba(255,215,0,0.1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.benefit-icon i{font-size:26px;color:var(--gold)}
+.benefit-icon img{width:100%;height:100%;object-fit:cover}
+
+.benefit-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.5rem;
+  letter-spacing:0.5px;
+  margin-bottom:0.5rem;
+}
+.benefit-text{color:var(--muted);font-size:0.85rem;line-height:1.6}
+
+/* ---------------- partners ---------------- */
+
+.partners-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:clamp(0.9rem,2.2vw,1.2rem);
+}
+.partner-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:clamp(1.3rem,3vw,1.6rem) clamp(1rem,2.4vw,1.2rem);
+  text-align:center;
+  transition:0.3s;
+  text-decoration:none;
+  color:inherit;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.7rem;
+  min-width:0;
+}
+.partner-card:hover{
+  transform:translateY(-5px);
+  border-color:var(--blue);
+  box-shadow:0 15px 30px rgba(0,0,0,0.3);
+}
+.partner-icon{
+  width:64px;height:64px;
+  border-radius:14px;
+  background:rgba(34,136,255,0.12);
+  color:var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.5rem;
+  flex-shrink:0;
+  overflow:hidden;
+}
+.partner-icon i{color:var(--blue)}
+.partner-icon img{width:100%;height:100%;object-fit:cover}
+.partner-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.25rem;
+  letter-spacing:0.5px;
+  line-height:1.2;
+}
+.partner-desc{color:var(--muted);font-size:0.76rem;line-height:1.5}
+.partner-link{
+  margin-top:auto;
+  font-size:0.7rem;
+  font-weight:800;
+  color:var(--teal);
+  display:flex;
+  align-items:center;
+  gap:0.3rem;
+}
+
+/* ---------------- steps ---------------- */
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(1rem,2.5vw,1.4rem);
+}
+.step{
+  text-align:center;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:clamp(1.4rem,3vw,1.8rem) clamp(1.1rem,2.5vw,1.4rem);
+}
+.step-number{
+  width:44px;height:44px;
+  margin:0 auto 1rem;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#111;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:1.05rem;
+}
+.step h3{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.35rem;
+  letter-spacing:0.5px;
+  margin-bottom:0.4rem;
+}
+.step p{color:var(--muted);font-size:0.85rem;line-height:1.6}
+
+/* ---------------- plans ---------------- */
+
+.plans-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(1.2rem,3vw,2rem);
+  max-width:900px;
+  margin:0 auto;
+  align-items:stretch;
+}
+
+
+.billing-toggle{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:0.3rem;
+  width:max-content;
+  max-width:100%;
+  margin:0 auto 1.8rem;
+  padding:0.3rem;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:50px;
+}
+
+.billing-option{
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-family:'Nunito',sans-serif;
+  font-size:0.85rem;
+  font-weight:800;
+  padding:0.65rem 1.25rem;
+  min-height:42px;
+  border-radius:40px;
+  cursor:pointer;
+  transition:all 0.25s ease;
+  white-space:nowrap;
+}
+
+.billing-option:hover{
+  color:#E8EEFF;
+}
+
+.billing-option.active{
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#111;
+  box-shadow:0 5px 18px rgba(255,215,0,0.18);
+}
+
+.billing-save{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-left:0.25rem;
+  padding:0.2rem 0.5rem;
+  border-radius:20px;
+  background:rgba(0,212,180,0.12);
+  color:var(--teal);
+  font-size:0.65rem;
+  font-weight:900;
+}
+
+.plan-price .per{
+  white-space:nowrap;
+}
+
+@media (max-width:480px){
+  .billing-toggle{
+    width:100%;
+    max-width:360px;
+  }
+
+  .billing-option{
+    flex:1;
+    padding:0.65rem 0.7rem;
+    font-size:0.78rem;
+  }
+
+  .billing-save{
+    display:none;
+  }
+}
+
+.plan-card{
+  background:var(--card);
+  border:1px solid rgba(255,215,0,0.2);
+  border-radius:20px;
+  padding:clamp(1.6rem,4vw,2.2rem) clamp(1.3rem,3vw,1.8rem);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,0.35);
+  transition:all 0.3s ease;
+  display:flex;
+  flex-direction:column;
+}
+.plan-card::before{
+  content:"";
+  position:absolute;
+  width:220px;height:220px;
+  border-radius:50%;
+  background:rgba(255,215,0,0.05);
+  top:-120px;right:-80px;
+}
+.plan-card:hover{
+  transform:translateY(-8px);
+  border-color:var(--gold);
+  box-shadow:0 25px 60px rgba(0,0,0,0.5);
+}
+.plan-card>*{position:relative;z-index:1}
+
+.plan-icon{
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:1rem;
+}
+.plan-icon i{font-size:2.5rem;color:var(--gold)}
+.plan-icon img{max-height:64px;max-width:140px;object-fit:contain}
+
+.plan-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(1.7rem,4.5vw,2rem);
+  letter-spacing:1px;
+  margin-bottom:0.3rem;
+}
+.plan-subtitle{
+  color:var(--muted);
+  font-size:0.85rem;
+  margin-bottom:1.5rem;
+  letter-spacing:0.4px;
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+.plan-price{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:0.1rem;
+  margin:-0.6rem 0 1.4rem;
+  line-height:1;
+}
+.plan-price .currency{
+  font-family:'Nunito',sans-serif;
+  font-size:1.15rem;
+  font-weight:900;
+  color:var(--gold);
+  align-self:flex-start;
+  margin-top:0.45rem;
+}
+.plan-price .amount{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2.3rem,6vw,3rem);
+  letter-spacing:1px;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.plan-price .per{
+  font-family:'Nunito',sans-serif;
+  font-size:0.78rem;
+  font-weight:700;
+  color:var(--muted);
+  margin-left:0.25rem;
+}
+
+.benefits-list{
+  list-style:none;
+  text-align:left;
+  margin-bottom:1.8rem;
+  flex-grow:1;
+}
+.benefits-list li{
+  padding:0.75rem 0;
+  border-bottom:1px solid var(--border);
+  font-size:0.88rem;
+  color:#dce2f0;
+}
+.benefits-list li:last-child{border-bottom:none}
+.benefits-list i{color:var(--teal);margin-right:0.6rem;width:20px;text-align:center}
+
+.apply-btn{
+  display:block;
+  width:100%;
+  padding:0.9rem;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#111;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:800;
+  font-size:0.95rem;
+  transition:transform 0.2s,box-shadow 0.2s;
+  min-height:48px;
+  line-height:1.2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  touch-action:manipulation;
+}
+.apply-btn:hover{transform:scale(1.02);box-shadow:0 0 30px rgba(255,215,0,0.25)}
+
+/* ---------------- faq ---------------- */
+
+.faq-list{
+  max-width:720px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:0.7rem;
+}
+.faq-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  transition:border-color 0.3s;
+}
+.faq-item:hover{border-color:rgba(0,212,180,0.3)}
+.faq-item summary{
+  cursor:pointer;
+  padding:1.1rem 1.3rem;
+  font-weight:800;
+  font-size:0.92rem;
+  list-style:none;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  min-height:52px;
+  touch-action:manipulation;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{
+  content:"\f078";
+  font-family:"Font Awesome 6 Free";
+  font-weight:900;
+  color:var(--teal);
+  font-size:0.72rem;
+  transition:transform 0.25s;
+  flex-shrink:0;
+}
+.faq-item[open] summary{color:var(--gold)}
+.faq-item[open] summary::after{transform:rotate(180deg)}
+.faq-item p{
+  padding:0 1.3rem 1.2rem;
+  color:var(--muted);
+  font-size:0.87rem;
+  line-height:1.7;
+}
+
+/* ---------------- footer ---------------- */
+
+footer{
+  text-align:center;
+  padding:clamp(2rem,5vw,3rem) 0 clamp(1.5rem,4vw,2rem);
+  border-top:1px solid var(--border);
+  margin-top:2rem;
+}
+.footer-brand{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.6rem;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:2px;
+  margin-bottom:.3rem;
+}
+.footer-tagline{
+  color:var(--muted);
+  font-size:.78rem;
+  margin-bottom:1.2rem;
+  letter-spacing:.5px;
+}
+.footer-social{
+  display:flex;
+  justify-content:center;
+  gap:clamp(0.8rem,3vw,1.5rem);
+  margin-bottom:1.2rem;
+  flex-wrap:wrap;
+}
+.footer-social a{
+  color:var(--muted);
+  font-size:1.3rem;
+  transition:all 0.3s;
+  min-width:44px;
+  min-height:44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  touch-action:manipulation;
+}
+.footer-social a:hover{color:var(--teal);transform:translateY(-3px)}
+
+.footer-contact{
+  display:flex;
+  justify-content:center;
+  gap:clamp(0.8rem,3vw,1.5rem);
+  flex-wrap:wrap;
+  font-size:.78rem;
+  color:var(--muted);
+  margin-bottom:1.2rem;
+  padding:0 8px;
+}
+.footer-contact a{
+  color:var(--teal);
+  text-decoration:none;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  word-break:break-word;
+  max-width:100%;
+}
+.footer-contact a:hover{text-decoration:underline}
+
+.footer-copyright{font-size:0.75rem;color:var(--muted)}
+
+/* ---------------- tablet ---------------- */
+@media (max-width:980px){
+  .hero{
+    grid-template-columns:1fr;
+    gap:clamp(1.6rem,5vw,2.6rem);
+    text-align:center;
+    padding-bottom:clamp(2rem,5vw,3.5rem);
+  }
+  .page-sub{margin-left:auto;margin-right:auto}
+  .hero-cta-group{justify-content:center}
+  .hero-note{justify-content:center}
+  .card-visual{order:-1;padding:0 0.5rem}
+  .partners-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mini-card{animation:none;transform:none}
+}
+
+/* ---------------- small tablets / big phones ---------------- */
+@media (max-width:850px){
+  .benefits-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:0.85rem;
+  }
+  .benefit-card{padding:1.2rem 0.9rem;border-radius:14px}
+  .benefit-icon{width:52px;height:52px;margin-bottom:0.7rem}
+  .benefit-icon i{font-size:22px}
+  .benefit-title{font-size:1.15rem;margin-bottom:0.35rem}
+  .benefit-text{font-size:0.76rem;line-height:1.5}
+
+  .steps{
+    grid-template-columns:1fr;
+    max-width:480px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+    /* ---- hamburger nav (mobile only) ---- */
+  .navbar{
+    flex-direction:row;
+    flex-wrap:nowrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:0.8rem;
+  }
+  .navbar-brand{text-align:left}
+  .nav-toggle{display:inline-flex}
+
+  .navbar-links{
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    display:none;         
+    flex-direction:column;
+    align-items:stretch;
+    gap:0.15rem;
+    margin-top:0.6rem;
+    padding:0.5rem;
+    background:linear-gradient(135deg,#161f38,#1C2640);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:0 20px 45px rgba(0,0,0,0.55);
+    z-index:60;
+  }
+  .navbar-links.open{display:flex}
+
+  .navbar-links a{
+    justify-content:flex-start;
+    font-size:0.9rem;
+    min-height:46px;
+    padding:0.7rem 1rem;
+    border-radius:9px;
+    white-space:normal;
+  }
+  .navbar-links a:hover,
+  .navbar-links a:focus{background:rgba(255,255,255,0.06)}
+  .navbar-links a.active{background:rgba(255,215,0,0.08)}
+}
+
+/* ---------------- phones ---------------- */
+@media (max-width:700px){
+  .plans-grid{
+    grid-template-columns:1fr;
+    max-width:500px;
+  }
+}
+
+/* ---------------- small phones ---------------- */
+@media (max-width:560px){
+  /* benefit cards were stuck at 2 columns — make them full width */
+  .benefits-grid{
+    grid-template-columns:1fr;
+    max-width:420px;
+    margin-left:auto;
+    margin-right:auto;
+    gap:0.75rem;
+  }
+  .benefit-card{
+    display:flex;
+    align-items:center;
+    text-align:left;
+    gap:1rem;
+    padding:1rem 1.1rem;
+  }
+  .benefit-icon{margin:0;flex-shrink:0}
+  .benefit-card>div:last-child{min-width:0}
+}
+
+@media (max-width:480px){
+  .navbar-links{gap:0.25rem 0.85rem}
+  
+
+  .mini-card{
+    max-width:min(320px,calc(100vw - 2 * var(--pad-x)));
+    padding:18px;
+    border-radius:16px;
+  }
+  .mini-icon{margin:16px 0 8px}
+  .mini-icon i{font-size:44px}
+  .mini-name{font-size:1.5rem}
+  .mini-qr-box{width:48px;height:48px}
+  .mini-qr-box i{font-size:32px}
+  .mini-qr p{font-size:0.64rem}
+
+  .partner-card,
+  .step{padding:1.3rem 1rem}
+
+  .plan-card{padding:1.6rem 1.2rem}
+
+  .partners-grid{grid-template-columns:1fr;max-width:340px;margin:0 auto}
+}
+
+/* ---------------- very small phones ---------------- */
+@media (max-width:380px){
+  .hero-cta-group{
+    flex-direction:column;
+    align-items:stretch;
+    width:100%;
+  }
+  .btn-primary,
+  .btn-secondary{
+    width:100%;
+    padding:0.85rem 1.2rem;
+    white-space:normal;
+  }
+  .page-title{letter-spacing:0}
+  .mini-details{grid-template-columns:1fr}
+  .mini-top{justify-content:center;text-align:center}
+}
+/* ---------------- reduced motion ---------------- */
+
+@media (prefers-reduced-motion: reduce){
+  .mini-card{animation:none;transform:none}
+  html{scroll-behavior:auto}
+  *{transition-duration:0.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="hero-bg"></div>
+<div class="hero-grid"></div>
+
+<div class="container" id="mainContainer">
+
+  <nav class="navbar">
+  <a href="index.html" class="navbar-brand">StudyFlix</a>
+
+  <button class="nav-toggle" id="navToggle" type="button"
+          aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="navbar-links" id="navLinks">
+    <a href="index.html" class="active">Home</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#partners">Partners</a>
+    <a href="#pricing" id="navPricing">Plans</a>
+    <a href="#faq">FAQ</a>
+    <a href="login.html" id="navLogin">Login</a>
+    <a href="register.html" id="navRegister">Register</a>
+    <a href="dashboard.html" id="navDashboard" style="display:none;">Dashboard</a>
+    <a href="#" id="navLogout" class="logout" style="display:none;">Logout</a>
+  </div>
+</nav>
+
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="hero-badge">
+        <i class="fas fa-graduation-cap"></i>
+        <span id="heroBadge">Student Membership Programme</span>
+      </div>
+      <h1 class="page-title">
+        <span class="highlight" id="heroTitle1">Your Student Card.</span><br>
+        <span class="highlight2" id="heroTitle2">Every Benefit.</span>
+      </h1>
+      <p class="page-sub" id="heroSub">StudyFlix gives students a digital membership card, partner discounts, and access to educational opportunities — all from one account.</p>
+      <div class="hero-cta-group" id="heroCta">
+        <a href="register.html" class="btn-primary"><i class="fas fa-user-plus"></i> Become a Member</a>
+        <a href="login.html" class="btn-secondary"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+      </div>
+      <p class="hero-note">
+        <i class="fas fa-check-circle"></i>
+        <span id="heroNote">Takes about 2 minutes · ID and proof of school required</span>
+      </p>
+    </div>
+
+    <div class="card-visual">
+      <div class="mini-card">
+        <div class="mini-top">
+          <div class="mini-logo">STUDYFLIX</div>
+          <div class="mini-label">Membership Card</div>
+        </div>
+        <div class="mini-icon"><i class="fas fa-user-circle"></i></div>
+        <div class="mini-name" id="cardName">Your Name</div>
+        <div class="mini-status"><span><i class="fas fa-check-circle"></i> STUDENT MEMBER</span></div>
+        <div class="mini-details">
+          <div class="mini-detail"><span>Membership No.</span><strong id="cardMembershipNumber">XXXXXXXXXX</strong></div>
+          <div class="mini-detail"><span>Date Issued</span><strong id="cardIssuedDate">--</strong></div>
+        </div>
+        <div class="mini-qr">
+          <div class="mini-qr-box"><i class="fas fa-qrcode"></i></div>
+          <p>Partners scan your QR code to verify your membership.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="benefits">
+    <div class="section-head">
+      <h2 class="section-title">WHAT YOU <span class="highlight">GET</span></h2>
+      <p class="section-sub">Everything included with your StudyFlix membership.</p>
+    </div>
+    <div class="benefits-grid" id="benefitsGrid"></div>
+  </section>
+
+  <section id="partners">
+    <div class="section-head">
+      <h2 class="section-title">OUR <span class="highlight">PARTNERS</span></h2>
+      <p class="section-sub">Businesses and organisations that offer StudyFlix member benefits.</p>
+    </div>
+    <div class="partners-grid" id="partnersGrid"></div>
+  </section>
+
+  <section id="how">
+    <div class="section-head">
+      <h2 class="section-title">HOW IT <span class="highlight">WORKS</span></h2>
+      <p class="section-sub">Three steps from application to your first discount.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-number">1</div><h3>Show Your Card</h3><p>Open your digital StudyFlix membership card when visiting a participating partner.</p></div>
+      <div class="step"><div class="step-number">2</div><h3>Partner Verifies</h3><p>The partner scans your QR code to verify that your membership is active.</p></div>
+      <div class="step"><div class="step-number">3</div><h3>Enjoy Your Benefit</h3><p>Once verified, you can receive the applicable member benefit or discount.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing">
+  <div class="section-head">
+    <h2 class="section-title">CHOOSE YOUR <span class="highlight">PLAN.</span></h2>
+    <p class="section-sub">Choose the StudyFlix membership that works best for you.</p>
+  </div>
+
+  <div class="billing-toggle" id="billingToggle">
+    <button
+      type="button"
+      class="billing-option active"
+      data-billing="monthly">
+      Monthly
+    </button>
+
+    <button
+      type="button"
+      class="billing-option"
+      data-billing="annual">
+      Annual
+      
+    </button>
+  </div>
+
+  <div class="plans-grid" id="plansGrid"></div>
+</section>
+
+  <section id="faq">
+    <div class="section-head">
+      <h2 class="section-title">COMMON <span class="highlight">QUESTIONS</span></h2>
+    </div>
+    <div class="faq-list" id="faqList"></div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">STUDYFLIX</div>
+    <div class="footer-tagline" id="footerTagline">Noko Entertainment Studio</div>
+    <div class="footer-social" id="footerSocial"></div>
+    <div class="footer-contact" id="footerContact"></div>
+    <div class="footer-copyright">&copy; 2025 StudyFlix &middot; All rights reserved</div>
+  </footer>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();const db=firebase.firestore();
+
+/* ---------- SITE SETTINGS ---------- */
+const SITE_DEFAULTS={
+  acceptApplications:true,
+  requirePayment:false,
+  showPricing:true,
+  maintenanceMode:false,
+
+  priceMonthly:100,
+  priceWithData:300,
+
+  priceAnnual:1200,
+  priceWithDataAnnual:3600,
+
+  currencySymbol:'R',
+  supportEmail:'support@studyflix.example',
+  supportPhone:'',
+  footerTagline:'Noko Entertainment Studio',
+  schoolCodePrefix:'SF',
+  schoolCodeLength:14
+};
+
+async function loadSiteSettings(){
+  try{
+    const snap=await db.collection('settings').doc('site').get();
+    return snap.exists?Object.assign({},SITE_DEFAULTS,snap.data()):SITE_DEFAULTS;
+  }catch(err){
+    console.warn('Settings load failed, using defaults:',err.message);
+    return SITE_DEFAULTS;
+  }
+}
+
+const FALLBACK={
+  hero:{
+    badgeText:'Student Membership Programme',
+    title1:'Your Student Card.',
+    title2:'Every Benefit.',
+    subtitle:'StudyFlix gives students a digital membership card, partner discounts, and access to educational opportunities — all from one account.',
+    note:'Takes about 2 minutes · ID and proof of school required'
+  },
+  plans:[
+    {name:'StudyFlix Plan',duration:'Membership Plan',icon:'fa-crown',image:'',features:['Digital Membership Card','Access to Member Benefits','Partner Verification']},
+    {name:'StudyFlix Plan + Data',duration:'Membership Plan',icon:'fa-wifi',image:'',features:['Telkom Mobile Data Included','Digital Membership Card','Access to Member Benefits','Partner Verification']}
+  ],
+  benefits:[
+    {icon:'fa-id-card',image:'',title:'Digital Card',text:'Access your digital StudyFlix membership card whenever you need it.'},
+    {icon:'fa-graduation-cap',image:'',title:'Education',text:'Get access to educational opportunities and resources available to StudyFlix members.'},
+    {icon:'fa-tags',image:'',title:'Discounts',text:'Enjoy special discounts and offers from participating StudyFlix partners.'},
+    {icon:'fa-store',image:'',title:'Partner Benefits',text:'Use your membership at participating businesses and partner organisations.'},
+    {icon:'fa-gift',image:'',title:'Special Offers',text:'Receive access to selected promotions and special offers for members.'},
+    {icon:'fa-headset',image:'',title:'Member Support',text:'Get assistance when you need help with your StudyFlix membership.'}
+  ],
+  partners:[
+    {icon:'fa-handshake',image:'',name:'Partner One',description:'Local business offering member discounts.',url:''},
+    {icon:'fa-store',image:'',name:'Partner Two',description:'Retail partner with special student pricing.',url:''},
+    {icon:'fa-building',image:'',name:'Partner Three',description:'Education and tutoring services.',url:''},
+    {icon:'fa-briefcase',image:'',name:'Partner Four',description:'Internships and career support.',url:''}
+  ],
+  faqs:[
+    {q:'What is StudyFlix?',a:'StudyFlix is a student membership programme. You get a digital membership card, member benefits, and access to discounts from participating partners.'},
+    {q:'Who can join?',a:'Any registered student can apply. You\'ll need to provide proof of school or institution when you submit your application.'},
+    {q:'What documents do I need to apply?',a:'A copy of your identity document and proof of school or institution. Both can be uploaded as a PDF or image during the application.'},
+    {q:'How long does approval take?',a:'Applications are reviewed by our team. You can track your progress at any time from your dashboard under Application Status.'},
+    {q:'Where can I use my membership card?',a:'At any participating StudyFlix partner. Open your digital card and let the partner scan the QR code to verify your membership.'},
+    {q:'Can I cancel my membership?',a:'Yes. Contact member support and we\'ll help you cancel.'}
+  ],
+  footerLinks:[
+    {label:'YouTube',url:'https://youtube.com/@studyflix-noko',icon:'fa-youtube'},
+    {label:'TikTok',url:'https://www.tiktok.com/@studyflixnokoente',icon:'fa-tiktok'},
+    {label:'Facebook',url:'https://www.facebook.com/profile.php?id=61591802301419',icon:'fa-facebook-f'}
+  ]
+};
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+
+function deepMerge(base,over){
+  for(const k in over){
+    if(over[k]&&typeof over[k]==='object'&&!Array.isArray(over[k])&&base[k])base[k]=deepMerge(base[k],over[k]);
+    else base[k]=over[k];
+  }
+  return base;
+}
+
+function visual(item,imgClass,iconClass,iconColorStyle){
+  const hasImg=item.image&&item.image.trim();
+  if(hasImg)return `<img src="${esc(item.image)}" alt="" class="${imgClass||''}" />`;
+  const fallback=item.icon||'fa-star';
+  const style=iconColorStyle?` style="${iconColorStyle}"`:'';
+  return `<i class="fas ${esc(fallback)} ${iconClass||''}"${style}></i>`;
+}
+
+let content=structuredClone(FALLBACK);
+let siteSettings=Object.assign({},SITE_DEFAULTS);
+
+/* ---------- RENDER ---------- */
+function renderAll(){
+  /* Hero */
+  document.getElementById('heroBadge').textContent=content.hero.badgeText||FALLBACK.hero.badgeText;
+  document.getElementById('heroTitle1').textContent=content.hero.title1||'';
+  document.getElementById('heroTitle2').textContent=content.hero.title2||'';
+  document.getElementById('heroSub').textContent=content.hero.subtitle||'';
+  document.getElementById('heroNote').textContent=content.hero.note||'';
+
+  /* Benefits */
+  document.getElementById('benefitsGrid').innerHTML=(content.benefits||[]).map(b=>`
+    <div class="benefit-card">
+      <div class="benefit-icon">${visual(b,'','')}</div>
+      <h3 class="benefit-title">${esc(b.title||'')}</h3>
+      <p class="benefit-text">${esc(b.text||'')}</p>
+    </div>
+  `).join('');
+
+  /* Partners */
+  const partners=content.partners||[];
+  const pSection=document.getElementById('partners');
+  const pGrid=document.getElementById('partnersGrid');
+  if(!partners.length){
+    pSection.style.display='none';
+  }else{
+    pSection.style.display='';
+    pGrid.innerHTML=partners.map(p=>{
+      const inner=`
+        <div class="partner-icon">${visual(p,'','')}</div>
+        <div class="partner-name">${esc(p.name||'')}</div>
+        <div class="partner-desc">${esc(p.description||'')}</div>
+        ${p.url?`<div class="partner-link">Visit site <i class="fas fa-arrow-right"></i></div>`:''}
+      `;
+      return p.url
+        ?`<a class="partner-card" href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>`
+        :`<div class="partner-card">${inner}</div>`;
+    }).join('');
+  }
+
+let selectedBilling='monthly';
+
+function getPlanPrice(index,billing){
+  const monthlyPrice = index===0
+    ? Number(siteSettings.priceMonthly)
+    : Number(siteSettings.priceWithData);
+
+  const annualPrice = index===0
+    ? Number(siteSettings.priceAnnual)
+    : Number(siteSettings.priceWithDataAnnual);
+
+  const price = billing==='annual'
+    ? annualPrice
+    : monthlyPrice;
+
+  return Number.isFinite(price) && price>0 ? price : 0;
+}
+
+function renderPlans(){
+  const plansGrid=document.getElementById('plansGrid');
+  if(!plansGrid)return;
+
+  const currency=siteSettings.currencySymbol||'R';
+
+  plansGrid.innerHTML=(content.plans||[]).map((p,i)=>{
+    const price=getPlanPrice(i,selectedBilling);
+
+    const period=selectedBilling==='annual'
+      ? '/year'
+      : '/month';
+
+    const priceHtml=price>0?`
+      <div class="plan-price">
+        <span class="currency">${esc(currency)}</span>
+        <span class="amount">${price.toLocaleString()}</span>
+        <span class="per">${period}</span>
+      </div>
+    `:'';
+
+    return `
+      <div class="plan-card">
+
+        <div class="plan-icon">
+          ${visual(p,'','')}
+        </div>
+
+        <h2 class="plan-name">
+          ${esc(p.name||'')}
+        </h2>
+
+        <div class="plan-subtitle">
+          ${esc(p.duration||'Membership Plan')}
+        </div>
+
+        ${priceHtml}
+
+        <ul class="benefits-list">
+          ${(p.features||[]).map(f=>`
+            <li>
+              <i class="fas fa-check"></i>
+              ${esc(f)}
+            </li>
+          `).join('')}
+        </ul>
+
+        <a href="membership-application.html" class="apply-btn">
+          Apply Now
+        </a>
+
+      </div>
+    `;
+  }).join('');
+}
+
+  /* Plans */
+renderPlans();
+
+/* Billing toggle */
+const billingButtons = document.querySelectorAll('.billing-option');
+
+billingButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const billing = button.dataset.billing;
+
+    if (billing !== 'monthly' && billing !== 'annual') return;
+
+    selectedBilling = billing;
+
+    billingButtons.forEach(btn => {
+      btn.classList.toggle(
+        'active',
+        btn.dataset.billing === selectedBilling
+      );
+    });
+
+    renderPlans();
+  });
+});
+
+  /* FAQs */
+  document.getElementById('faqList').innerHTML=(content.faqs||[]).map(f=>`
+    <details class="faq-item">
+      <summary>${esc(f.q||'')}</summary>
+      <p>${esc(f.a||'')}</p>
+    </details>
+  `).join('');
+
+  /* Footer social */
+  document.getElementById('footerSocial').innerHTML=(content.footerLinks||[]).map(l=>`
+    <a href="${esc(l.url||'#')}" target="_blank" rel="noopener" aria-label="${esc(l.label||'')}">
+      <i class="fab ${esc(l.icon||'fa-link')}"></i>
+    </a>
+  `).join('');
+
+  /* Footer tagline */
+  document.getElementById('footerTagline').textContent=siteSettings.footerTagline||'Noko Entertainment Studio';
+
+  /* Footer contact */
+  const contactParts=[];
+  if(siteSettings.supportEmail){
+    contactParts.push(`<a href="mailto:${esc(siteSettings.supportEmail)}"><i class="fas fa-envelope"></i> ${esc(siteSettings.supportEmail)}</a>`);
+  }
+  if(siteSettings.supportPhone){
+    contactParts.push(`<a href="tel:${esc(siteSettings.supportPhone.replace(/\s/g,''))}"><i class="fas fa-phone"></i> ${esc(siteSettings.supportPhone)}</a>`);
+  }
+  document.getElementById('footerContact').innerHTML=contactParts.join('');
+}
+
+/* ---------- VISIBILITY ---------- */
+function applyPricingVisibility(visible){
+  const section=document.getElementById('pricing');
+  const navLink=document.getElementById('navPricing');
+  if(visible===false){
+    const user=auth.currentUser;
+    if(user){
+      if(section)section.style.display='';
+      if(navLink)navLink.style.display='';
+    }else{
+      if(section)section.style.display='none';
+      if(navLink)navLink.style.display='none';
+    }
+  }else{
+    if(section)section.style.display='';
+    if(navLink)navLink.style.display='';
+  }
+}
+
+/* ---------- MAINTENANCE MODE ---------- */
+function showMaintenance(){
+  document.body.innerHTML=`
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;background:linear-gradient(135deg,#0a0a2a,#1a1a3e);color:#E8EEFF;font-family:'Nunito',sans-serif">
+      <div style="max-width:520px">
+        <div style="font-size:4.5rem;color:#FFD700;margin-bottom:1.2rem"><i class="fas fa-screwdriver-wrench"></i></div>
+        <h1 style="font-family:'Bebas Neue',sans-serif;font-size:3.4rem;letter-spacing:2px;margin-bottom:.5rem;background:linear-gradient(135deg,#FFD700,#FF6B00);-webkit-background-clip:text;background-clip:text;color:transparent">WE'LL BE BACK SOON</h1>
+        <p style="color:#8892B0;line-height:1.7;font-size:.95rem">StudyFlix is undergoing scheduled maintenance. New signups are temporarily paused. Please check back shortly.</p>
+      </div>
+    </div>`;
+}
+
+/* ---------- BOOTSTRAP ---------- */
+(async function(){
+  siteSettings=await loadSiteSettings();
+
+  if(siteSettings.maintenanceMode===true){
+    showMaintenance();
+    return;
+  }
+
+  try{
+    const snap=await db.collection('settings').doc('content').get();
+    if(snap.exists)content=deepMerge(structuredClone(FALLBACK),snap.data());
+  }catch(err){console.warn('Content fetch failed — using fallback.',err.message)}
+
+  applyPricingVisibility(siteSettings.showPricing);
+  renderAll();
+  
+})();
+
+/* ---------- AUTH-AWARE UI ---------- */
+auth.onAuthStateChanged(async user=>{
+  const login=document.getElementById('navLogin');
+  const register=document.getElementById('navRegister');
+  const dashboard=document.getElementById('navDashboard');
+  const logout=document.getElementById('navLogout');
+
+  if(!login||!register||!dashboard||!logout)return;
+
+  if(!user){
+    login.style.display='inline';
+    register.style.display='inline';
+    dashboard.style.display='none';
+    logout.style.display='none';
+    applyPricingVisibility(siteSettings.showPricing);
+    return;
+  }
+
+  login.style.display='none';
+  register.style.display='none';
+  dashboard.style.display='inline';
+  logout.style.display='inline';
+  applyPricingVisibility(siteSettings.showPricing);
+
+  const heroCta=document.getElementById('heroCta');
+  if(heroCta){
+    heroCta.innerHTML=`
+      <a href="dashboard.html" class="btn-primary"><i class="fas fa-arrow-right"></i> Go to Dashboard</a>
+      <a href="membership-card.html" class="btn-secondary"><i class="fas fa-id-card"></i> View My Card</a>`;
+  }
+
+  let name=null;
+  try{
+    const snap=await db.collection('members').doc(user.uid).get();
+    if(snap.exists){
+      const d=snap.data();
+      name=d.name||d.fullName||d.displayName||null;
+    }
+  }catch(err){console.warn('Firestore read skipped:',err.message)}
+
+  if(!name&&user.displayName)name=user.displayName;
+  if(!name&&user.email)name=user.email.split('@')[0];
+  const cardNameEl=document.getElementById('cardName');
+  if(name&&cardNameEl)cardNameEl.textContent=name;
+});
+
+const logoutBtn=document.getElementById('navLogout');
+if(logoutBtn){
+  logoutBtn.addEventListener('click',async e=>{
+    e.preventDefault();
+    try{await auth.signOut()}catch(err){console.error(err)}
+    window.location.href='index.html';
+  });
+}
+
+
+/* ---------- MOBILE HAMBURGER NAV ---------- */
+(function(){
+  const toggle=document.getElementById('navToggle');
+  const links=document.getElementById('navLinks');
+  if(!toggle||!links)return;
+
+  const OPEN_ICON='<i class="fas fa-times"></i>';
+  const CLOSE_ICON='<i class="fas fa-bars"></i>';
+
+  function closeMenu(){
+    links.classList.remove('open');
+    toggle.setAttribute('aria-expanded','false');
+    toggle.innerHTML=CLOSE_ICON;
+  }
+  function openMenu(){
+    links.classList.add('open');
+    toggle.setAttribute('aria-expanded','true');
+    toggle.innerHTML=OPEN_ICON;
+  }
+
+  toggle.addEventListener('click',e=>{
+    e.stopPropagation();
+    links.classList.contains('open')?closeMenu():openMenu();
+  });
+
+  // close after tapping any link
+  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+
+  // close when tapping outside
+  document.addEventListener('click',e=>{
+    if(links.classList.contains('open')&&
+       !links.contains(e.target)&&
+       !toggle.contains(e.target))closeMenu();
+  });
+
+  // close on Escape
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')closeMenu();
+  });
+
+  // reset if the window grows back to desktop
+  window.addEventListener('resize',()=>{
+    if(window.innerWidth>850)closeMenu();
+  });
+})();
+
+
+
+
+
+</script>
+
+</body>
+</html>

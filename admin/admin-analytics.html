@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Analytics — StudyFlix Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;--red:#ff5555;--muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,.07)}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#080C18,#111A2E);color:#E8EEFF;min-height:100vh;overflow-x:hidden}
+.hero-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.guard{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,42,.95);z-index:10000;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.guard.hidden{display:none}
+.guard-text{color:var(--muted);font-size:.9rem}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,215,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.main{padding:1.5rem 1.5rem 3rem;max-width:1400px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;flex-wrap:wrap}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1.5px}
+h1 .hl{background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+.btn{padding:.65rem 1.2rem;border-radius:10px;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:rgba(255,255,255,.05);color:#E8EEFF;border-color:var(--border)}
+.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.1)}
+select.range{padding:.65rem 2rem .65rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:#E8EEFF;font-size:.85rem;font-family:inherit;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238892B0'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right .5rem center;background-size:16px}
+select.range:focus{border-color:var(--teal)}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.6rem}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.3rem;position:relative;overflow:hidden;transition:.2s}
+.kpi:hover{border-color:rgba(0,212,180,.35);transform:translateY(-2px)}
+.kpi .icon{position:absolute;top:.9rem;right:.9rem;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.kpi.gold .icon{background:rgba(255,215,0,.12);color:var(--gold)}
+.kpi.teal .icon{background:rgba(0,212,180,.12);color:var(--teal)}
+.kpi.blue .icon{background:rgba(34,136,255,.12);color:var(--blue)}
+.kpi.red .icon{background:rgba(255,85,85,.12);color:#ff9b9b}
+.kpi .lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800;margin-bottom:.4rem}
+.kpi .val{font-size:1.75rem;font-weight:900;line-height:1.1}
+.kpi .delta{font-size:.72rem;color:var(--muted);margin-top:.3rem;font-weight:600}
+.kpi .delta.up{color:var(--teal)}
+.kpi .delta.down{color:#ff9b9b}
+
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem}
+.chart-grid.full{grid-template-columns:1fr}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem 1.5rem}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.8px;color:var(--gold);display:flex;align-items:center;gap:.5rem}
+.panel-sub{font-size:.72rem;color:var(--muted)}
+
+.bar-chart{width:100%;height:auto;display:block;overflow:visible}
+.bar-chart .bar{transition:opacity .15s}
+.bar-chart .bar:hover{opacity:.8}
+.bar-chart text{font-family:'Nunito',sans-serif}
+
+.hbar-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem}
+.hbar-row:last-child{margin-bottom:0}
+.hbar-label{flex:0 0 130px;font-size:.8rem;color:#dce2f0;font-weight:700;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{flex:1;height:24px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;position:relative}
+.hbar-fill{height:100%;border-radius:6px;transition:width .6s ease-out;display:flex;align-items:center;justify-content:flex-end;padding-right:.5rem;font-size:.72rem;font-weight:800;color:#111;min-width:30px}
+.hbar-fill.teal{background:linear-gradient(90deg,#00D4B4,#00b89a)}
+.hbar-fill.gold{background:linear-gradient(90deg,#FFD700,#FF6B00)}
+.hbar-fill.blue{background:linear-gradient(90deg,#2288FF,#0066ff)}
+.hbar-fill.red{background:linear-gradient(90deg,#ff8888,#ff5555);color:#fff}
+
+.donut-wrap{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center}
+.donut-legend{display:flex;flex-direction:column;gap:.6rem;min-width:140px}
+.leg-item{display:flex;align-items:center;gap:.55rem;font-size:.82rem}
+.leg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.leg-label{flex:1;color:#dce2f0;font-weight:700}
+.leg-value{color:var(--muted);font-weight:800;font-size:.78rem}
+
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:.85rem}
+.empty i{display:block;font-size:2rem;color:rgba(255,215,0,.3);margin-bottom:.6rem}
+
+#toast{position:fixed;bottom:24px;right:24px;background:rgba(28,38,64,.98);border:1px solid var(--border);border-left:3px solid var(--teal);padding:.9rem 1.2rem;border-radius:12px;font-size:.85rem;font-weight:700;z-index:20000;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;max-width:340px}
+#toast.error{border-left-color:var(--red);color:#ff9b9b}
+
+@media(max-width:1000px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.chart-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.main{padding-top:75px}h1{font-size:2rem}.kpi-grid{grid-template-columns:1fr 1fr;gap:.7rem}.kpi{padding:1rem}.kpi .val{font-size:1.4rem}.panel{padding:1.1rem}select.range{width:100%}.hbar-label{flex:0 0 90px;font-size:.72rem}}
+</style>
+</head>
+<body class="has-sidebar">
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard"><div class="spinner"></div><div class="guard-text" id="guardText">Verifying admin access…</div></div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1><span class="hl">Analytics</span></h1><p class="sub">Signups, approvals, revenue and distribution.</p></div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <select class="range" id="rangeSelect">
+        <option value="7">Last 7 days</option>
+        <option value="30" selected>Last 30 days</option>
+        <option value="90">Last 90 days</option>
+        <option value="365">Last 12 months</option>
+      </select>
+      <button class="btn btn-ghost" id="refreshBtn"><i class="fas fa-rotate-right"></i> Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi gold">
+      <div class="icon"><i class="fas fa-user-plus"></i></div>
+      <div class="lbl">New Signups</div>
+      <div class="val" id="kpiSignups">—</div>
+      <div class="delta" id="kpiSignupsDelta">loading…</div>
+    </div>
+    <div class="kpi teal">
+      <div class="icon"><i class="fas fa-check-circle"></i></div>
+      <div class="lbl">Approval Rate</div>
+      <div class="val" id="kpiApproval">—</div>
+      <div class="delta" id="kpiApprovalDelta">—</div>
+    </div>
+    <div class="kpi blue">
+      <div class="icon"><i class="fas fa-coins"></i></div>
+      <div class="lbl">Period Revenue</div>
+      <div class="val" id="kpiRevenue">—</div>
+      <div class="delta" id="kpiRevenueDelta">—</div>
+    </div>
+    <div class="kpi red">
+      <div class="icon"><i class="fas fa-circle-dollar-to-slot"></i></div>
+      <div class="lbl">Paid Members</div>
+      <div class="val" id="kpiPaid">—</div>
+      <div class="delta" id="kpiPaidDelta">PayPal paid</div>
+    </div>
+
+    <div class="kpi red">
+      <div class="icon"><i class="fas fa-circle-exclamation"></i></div>
+      <div class="lbl">Unpaid Members</div>
+      <div class="val" id="kpiUnpaid">—</div>
+      <div class="delta">no successful PayPal payment</div>
+    </div>
+  </div>
+
+  <!-- SIGNUPS CHART -->
+  <div class="chart-grid full">
+    <div class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title"><i class="fas fa-chart-column"></i> Signups Over Time</h2>
+        <div class="panel-sub" id="signupsSub">—</div>
+      </div>
+      <div id="signupsChart"><div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <!-- APPROVAL DONUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title"><i class="fas fa-chart-pie"></i> Application Status</h2>
+      </div>
+      <div id="approvalChart"><div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading…</div></div>
+    </div>
+
+    <!-- PLAN DISTRIBUTION -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">
+          <i class="fas fa-crown"></i> Plan Distribution
+        </h2>
+        <div class="panel-sub">All membership plans</div>
+      </div>
+
+      <div id="planChart">
+        <div class="empty">
+          <i class="fas fa-spinner fa-spin"></i>Loading…
+        </div>
+      </div>
+    </div>
+
+  <div class="chart-grid">
+    <!-- TOP SCHOOLS -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title"><i class="fas fa-graduation-cap"></i> Top Schools</h2>
+        <div class="panel-sub">By member count</div>
+      </div>
+      <div id="schoolsChart"><div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading…</div></div>
+    </div>
+
+    <!-- REVENUE BY MONTH -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title"><i class="fas fa-chart-line"></i> Revenue by Month</h2>
+        <div class="panel-sub">PayPal revenue · Last 6 months</div>
+      </div>
+      <div id="revenueChart"><div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading…</div></div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNWXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();const db=firebase.firestore();
+
+let currentUser=null,currentAdmin=null;
+let allMembers=[];
+let rangeDays=30;
+let currencySymbol='R';
+
+const toastEl=document.getElementById('toast');let tt=null;
+function toast(m,err){toastEl.textContent=m;toastEl.classList.toggle('error',!!err);toastEl.style.display='block';clearTimeout(tt);tt=setTimeout(()=>toastEl.style.display='none',3200)}
+function toDate(t){if(!t)return null;try{if(t.toDate)return t.toDate();if(t.seconds)return new Date(t.seconds*1000);return new Date(t)}catch(e){return null}}
+function fmtMoney(n){return currencySymbol+(parseFloat(n)||0).toFixed(0)}
+
+/* Sidebar */
+(async function(){
+  try{
+    const r=await fetch('admin-sidebar.html');
+    document.getElementById('sidebar-placeholder').innerHTML=await r.text();
+    const sb=document.getElementById('sidebar'),tg=document.getElementById('sidebarToggle'),cl=document.getElementById('sidebarClose'),ov=document.getElementById('sidebarOverlay'),lo=document.getElementById('sidebarLogout');
+    tg.addEventListener('click',()=>{sb.classList.add('open');ov.classList.add('active')});
+    function c(){sb.classList.remove('open');ov.classList.remove('active')}
+    cl.addEventListener('click',c);ov.addEventListener('click',c);
+    const cur=location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.page===cur));
+    lo.addEventListener('click',async()=>{lo.disabled=true;try{await auth.signOut()}catch(e){}location.href='admin-login.html'});
+  }catch(e){console.error(e)}
+})();
+
+async function loadSettings(){
+  try{
+    const snap=await db.collection('settings').doc('site').get();
+    if(snap.exists&&snap.data().currencySymbol)currencySymbol=snap.data().currencySymbol;
+  }catch(e){}
+}
+
+async function loadData(){
+  try{
+    const snap=await db.collection('members').limit(3000).get();
+    allMembers=snap.docs.map(d=>({id:d.id,data:d.data()}));
+    renderAll();
+  }catch(err){
+    console.error(err);
+    toast('Could not load members: '+(err.code||err.message),true);
+  }
+}
+
+/* Helpers */
+function startOfDay(d){const x=new Date(d);x.setHours(0,0,0,0);return x}
+
+function renderAll(){
+  computeKPIs();
+  renderSignupsChart();
+  renderApprovalChart();
+  renderPlanChart();
+  renderSchoolsChart();
+  renderRevenueChart();
+}
+
+/* KPIs */
+function computeKPIs(){
+  const now=new Date();
+  const rangeStart=new Date(now.getTime()-rangeDays*24*60*60*1000);
+  const prevStart=new Date(rangeStart.getTime()-rangeDays*24*60*60*1000);
+
+  let newSignups=0;
+  let prevSignups=0;
+
+  let active=0;
+  let rejected=0;
+
+  let revenue=0;
+  let prevRevenue=0;
+
+  let paidMembers=0;
+  let unpaidMembers=0;
+
+  allMembers.forEach(m=>{
+    const d=m.data||{};
+
+    const created=toDate(d.createdAt);
+
+    if(created){
+      if(created>=rangeStart){
+        newSignups++;
+      }else if(created>=prevStart&&created<rangeStart){
+        prevSignups++;
+      }
+    }
+
+    const status=(
+      d.status ||
+      d.membershipStatus ||
+      d.applicationStatus ||
+      ''
+    ).toString().toLowerCase();
+
+    if(
+      status==='active' ||
+      status==='approved'
+    ){
+      active++;
+    }
+
+    if(
+      status==='rejected' ||
+      status==='declined' ||
+      status==='inactive'
+    ){
+      rejected++;
+    }
+
+    /* ---------------- PAYPAL PAYMENT ---------------- */
+
+    /*
+      Current StudyFlix PayPal payment structure:
+      paid
+      paidAt
+      paypalStatus
+      paypalSubscriptionId
+      paypalPlanId
+      paypalPlanKey
+    */
+
+    const paypalPaid=
+      d.paid===true ||
+      String(d.paypalStatus||'').toUpperCase()==='APPROVED' ||
+      String(d.paypalStatus||'').toUpperCase()==='ACTIVE';
+
+    const paidAt=
+      toDate(d.paidAt) ||
+      toDate(d.paypalUpdatedAt) ||
+      toDate(d.application?.payment?.paidAt) ||
+      toDate(d.lastPayment?.paidAt);
+
+    const amount=
+      parseFloat(
+        d.amount ||
+        d.paymentAmount ||
+        d.application?.payment?.amount ||
+        d.lastPayment?.amount ||
+        0
+      ) || 0;
+
+    if(paypalPaid){
+      paidMembers++;
+    }else{
+      unpaidMembers++;
+    }
+
+    if(paypalPaid && paidAt){
+
+      if(paidAt>=rangeStart){
+        revenue+=amount;
+      }
+
+      if(paidAt>=prevStart && paidAt<rangeStart){
+        prevRevenue+=amount;
+      }
+    }
+  });
+
+  /* ---------------- APPROVAL RATE ---------------- */
+
+  const decided=active+rejected;
+
+  const approvalRate=
+    decided>0
+      ?Math.round((active/decided)*100)
+      :0;
+
+  /* ---------------- SIGNUPS ---------------- */
+
+  document.getElementById('kpiSignups').textContent=newSignups;
+
+  const signupDelta=
+    prevSignups>0
+      ?Math.round(((newSignups-prevSignups)/prevSignups)*100)
+      :(newSignups>0?100:0);
+
+  const sEl=document.getElementById('kpiSignupsDelta');
+
+  if(prevSignups===0&&newSignups===0){
+
+    sEl.textContent='no activity';
+    sEl.className='delta';
+
+  }else{
+
+    sEl.textContent=
+      (signupDelta>=0?'▲ ':'▼ ')+
+      Math.abs(signupDelta)+
+      '% vs previous period';
+
+    sEl.className=
+      'delta '+
+      (signupDelta>=0?'up':'down');
+  }
+
+
+
+  document.getElementById('kpiApproval').textContent=
+    approvalRate+'%';
+
+  document.getElementById('kpiApprovalDelta').textContent=
+    active+' approved · '+rejected+' rejected';
+
+ 
+
+  document.getElementById('kpiRevenue').textContent=
+    fmtMoney(revenue);
+
+  const revEl=
+    document.getElementById('kpiRevenueDelta');
+
+  if(prevRevenue>0){
+
+    const rd=
+      Math.round(
+        ((revenue-prevRevenue)/prevRevenue)*100
+      );
+
+    revEl.textContent=
+      (rd>=0?'▲ ':'▼ ')+
+      Math.abs(rd)+
+      '% vs previous period';
+
+    revEl.className=
+      'delta '+(rd>=0?'up':'down');
+
+  }else{
+
+    revEl.textContent=
+      'previous period: '+fmtMoney(prevRevenue);
+
+    revEl.className='delta';
+  }
+
+
+  document.getElementById('kpiPaid').textContent=
+    paidMembers;
+
+  document.getElementById('kpiPaidDelta').textContent=
+    'PayPal paid';
+
+  document.getElementById('kpiUnpaid').textContent=
+    unpaidMembers;
+}
+
+/* Signups bar chart (SVG) */
+function renderSignupsChart(){
+  const wrap=document.getElementById('signupsChart');
+  const days=rangeDays<=30?rangeDays:(rangeDays<=90?rangeDays:Math.min(rangeDays,365));
+  const buckets=[];
+  const now=new Date();now.setHours(0,0,0,0);
+
+  if(rangeDays<=90){
+    for(let i=days-1;i>=0;i--){
+      const d=new Date(now);d.setDate(d.getDate()-i);
+      buckets.push({label:d,count:0});
+    }
+    allMembers.forEach(m=>{
+      const c=toDate(m.data.createdAt);if(!c)return;
+      const cd=startOfDay(c);
+      const b=buckets.find(x=>x.label.getTime()===cd.getTime());
+      if(b)b.count++;
+    });
+  } else {
+    // monthly buckets
+    for(let i=11;i>=0;i--){
+      const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+      buckets.push({label:d,count:0,month:true});
+    }
+    allMembers.forEach(m=>{
+      const c=toDate(m.data.createdAt);if(!c)return;
+      const key=c.getFullYear()+'-'+c.getMonth();
+      const b=buckets.find(x=>x.label.getFullYear()+'-'+x.label.getMonth()===key);
+      if(b)b.count++;
+    });
+  }
+
+  const max=Math.max(...buckets.map(b=>b.count),1);
+  const W=900,H=260,padL=40,padR=20,padT=20,padB=40;
+  const chartW=W-padL-padR,chartH=H-padT-padB;
+  const barW=chartW/buckets.length;
+  const gap=Math.max(1,barW*.15);
+
+  // Y gridlines
+  const ySteps=4;
+  let gridlines='';
+  for(let i=0;i<=ySteps;i++){
+    const y=padT+chartH*(i/ySteps);
+    const v=Math.round(max*(1-i/ySteps));
+    gridlines+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="rgba(255,255,255,.06)" stroke-width="1"/>`;
+    gridlines+=`<text x="${padL-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#8892B0">${v}</text>`;
+  }
+
+  // Bars
+  let bars='';
+  buckets.forEach((b,i)=>{
+    const h=(b.count/max)*chartH;
+    const x=padL+i*barW+gap/2;
+    const y=padT+chartH-h;
+    const bw=barW-gap;
+    const isLast=i===buckets.length-1;
+    const fill=isLast?'url(#barGradActive)':'url(#barGrad)';
+    bars+=`<rect class="bar" x="${x}" y="${y}" width="${bw}" height="${Math.max(h,1)}" rx="3" fill="${fill}"><title>${b.count} signups</title></rect>`;
+    // x labels — sparse
+    const every=Math.max(1,Math.floor(buckets.length/8));
+    if(i%every===0||i===buckets.length-1){
+      const lbl=b.month?b.label.toLocaleDateString(undefined,{month:'short'}):b.label.getDate();
+      bars+=`<text x="${x+bw/2}" y="${H-padB+16}" text-anchor="middle" font-size="10" fill="#8892B0">${lbl}</text>`;
+    }
+  });
+
+  wrap.innerHTML=`
+    <svg class="bar-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00D4B4" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#00D4B4" stop-opacity="0.3"/>
+        </linearGradient>
+        <linearGradient id="barGradActive" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFD700" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="#FF6B00" stop-opacity="0.4"/>
+        </linearGradient>
+      </defs>
+      ${gridlines}
+      ${bars}
+    </svg>
+  `;
+
+  const total=buckets.reduce((s,b)=>s+b.count,0);
+  document.getElementById('signupsSub').textContent=total+' total in period';
+}
+
+/* Approval donut */
+function renderApprovalChart(){
+  const wrap=document.getElementById('approvalChart');
+  let active=0,pending=0,rejected=0;
+  allMembers.forEach(m=>{
+    const s=(m.data.status||'pending').toLowerCase();
+    if(s==='active'||s==='approved')active++;
+    else if(s==='pending')pending++;
+    else if(s==='rejected'||s==='inactive')rejected++;
+  });
+  const total=active+pending+rejected;
+  if(!total){wrap.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>No members yet.</div>';return}
+
+  const data=[
+    {label:'Active',value:active,color:'#00D4B4'},
+    {label:'Pending',value:pending,color:'#FFD700'},
+    {label:'Rejected',value:rejected,color:'#ff5555'}
+  ].filter(d=>d.value>0);
+
+  const size=180,stroke=26,r=(size-stroke)/2,cx=size/2,cy=size/2;
+  const circ=2*Math.PI*r;
+  let acc=0,paths='';
+  data.forEach(d=>{
+    const frac=d.value/total;
+    const dash=circ*frac;
+    const gap=circ-dash;
+    const offset=circ*acc*-1;
+    paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.color}" stroke-width="${stroke}" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${offset}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    acc+=frac;
+  });
+
+  const legend=data.map(d=>`
+    <div class="leg-item">
+      <div class="leg-dot" style="background:${d.color}"></div>
+      <div class="leg-label">${d.label}</div>
+      <div class="leg-value">${d.value} · ${Math.round(d.value/total*100)}%</div>
+    </div>
+  `).join('');
+
+  wrap.innerHTML=`
+    <div class="donut-wrap">
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="${stroke}"/>
+        ${paths}
+        <text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="24" font-weight="900" fill="#E8EEFF" font-family="Bebas Neue">${total}</text>
+        <text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="10" fill="#8892B0" font-family="Nunito">MEMBERS</text>
+      </svg>
+      <div class="donut-legend">${legend}</div>
+    </div>
+  `;
+}
+
+function renderPlanChart(){
+
+  const wrap=document.getElementById('planChart');
+
+  const counts={
+    standardMonthly:0,
+    standardAnnual:0,
+    dataMonthly:0,
+    dataAnnual:0
+  };
+
+  allMembers.forEach(m=>{
+
+    const d=m.data||{};
+
+    let key=
+      d.paypalPlanKey ||
+      d.membershipType ||
+      d.plan ||
+      '';
+
+    key=String(key).toLowerCase();
+
+    /*
+      Match the four current StudyFlix plans.
+    */
+
+    if(
+      key.includes('standard') &&
+      key.includes('annual')
+    ){
+
+      counts.standardAnnual++;
+
+    }else if(
+      key.includes('standard') &&
+      (
+        key.includes('monthly') ||
+        key==='standard'
+      )
+    ){
+
+      counts.standardMonthly++;
+
+    }else if(
+      (
+        key.includes('data') ||
+        key.includes('plus-data') ||
+        key.includes('telkom')
+      ) &&
+      key.includes('annual')
+    ){
+
+      counts.dataAnnual++;
+
+    }else if(
+      key.includes('data') ||
+      key.includes('plus-data') ||
+      key.includes('telkom')
+    ){
+
+      counts.dataMonthly++;
+
+    }else{
+
+      /*
+        Backward compatibility with older records.
+      */
+
+      if(
+        key==='studyflix-monthly' ||
+        key==='free'
+      ){
+
+        counts.standardMonthly++;
+
+      }else if(
+        key==='studyflix-telkom'
+      ){
+
+        counts.dataMonthly++;
+      }
+    }
+  });
+
+  const plans=[
+    {
+      key:'standardMonthly',
+      label:'Standard Monthly',
+      price:'R100/month',
+      value:counts.standardMonthly
+    },
+    {
+      key:'standardAnnual',
+      label:'Standard Annual',
+      price:'R1,200/year',
+      value:counts.standardAnnual
+    },
+    {
+      key:'dataMonthly',
+      label:'+Data Monthly',
+      price:'R300/month',
+      value:counts.dataMonthly
+    },
+    {
+      key:'dataAnnual',
+      label:'+Data Annual',
+      price:'R3,600/year',
+      value:counts.dataAnnual
+    }
+  ];
+
+  const total=
+    plans.reduce((sum,p)=>sum+p.value,0);
+
+  if(!total){
+
+    wrap.innerHTML=
+      '<div class="empty">'+
+      '<i class="fas fa-inbox"></i>'+
+      'No plan data yet.'+
+      '</div>';
+
+    return;
+  }
+
+  const max=
+    Math.max(...plans.map(p=>p.value),1);
+
+  wrap.innerHTML=
+    plans.map((p,i)=>{
+
+      const pct=
+        Math.round((p.value/total)*100);
+
+      const width=
+        p.value>0
+          ?Math.max(8,(p.value/max)*100)
+          :0;
+
+      const cls=
+        ['teal','gold','blue','red'][i];
+
+      return `
+        <div class="hbar-row">
+
+          <div
+            class="hbar-label"
+            title="${p.label} — ${p.price}"
+          >
+            ${p.label}
+          </div>
+
+          <div class="hbar-track">
+
+            <div
+              class="hbar-fill ${cls}"
+              style="width:${width}%"
+            >
+              ${p.value}
+            </div>
+
+          </div>
+
+          <div style="
+            flex:0 0 44px;
+            text-align:right;
+            font-size:.75rem;
+            color:#8892B0;
+            font-weight:800
+          ">
+            ${pct}%
+          </div>
+
+        </div>
+      `;
+
+    }).join('');
+}
+
+/* Top schools */
+function renderSchoolsChart(){
+  const wrap=document.getElementById('schoolsChart');
+  const counts={};
+  allMembers.forEach(m=>{
+    const s=(m.data.school||m.data.application&&m.data.application.school||'').trim();
+    if(!s)return;
+    counts[s]=(counts[s]||0)+1;
+  });
+  const arr=Object.entries(counts).map(([k,v])=>({school:k,value:v})).sort((a,b)=>b.value-a.value).slice(0,6);
+  if(!arr.length){wrap.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>No school data yet.</div>';return}
+  const max=Math.max(...arr.map(a=>a.value));
+
+  wrap.innerHTML=arr.map((a,i)=>{
+    const w=Math.max(8,(a.value/max)*100);
+    const cls=['gold','teal','blue','red','teal','gold'][i%6];
+    return `<div class="hbar-row">
+      <div class="hbar-label" title="${a.school}">${a.school}</div>
+      <div class="hbar-track">
+        <div class="hbar-fill ${cls}" style="width:${w}%">${a.value}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* Revenue by month */
+function renderRevenueChart(){
+
+  const wrap = document.getElementById('revenueChart');
+
+  if(!wrap) return;
+
+  const months = [];
+  const now = new Date();
+
+  for(let i = 5; i >= 0; i--){
+
+    const d = new Date(
+      now.getFullYear(),
+      now.getMonth() - i,
+      1
+    );
+
+    months.push({
+      label: d,
+      value: 0
+    });
+  }
+
+  allMembers.forEach(m => {
+
+    const d = m.data || {};
+
+    const paypalPaid =
+      d.paid === true ||
+      String(d.paypalStatus || '').toUpperCase() === 'APPROVED' ||
+      String(d.paypalStatus || '').toUpperCase() === 'ACTIVE';
+
+    if(!paypalPaid) return;
+
+    const paidAt =
+      toDate(d.paidAt) ||
+      toDate(d.paypalUpdatedAt) ||
+      toDate(d.application?.payment?.paidAt) ||
+      toDate(d.lastPayment?.paidAt);
+
+    if(!paidAt) return;
+
+    let amount =
+      parseFloat(d.amount) ||
+      parseFloat(d.paymentAmount) ||
+      parseFloat(d.paypalAmount) ||
+      parseFloat(d.application?.payment?.amount) ||
+      parseFloat(d.lastPayment?.amount) ||
+      0;
+
+    /*
+      If Firestore doesn't contain an amount,
+      use the StudyFlix plan price.
+    */
+    if(!amount){
+
+      const key = String(
+        d.paypalPlanKey ||
+        d.membershipType ||
+        d.plan ||
+        ''
+      ).toLowerCase();
+
+      if(
+        key.includes('standard') &&
+        key.includes('annual')
+      ){
+
+        amount = 1200;
+
+      }else if(
+        (
+          key.includes('data') ||
+          key.includes('plus-data') ||
+          key.includes('telkom')
+        ) &&
+        key.includes('annual')
+      ){
+
+        amount = 3600;
+
+      }else if(
+        key.includes('data') ||
+        key.includes('plus-data') ||
+        key.includes('telkom')
+      ){
+
+        amount = 300;
+
+      }else{
+
+        amount = 100;
+      }
+    }
+
+    const key =
+      paidAt.getFullYear() +
+      '-' +
+      paidAt.getMonth();
+
+    const bucket = months.find(x =>
+      x.label.getFullYear() +
+      '-' +
+      x.label.getMonth() === key
+    );
+
+    if(bucket){
+      bucket.value += amount;
+    }
+
+  });
+
+  const max = Math.max(
+    ...months.map(x => x.value),
+    1
+  );
+
+  wrap.innerHTML = `
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:12px;
+      align-items:end;
+      height:240px;
+      padding:10px 0;
+    ">
+      ${months.map(x => {
+
+        const height = x.value > 0
+          ? Math.max(8,(x.value / max) * 100)
+          : 0;
+
+        return `
+          <div style="
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            justify-content:flex-end;
+            align-items:center;
+            gap:6px;
+          ">
+
+            <div style="
+              font-size:.7rem;
+              color:#8892B0;
+              font-weight:800;
+            ">
+              ${fmtMoney(x.value)}
+            </div>
+
+            <div style="
+              width:70%;
+              height:160px;
+              background:rgba(255,255,255,.04);
+              border-radius:7px 7px 0 0;
+              display:flex;
+              align-items:flex-end;
+              overflow:hidden;
+            ">
+              <div style="
+                width:100%;
+                height:${height}%;
+                background:linear-gradient(
+                  180deg,
+                  #00D4B4,
+                  #2288FF
+                );
+                border-radius:7px 7px 0 0;
+              "></div>
+            </div>
+
+            <div style="
+              font-size:.72rem;
+              color:#8892B0;
+              font-weight:700;
+            ">
+              ${x.label.toLocaleDateString('en-ZA',{
+                month:'short'
+              })}
+            </div>
+
+          </div>
+        `;
+
+      }).join('')}
+    </div>
+  `;
+}
+
+/* Controls */
+document.getElementById('rangeSelect').addEventListener('change',e=>{
+  rangeDays=parseInt(e.target.value,10)||30;
+  renderAll();
+});
+document.getElementById('refreshBtn').addEventListener('click',async e=>{
+  e.target.disabled=true;
+  await loadData();
+  e.target.disabled=false;
+  toast('Refreshed.');
+});
+
+auth.onAuthStateChanged(async user=>{
+  const guard=document.getElementById('guard'),gt=document.getElementById('guardText');
+  if(!user){gt.textContent='Not signed in. Redirecting…';setTimeout(()=>location.href='admin-login.html',900);return}
+  currentUser=user;
+  try{
+    const snap=await db.collection('admins').doc(user.uid).get();
+    if(!snap.exists||snap.data().role!=='admin'||snap.data().status!=='active'){gt.textContent='Admin access required.';setTimeout(()=>location.href='admin-login.html',1200);return}
+    currentAdmin=snap.data();
+    const name=currentAdmin.name||user.email.split('@')[0];
+    const av=document.getElementById('sidebarAdminAvatar'),nm=document.getElementById('sidebarAdminName'),em=document.getElementById('sidebarAdminEmail');
+    if(av)av.textContent=name.charAt(0).toUpperCase();if(nm)nm.textContent=name;if(em)em.textContent=user.email||'';
+    guard.classList.add('hidden');
+    await loadSettings();
+    await loadData();
+  }catch(err){console.error(err);gt.textContent='Verification failed.';setTimeout(()=>location.href='admin-login.html',1500)}
+});
+</script>
+</body>
+</html>

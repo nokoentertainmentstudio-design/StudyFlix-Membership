@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Payments — StudyFlix Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --gold:#FFD700;
+  --orange:#FF6B00;
+  --teal:#00D4B4;
+  --blue:#2288FF;
+  --red:#ff5555;
+  --green:#35d07f;
+  --muted:#8892B0;
+  --card:#1C2640;
+  --border:rgba(255,255,255,.07)
+}
+
+body{
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,#080C18,#111A2E);
+  color:#E8EEFF;
+  min-height:100vh;
+  overflow-x:hidden
+}
+
+.hero-bg{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),
+    radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);
+  z-index:-2
+}
+
+.guard{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,10,42,.95);
+  z-index:10000;
+  flex-direction:column;
+  gap:1rem;
+  text-align:center;
+  padding:2rem
+}
+
+.guard.hidden{display:none}
+
+.guard-text{
+  color:var(--muted);
+  font-size:.9rem
+}
+
+.spinner{
+  width:32px;
+  height:32px;
+  border:3px solid rgba(255,215,0,.15);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:spin .8s linear infinite
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.main{
+  padding:1.5rem 1.5rem 3rem;
+  max-width:1500px;
+  margin:0 auto
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  padding-bottom:1.2rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:1.6rem;
+  flex-wrap:wrap
+}
+
+h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.4rem;
+  letter-spacing:1.5px
+}
+
+h1 .hl{
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent
+}
+
+.sub{
+  color:var(--muted);
+  font-size:.85rem;
+  margin-top:.25rem
+}
+
+.btn{
+  padding:.65rem 1.2rem;
+  border-radius:10px;
+  font-family:inherit;
+  font-weight:800;
+  font-size:.8rem;
+  cursor:pointer;
+  border:1px solid transparent;
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  transition:.2s
+}
+
+.btn:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
+
+.btn-ghost{
+  background:rgba(255,255,255,.05);
+  color:#E8EEFF;
+  border-color:var(--border)
+}
+
+.btn-ghost:hover:not(:disabled){
+  background:rgba(255,255,255,.1)
+}
+
+.btn-teal{
+  background:rgba(0,212,180,.1);
+  color:var(--teal);
+  border-color:rgba(0,212,180,.3)
+}
+
+.btn-teal:hover:not(:disabled){
+  background:rgba(0,212,180,.2)
+}
+
+/* ================= STATS ================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+  margin-bottom:1.6rem
+}
+
+.stat{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1.1rem 1.2rem;
+  transition:.2s
+}
+
+.stat:hover{
+  border-color:rgba(0,212,180,.35);
+  transform:translateY(-2px)
+}
+
+.stat .lbl{
+  font-size:.68rem;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:var(--muted);
+  font-weight:800;
+  margin-bottom:.3rem;
+  display:flex;
+  align-items:center;
+  gap:.4rem
+}
+
+.stat .val{
+  font-size:1.6rem;
+  font-weight:900;
+  line-height:1.1
+}
+
+.stat.rev .val{color:var(--teal)}
+.stat.today .val{color:var(--gold)}
+.stat.count .val{color:#9cc7ff}
+.stat.avg .val{color:#dce2f0}
+
+.stat .sub{
+  font-size:.7rem;
+  color:var(--muted);
+  margin-top:.3rem
+}
+
+/* ================= TOOLBAR ================= */
+
+.toolbar{
+  display:flex;
+  gap:.6rem;
+  flex-wrap:wrap;
+  align-items:center;
+  background:var(--card);
+  padding:1rem;
+  border-radius:14px;
+  border:1px solid var(--border);
+  margin-bottom:1rem
+}
+
+.search{
+  position:relative;
+  flex:1;
+  min-width:220px
+}
+
+.search i{
+  position:absolute;
+  left:.9rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:.85rem
+}
+
+.search input{
+  width:100%;
+  padding:.65rem 1rem .65rem 2.3rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:#E8EEFF;
+  font-size:.85rem;
+  font-family:inherit;
+  outline:none
+}
+
+.search input:focus{
+  border-color:var(--teal)
+}
+
+select.filter{
+  padding:.65rem 2rem .65rem .9rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:#E8EEFF;
+  font-size:.85rem;
+  font-family:inherit;
+  cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238892B0'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right .5rem center;
+  background-size:16px
+}
+
+select.filter:focus{
+  border-color:var(--teal)
+}
+
+input.date{
+  padding:.65rem .9rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:#E8EEFF;
+  font-size:.85rem;
+  font-family:inherit;
+  outline:none;
+  color-scheme:dark
+}
+
+input.date:focus{
+  border-color:var(--teal)
+}
+
+/* ================= TABLE ================= */
+
+.table-wrap{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden
+}
+
+table{
+  width:100%;
+  border-collapse:collapse
+}
+
+thead th{
+  background:rgba(0,0,0,.2);
+  text-align:left;
+  padding:.85rem 1rem;
+  font-size:.68rem;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:var(--muted);
+  font-weight:800;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+  cursor:pointer;
+  user-select:none
+}
+
+thead th:hover{
+  color:var(--teal)
+}
+
+thead th .si{
+  margin-left:.3rem;
+  opacity:.4;
+  font-size:.6rem
+}
+
+thead th.sorted .si{
+  opacity:1;
+  color:var(--teal)
+}
+
+tbody td{
+  padding:.85rem 1rem;
+  font-size:.83rem;
+  border-bottom:1px solid var(--border);
+  vertical-align:middle
+}
+
+tbody tr:hover{
+  background:rgba(0,212,180,.04)
+}
+
+tbody tr:last-child td{
+  border-bottom:none
+}
+
+.mname{
+  font-weight:800;
+  color:#E8EEFF
+}
+
+.memail{
+  color:var(--muted);
+  font-size:.72rem;
+  margin-top:2px
+}
+
+.amount{
+  font-weight:900;
+  color:var(--teal);
+  font-size:.95rem;
+  white-space:nowrap
+}
+
+.plan-name{
+  font-weight:800;
+  color:#E8EEFF;
+  font-size:.8rem
+}
+
+.plan-key{
+  color:var(--muted);
+  font-size:.68rem;
+  margin-top:2px
+}
+
+.method{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  font-size:.75rem;
+  color:var(--muted)
+}
+
+.method i{
+  color:#0070ba
+}
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.28rem .55rem;
+  border-radius:999px;
+  font-size:.66rem;
+  font-weight:900;
+  white-space:nowrap
+}
+
+.status.paid{
+  background:rgba(53,208,127,.12);
+  color:var(--green);
+  border:1px solid rgba(53,208,127,.25)
+}
+
+.status.unpaid{
+  background:rgba(255,85,85,.10);
+  color:#ff8d8d;
+  border:1px solid rgba(255,85,85,.22)
+}
+
+.status.pending{
+  background:rgba(255,215,0,.10);
+  color:var(--gold);
+  border:1px solid rgba(255,215,0,.22)
+}
+
+.paypal-status{
+  font-size:.68rem;
+  color:var(--muted);
+  margin-top:.3rem;
+  font-family:'Courier New',monospace
+}
+
+.txn{
+  font-family:'Courier New',monospace;
+  font-size:.7rem;
+  color:var(--muted);
+  word-break:break-all;
+  max-width:190px
+}
+
+.live-dot{
+  width:7px;
+  height:7px;
+  background:var(--green);
+  border-radius:50%;
+  display:inline-block;
+  margin-right:.35rem;
+  box-shadow:0 0 8px rgba(53,208,127,.7)
+}
+
+.empty{
+  text-align:center;
+  padding:3rem 1rem;
+  color:var(--muted)
+}
+
+.empty i{
+  font-size:2.2rem;
+  color:rgba(255,215,0,.35);
+  display:block;
+  margin-bottom:.8rem
+}
+
+/* ================= PAGER ================= */
+
+.pager{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:1rem;
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:.6rem
+}
+
+.pager-info{
+  color:var(--muted);
+  font-size:.75rem
+}
+
+.pager-btns{
+  display:flex;
+  gap:.3rem
+}
+
+.pager-btns button{
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  color:#E8EEFF;
+  padding:.4rem .7rem;
+  border-radius:8px;
+  font-family:inherit;
+  font-weight:700;
+  font-size:.75rem;
+  cursor:pointer
+}
+
+.pager-btns button:hover:not(:disabled){
+  background:rgba(255,255,255,.1)
+}
+
+.pager-btns button:disabled{
+  opacity:.4;
+  cursor:not-allowed
+}
+
+.pager-btns button.active{
+  background:var(--gold);
+  color:#111;
+  border-color:transparent
+}
+
+/* ================= TOAST ================= */
+
+#toast{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  background:rgba(28,38,64,.98);
+  border:1px solid var(--border);
+  border-left:3px solid var(--teal);
+  padding:.9rem 1.2rem;
+  border-radius:12px;
+  font-size:.85rem;
+  font-weight:700;
+  z-index:20000;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  display:none;
+  max-width:340px
+}
+
+#toast.error{
+  border-left-color:var(--red);
+  color:#ff9b9b
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1100px){
+  .table-wrap{
+    overflow-x:auto
+  }
+
+  table{
+    min-width:1050px
+  }
+}
+
+@media(max-width:900px){
+  .stats{
+    grid-template-columns:repeat(2,1fr)
+  }
+}
+
+@media(max-width:700px){
+  .main{
+    padding-top:75px
+  }
+
+  h1{
+    font-size:2rem
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr
+  }
+
+  table,thead,tbody,tr,td{
+    display:block
+  }
+
+  thead{
+    display:none
+  }
+
+  tbody tr{
+    padding:1rem;
+    border-bottom:1px solid var(--border)
+  }
+
+  tbody td{
+    border:none;
+    padding:.3rem 0
+  }
+
+  tbody td::before{
+    content:attr(data-label);
+    display:block;
+    font-size:.6rem;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    color:var(--muted);
+    margin-bottom:.1rem
+  }
+
+  input.date,
+  select.filter{
+    width:100%
+  }
+}
+</style>
+</head>
+
+<body class="has-sidebar">
+
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard">
+  <div class="spinner"></div>
+  <div class="guard-text" id="guardText">Verifying admin access…</div>
+</div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+
+  <div class="topbar">
+
+    <div>
+      <h1><span class="hl">Payments</span></h1>
+      <p class="sub">
+        Track PayPal membership payments and subscription activity.
+        <span style="margin-left:.5rem;">
+          <span class="live-dot"></span>Live updates
+        </span>
+      </p>
+    </div>
+
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+
+      <button class="btn btn-teal" id="exportBtn">
+        <i class="fas fa-download"></i>
+        Export CSV
+      </button>
+
+      <button class="btn btn-ghost" id="refreshBtn">
+        <i class="fas fa-rotate-right"></i>
+        Refresh
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="stats">
+
+    <div class="stat rev">
+      <div class="lbl">
+        <i class="fas fa-coins"></i>
+        Total Revenue
+      </div>
+      <div class="val" id="statTotal">—</div>
+      <div class="sub">paid memberships</div>
+    </div>
+
+    <div class="stat today">
+      <div class="lbl">
+        <i class="fas fa-calendar-day"></i>
+        Today
+      </div>
+      <div class="val" id="statToday">—</div>
+      <div class="sub">payments recorded today</div>
+    </div>
+
+    <div class="stat count">
+      <div class="lbl">
+        <i class="fas fa-receipt"></i>
+        Transactions
+      </div>
+      <div class="val" id="statCount">—</div>
+      <div class="sub">paid applications</div>
+    </div>
+
+    <div class="stat avg">
+      <div class="lbl">
+        <i class="fas fa-chart-simple"></i>
+        Average
+      </div>
+      <div class="val" id="statAvg">—</div>
+      <div class="sub">per paid membership</div>
+    </div>
+
+  </div>
+
+  <!-- ================= FILTERS ================= -->
+
+  <div class="toolbar">
+
+    <div class="search">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search name, email, plan, status, or PayPal subscription ID…"
+      />
+    </div>
+
+    <select class="filter" id="methodFilter">
+      <option value="all">All methods</option>
+      <option value="paypal">PayPal</option>
+      <option value="card">Card — legacy</option>
+      <option value="eft">Instant EFT — legacy</option>
+    </select>
+
+    <select class="filter" id="paymentFilter">
+      <option value="all">All payment states</option>
+      <option value="paid">Paid</option>
+      <option value="unpaid">Not Paid</option>
+    </select>
+
+    <select class="filter" id="planFilter">
+      <option value="all">All plans</option>
+      <option value="standard">Standard — R100</option>
+      <option value="plus-data">+ Data — R300</option>
+    </select>
+
+    <input type="date" class="date" id="fromDate" />
+    <input type="date" class="date" id="toDate" />
+
+  </div>
+
+  <!-- ================= TABLE ================= -->
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+        <tr>
+
+          <th data-sort="name">
+            Member
+            <i class="fas fa-sort si"></i>
+          </th>
+
+          <th data-sort="plan">
+            Plan
+            <i class="fas fa-sort si"></i>
+          </th>
+
+          <th data-sort="amount">
+            Amount
+            <i class="fas fa-sort si"></i>
+          </th>
+
+          <th data-sort="method">
+            Method
+            <i class="fas fa-sort si"></i>
+          </th>
+
+          <th data-sort="status">
+            Payment
+            <i class="fas fa-sort si"></i>
+          </th>
+
+          <th data-sort="date">
+            Date
+            <i class="fas fa-sort-down si"></i>
+          </th>
+
+          <th>
+            PayPal Subscription
+          </th>
+
+        </tr>
+      </thead>
+
+      <tbody id="tbody">
+
+        <tr>
+          <td colspan="7" class="empty">
+            <i class="fas fa-spinner fa-spin"></i>
+            Loading payments…
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+    <div class="pager" id="pager" style="display:none">
+
+      <div class="pager-info" id="pagerInfo"></div>
+
+      <div class="pager-btns" id="pagerBtns"></div>
+
+    </div>
+
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+  authDomain:"studyflix-membership.firebaseapp.com",
+  projectId:"studyflix-membership",
+  storageBucket:"studyflix-membership.firebasestorage.app",
+  messagingSenderId:"641080177215",
+  appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",
+  measurementId:"G-3384WRNWXW"
+};
+
+if(!firebase.apps.length){
+  firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let allPayments = [];
+let filtered = [];
+let currentPage = 1;
+
+const PER = 25;
+
+let sortKey = 'date';
+let sortDir = 'desc';
+
+let currentUser = null;
+let currentAdmin = null;
+
+let currencySymbol = 'R';
+
+let unsubscribePayments = null;
+
+/* ================= TOAST ================= */
+
+const toastEl = document.getElementById('toast');
+let tt = null;
+
+function toast(message,error){
+
+  toastEl.textContent = message;
+
+  toastEl.classList.toggle('error',!!error);
+
+  toastEl.style.display = 'block';
+
+  clearTimeout(tt);
+
+  tt = setTimeout(()=>{
+    toastEl.style.display = 'none';
+  },3200);
+}
+
+/* ================= HELPERS ================= */
+
+function esc(s){
+
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function toDate(t){
+
+  if(!t) return null;
+
+  try{
+
+    if(t.toDate) return t.toDate();
+
+    if(t.seconds) return new Date(t.seconds * 1000);
+
+    const d = new Date(t);
+
+    return isNaN(d.getTime()) ? null : d;
+
+  }catch(e){
+
+    return null;
+
+  }
+}
+
+function fmtMoney(n){
+
+  return currencySymbol +
+    (parseFloat(n) || 0).toFixed(2);
+}
+
+const PAYPAL_PLANS = {
+
+  'standard-monthly': {
+    key: 'standard-monthly',
+    planId: 'P-4M207833SW0061541NKYOBQQ',
+    name: 'StudyFlix Student Membership',
+    shortName: 'Standard Monthly',
+    billingPeriod: 'monthly',
+    intervalLabel: '/month',
+    priceSetting: 'priceMonthly',
+    defaultPriceZAR: 100,
+    priceUSD: 6.16
+  },
+
+  'standard-annual': {
+    key: 'standard-annual',
+    planId: 'P-6GK41801196058811NK6QNTI',
+    name: 'StudyFlix Student Membership',
+    shortName: 'Standard Annual',
+    billingPeriod: 'annual',
+    intervalLabel: '/year',
+    priceSetting: 'priceAnnual',
+    defaultPriceZAR: 1200,
+    priceUSD: 73.92
+  },
+
+  'plus-data-monthly': {
+    key: 'plus-data-monthly',
+    planId: 'P-68800109GT083772LNKYOFPA',
+    name: 'StudyFlix Student Membership + Data',
+    shortName: '+ Data Monthly',
+    billingPeriod: 'monthly',
+    intervalLabel: '/month',
+    priceSetting: 'priceWithData',
+    defaultPriceZAR: 300,
+    priceUSD: 18.48
+  },
+
+  'plus-data-annual': {
+    key: 'plus-data-annual',
+    planId: 'P-76Y177913D3206319NK6QV2A',
+    name: 'StudyFlix Student Membership + Data',
+    shortName: '+ Data Annual',
+    billingPeriod: 'annual',
+    intervalLabel: '/year',
+    priceSetting: 'priceWithDataAnnual',
+    defaultPriceZAR: 3600,
+    priceUSD: 221.76
+  }
+
+};
+
+
+
+function getPlanInfo(d,app){
+
+  const key =
+    d.paypalPlanKey ||
+    d.membershipType ||
+    d.plan ||
+    app.paypalPlanKey ||
+    app.membershipType ||
+    app.plan ||
+    '';
+
+  const normalized = String(key).toLowerCase();
+
+  if(
+    normalized === 'plus-data' ||
+    normalized.includes('plus') ||
+    normalized.includes('data')
+  ){
+
+    return PAYPAL_PLANS['plus-data'];
+
+  }
+
+  if(normalized === 'standard'){
+
+    return PAYPAL_PLANS.standard;
+
+  }
+
+  /* fallback based on PayPal plan ID */
+
+  if(d.paypalPlanId === 'P-68800109GT083772LNKYOFPA'){
+
+    return PAYPAL_PLANS['plus-data'];
+
+  }
+
+  if(d.paypalPlanId === 'P-4M207833SW0061541NKYOBQQ'){
+
+    return PAYPAL_PLANS.standard;
+
+  }
+
+  return {
+
+    key:key || 'unknown',
+
+    name:d.membershipType || d.plan || app.membershipType || app.plan || 'Membership',
+
+    shortName:d.membershipType || d.plan || 'Membership',
+
+    amount:0
+
+  };
+
+}
+
+/* ================= PAYMENT DATE ================= */
+
+
+function getPaymentDate(d, app, pay){
+
+  d = d || {};
+  app = app || {};
+  pay = pay || {};
+
+  const appPayment = app.payment || {};
+  const lastPayment = d.lastPayment || {};
+
+  return (
+    toDate(pay.paidAt) ||
+    toDate(d.paidAt) ||
+    toDate(d.paypalActivatedAt) ||
+    toDate(d.paypalUpdatedAt) ||
+    toDate(app.paidAt) ||
+    toDate(appPayment.paidAt) ||
+    toDate(lastPayment.paidAt) ||
+    null
+  );
+}
+
+/* ================= PAYMENT STATUS ================= */
+
+function getPaymentStatus(d,pay){
+
+  /*
+    IMPORTANT:
+    We use the explicit "paid" field first.
+
+    PayPal status is displayed separately.
+  */
+
+  if(d.paid === true){
+
+    return 'paid';
+
+  }
+
+  if(pay && pay.paid === true){
+
+    return 'paid';
+
+  }
+
+  return 'unpaid';
+
+}
+
+
+function buildPaymentRecord(doc){
+
+  const d = doc.data() || {};
+
+  const app = d.application || {};
+
+  /*
+    PRIMARY SOURCE:
+    PayPal fields written directly into members/{uid}
+  */
+
+  const paypalSubscriptionId =
+    d.paypalSubscriptionId ||
+    '';
+
+  const paypalPlanId =
+    d.paypalPlanId ||
+    '';
+
+  const paypalPlanKey =
+    d.paypalPlanKey ||
+    '';
+
+  const paypalStatus =
+    d.paypalStatus ||
+    '';
+
+  const hasPayPalData =
+    !!(
+      paypalSubscriptionId ||
+      paypalPlanId ||
+      paypalPlanKey ||
+      paypalStatus ||
+      d.paid === true
+    );
+
+  const plan = getPlanInfo(d,app);
+
+  const paymentDate =
+    getPaymentDate(d,app,null);
+
+  /*
+    If PayPal data exists, use PayPal as the
+    primary payment method.
+  */
+
+  if(hasPayPalData){
+
+    const status =
+      getPaymentStatus(d,null);
+
+    return {
+
+      id:doc.id,
+
+      memberName:
+        d.name ||
+        d.fullName ||
+        app.fullName ||
+        app.name ||
+        d.email ||
+        '(no name)',
+
+      memberEmail:
+        d.email ||
+        app.email ||
+        '',
+
+      amount:
+        plan.amount,
+
+      currency:
+        'ZAR',
+
+      method:
+        'paypal',
+
+      transactionId:
+        paypalSubscriptionId ||
+        paypalPlanId ||
+        '—',
+
+      paypalSubscriptionId:
+        paypalSubscriptionId,
+
+      paypalPlanId:
+        paypalPlanId,
+
+      paypalPlanKey:
+        plan.key,
+
+      paypalStatus:
+        paypalStatus || '—',
+
+      paymentStatus:
+        status,
+
+      paidAt:
+        paymentDate,
+
+      planName:
+        plan.name,
+
+      planShortName:
+        plan.shortName,
+
+      source:
+        'paypal'
+
+    };
+
+  }
+
+  /*
+    LEGACY FALLBACK
+    This keeps old payment records working.
+  */
+
+  const appPayment =
+    app.payment &&
+    app.payment.transactionId
+      ? app.payment
+      : null;
+
+  const legacyPayment =
+    appPayment ||
+    (
+      d.lastPayment &&
+      d.lastPayment.transactionId
+        ? d.lastPayment
+        : null
+    );
+
+  /*
+    IMPORTANT:
+    If there is no payment yet, DO NOT return null.
+
+    The learner may have submitted an application
+    without completing payment.
+
+    We still create a payment record so the Admin
+    Payments page can show:
+
+        Payment: Not Paid
+  */
+
+  if(!legacyPayment){
+
+    return {
+
+      id:doc.id,
+
+      memberName:
+        d.name ||
+        d.fullName ||
+        app.fullName ||
+        app.name ||
+        d.email ||
+        '(no name)',
+
+      memberEmail:
+        d.email ||
+        app.email ||
+        '',
+
+      amount:
+        plan.amount,
+
+      currency:
+        'ZAR',
+
+      method:
+        'paypal',
+
+      transactionId:
+        '—',
+
+      paypalSubscriptionId:
+        '',
+
+      paypalPlanId:
+        d.paypalPlanId ||
+        '',
+
+      paypalPlanKey:
+        plan.key ||
+        '',
+
+      paypalStatus:
+        '',
+
+      paymentStatus:
+        'unpaid',
+
+      paidAt:
+        null,
+
+      planName:
+        plan.name ||
+        d.membershipType ||
+        d.plan ||
+        app.membershipType ||
+        app.plan ||
+        'Membership',
+
+      planShortName:
+        plan.shortName ||
+        d.membershipType ||
+        d.plan ||
+        app.membershipType ||
+        app.plan ||
+        'Membership',
+
+      source:
+        'application'
+
+    };
+
+  }
+
+  /*
+    Existing legacy paid payment.
+  */
+
+  const legacyDate =
+    toDate(legacyPayment.paidAt);
+
+  return {
+
+    id:doc.id,
+
+    memberName:
+      d.name ||
+      d.fullName ||
+      app.fullName ||
+      app.name ||
+      d.email ||
+      '(no name)',
+
+    memberEmail:
+      d.email ||
+      app.email ||
+      '',
+
+    amount:
+      parseFloat(
+        legacyPayment.amount
+      ) || plan.amount,
+
+    currency:
+      legacyPayment.currency ||
+      'ZAR',
+
+    method:
+      legacyPayment.method ||
+      'card',
+
+    transactionId:
+      legacyPayment.transactionId ||
+      '—',
+
+    paypalSubscriptionId:
+      '',
+
+    paypalPlanId:
+      '',
+
+    paypalPlanKey:
+      plan.key ||
+      '',
+
+    paypalStatus:
+      '',
+
+    paymentStatus:
+      'paid',
+
+    paidAt:
+      legacyDate,
+
+    planName:
+      plan.name ||
+      d.membershipType ||
+      d.plan ||
+      app.membershipType ||
+      app.plan ||
+      'Membership',
+
+    planShortName:
+      plan.shortName ||
+      d.membershipType ||
+      d.plan ||
+      app.membershipType ||
+      app.plan ||
+      'Membership',
+
+    source:
+      'legacy'
+
+  };
+
+}
+
+/* ================= SETTINGS ================= */
+
+async function loadSettings(){
+
+  try{
+
+    const snap =
+      await db.collection('settings')
+        .doc('site')
+        .get();
+
+    if(
+      snap.exists &&
+      snap.data().currencySymbol
+    ){
+
+      currencySymbol =
+        snap.data().currencySymbol;
+
+    }
+
+  }catch(e){
+
+    console.warn(
+      'Could not load site settings.',
+      e
+    );
+
+  }
+
+}
+
+/* ================= LOAD PAYMENTS ================= */
+
+async function loadPayments(){
+
+  const tb =
+    document.getElementById('tbody');
+
+  tb.innerHTML = `
+    <tr>
+      <td colspan="7" class="empty">
+        <i class="fas fa-spinner fa-spin"></i>
+        Loading payments…
+      </td>
+    </tr>
+  `;
+
+  try{
+
+    const snap =
+      await db.collection('members')
+        .limit(2000)
+        .get();
+
+    const rows = [];
+
+    snap.docs.forEach(doc=>{
+
+      const payment =
+        buildPaymentRecord(doc);
+
+      if(payment){
+
+        rows.push(payment);
+
+      }
+
+    });
+
+    allPayments = rows;
+
+    computeStats();
+
+    applyFilters();
+
+  }catch(err){
+
+    console.error(err);
+
+    tb.innerHTML = `
+      <tr>
+        <td colspan="7" class="empty">
+          <i class="fas fa-exclamation-triangle"></i>
+          ${esc(err.message)}
+        </td>
+      </tr>
+    `;
+
+    toast(
+      'Load failed: ' +
+      (err.code || err.message),
+      true
+    );
+
+  }
+
+}
+
+/* ================= REAL-TIME PAYMENTS ================= */
+
+function startPaymentListener(){
+
+  if(unsubscribePayments){
+
+    unsubscribePayments();
+
+    unsubscribePayments = null;
+
+  }
+
+  unsubscribePayments =
+    db.collection('members')
+      .limit(2000)
+      .onSnapshot(
+
+        snap=>{
+
+          const rows = [];
+
+          snap.docs.forEach(doc=>{
+
+            const payment =
+              buildPaymentRecord(doc);
+
+            if(payment){
+
+              rows.push(payment);
+
+            }
+
+          });
+
+          allPayments = rows;
+
+          computeStats();
+
+          applyFilters();
+
+        },
+
+        error=>{
+
+          console.error(
+            'Realtime payment listener error:',
+            error
+          );
+
+          toast(
+            'Live payment updates failed. Use Refresh.',
+            true
+          );
+
+        }
+
+      );
+
+}
+
+/* ================= STATS ================= */
+
+function computeStats(){
+
+  /*
+    Revenue and transaction statistics only
+    include records marked as paid.
+  */
+
+  const paidPayments =
+    allPayments.filter(
+      p=>p.paymentStatus === 'paid'
+    );
+
+  const total =
+    paidPayments.reduce(
+      (sum,p)=>
+        sum + (parseFloat(p.amount) || 0),
+      0
+    );
+
+  const count =
+    paidPayments.length;
+
+  const avg =
+    count
+      ? total / count
+      : 0;
+
+  const today =
+    new Date();
+
+  today.setHours(
+    0,0,0,0
+  );
+
+  const todaySum =
+    paidPayments
+      .filter(
+        p=>
+          p.paidAt &&
+          p.paidAt >= today
+      )
+      .reduce(
+        (sum,p)=>
+          sum + (parseFloat(p.amount) || 0),
+        0
+      );
+
+  document.getElementById(
+    'statTotal'
+  ).textContent =
+    fmtMoney(total);
+
+  document.getElementById(
+    'statToday'
+  ).textContent =
+    fmtMoney(todaySum);
+
+  document.getElementById(
+    'statCount'
+  ).textContent =
+    count;
+
+  document.getElementById(
+    'statAvg'
+  ).textContent =
+    fmtMoney(avg);
+
+}
+
+/* ================= FILTERS ================= */
+
+function applyFilters(){
+
+  const q =
+    (
+      document.getElementById(
+        'searchInput'
+      ).value || ''
+    )
+      .trim()
+      .toLowerCase();
+
+  const method =
+    document.getElementById(
+      'methodFilter'
+    ).value;
+
+  const paymentFilter =
+    document.getElementById(
+      'paymentFilter'
+    ).value;
+
+  const planFilter =
+    document.getElementById(
+      'planFilter'
+    ).value;
+
+  const fromValue =
+    document.getElementById(
+      'fromDate'
+    ).value;
+
+  const toValue =
+    document.getElementById(
+      'toDate'
+    ).value;
+
+  const from =
+    fromValue
+      ? new Date(fromValue)
+      : null;
+
+  const to =
+    toValue
+      ? new Date(
+          toValue + 'T23:59:59'
+        )
+      : null;
+
+  filtered =
+    allPayments.filter(p=>{
+
+      if(
+        method !== 'all' &&
+        p.method !== method
+      ){
+
+        return false;
+
+      }
+
+      if(
+        paymentFilter !== 'all' &&
+        p.paymentStatus !== paymentFilter
+      ){
+
+        return false;
+
+      }
+
+      if(
+        planFilter !== 'all' &&
+        p.paypalPlanKey !== planFilter
+      ){
+
+        return false;
+
+      }
+
+    
+      if(from){
+
+        if(!p.paidAt || p.paidAt < from){
+
+          return false;
+
+        }
+
+      }
+
+      if(to){
+
+        if(!p.paidAt || p.paidAt > to){
+
+          return false;
+
+        }
+
+      }
+
+      if(q){
+
+        const hay = [
+
+          p.memberName,
+
+          p.memberEmail,
+
+          p.transactionId,
+
+          p.paypalSubscriptionId,
+
+          p.paypalPlanId,
+
+          p.paypalStatus,
+
+          p.planName,
+
+          p.planShortName,
+
+          p.paypalPlanKey
+
+        ]
+          .join(' ')
+          .toLowerCase();
+
+        if(!hay.includes(q)){
+
+          return false;
+
+        }
+
+      }
+
+      return true;
+
+    });
+
+  filtered.sort((a,b)=>{
+
+    let va;
+    let vb;
+
+    if(sortKey === 'name'){
+
+      va =
+        (a.memberName || '')
+          .toLowerCase();
+
+      vb =
+        (b.memberName || '')
+          .toLowerCase();
+
+    }
+
+    else if(sortKey === 'plan'){
+
+      va =
+        (a.planName || '')
+          .toLowerCase();
+
+      vb =
+        (b.planName || '')
+          .toLowerCase();
+
+    }
+
+    else if(sortKey === 'amount'){
+
+      va =
+        parseFloat(a.amount) || 0;
+
+      vb =
+        parseFloat(b.amount) || 0;
+
+    }
+
+    else if(sortKey === 'method'){
+
+      va =
+        a.method || '';
+
+      vb =
+        b.method || '';
+
+    }
+
+    else if(sortKey === 'status'){
+
+      va =
+        a.paymentStatus || '';
+
+      vb =
+        b.paymentStatus || '';
+
+    }
+
+    else{
+
+      va =
+        a.paidAt
+          ? a.paidAt.getTime()
+          : 0;
+
+      vb =
+        b.paidAt
+          ? b.paidAt.getTime()
+          : 0;
+
+    }
+
+    if(va < vb){
+
+      return sortDir === 'asc'
+        ? -1
+        : 1;
+
+    }
+
+    if(va > vb){
+
+      return sortDir === 'asc'
+        ? 1
+        : -1;
+
+    }
+
+    return 0;
+
+  });
+
+  currentPage = 1;
+
+  render();
+
+}
+
+/* ================= RENDER ================= */
+
+function render(){
+
+  const tb =
+    document.getElementById(
+      'tbody'
+    );
+
+  const pg =
+    document.getElementById(
+      'pager'
+    );
+
+  if(!filtered.length){
+
+    tb.innerHTML = `
+      <tr>
+        <td colspan="7" class="empty">
+          <i class="fas fa-inbox"></i>
+          No payments match your filters.
+        </td>
+      </tr>
+    `;
+
+    pg.style.display = 'none';
+
+    return;
+
+  }
+
+  const totalPages =
+    Math.ceil(
+      filtered.length / PER
+    );
+
+  if(currentPage > totalPages){
+
+    currentPage = totalPages;
+
+  }
+
+  const start =
+    (currentPage - 1) * PER;
+
+  const page =
+    filtered.slice(
+      start,
+      start + PER
+    );
+
+  tb.innerHTML =
+    page.map(p=>{
+
+      let paymentHtml = '';
+
+      if(p.paymentStatus === 'paid'){
+
+        paymentHtml = `
+          <span class="status paid">
+            <i class="fas fa-check-circle"></i>
+            Paid
+          </span>
+        `;
+
+      }else{
+
+        paymentHtml = `
+          <span class="status unpaid">
+            <i class="fas fa-circle-xmark"></i>
+            Not Paid
+          </span>
+        `;
+
+      }
+
+      const paypalStatus =
+        p.paypalStatus &&
+        p.paypalStatus !== '—'
+          ? `
+            <div class="paypal-status">
+              ${esc(p.paypalStatus)}
+            </div>
+          `
+          : '';
+
+      const methodIcon =
+        p.method === 'paypal'
+          ? 'fa-brands fa-paypal'
+          : p.method === 'eft'
+            ? 'fas fa-university'
+            : 'fas fa-credit-card';
+
+      const methodLabel =
+        p.method === 'paypal'
+          ? 'PayPal'
+          : p.method === 'eft'
+            ? 'Instant EFT'
+            : 'Card';
+
+      const subscription =
+        p.paypalSubscriptionId
+          ? `
+            <div class="txn">
+              ${esc(
+                p.paypalSubscriptionId
+              )}
+            </div>
+
+            ${
+              p.paypalPlanId
+                ? `
+                  <div
+                    class="paypal-status"
+                    title="${esc(p.paypalPlanId)}"
+                  >
+                    Plan ID: ${esc(
+                      p.paypalPlanId
+                    )}
+                  </div>
+                `
+                : ''
+            }
+          `
+          : `
+            <div class="txn">
+              ${esc(
+                p.transactionId || '—'
+              )}
+            </div>
+          `;
+
+      return `
+        <tr>
+
+          <td data-label="Member">
+
+            <div class="mname">
+              ${esc(p.memberName)}
+            </div>
+
+            <div class="memail">
+              ${esc(p.memberEmail)}
+            </div>
+
+          </td>
+
+          <td data-label="Plan">
+
+            <div class="plan-name">
+              ${esc(
+                p.planShortName ||
+                p.planName ||
+                'Membership'
+              )}
+            </div>
+
+            <div class="plan-key">
+              ${
+                p.paypalPlanKey
+                  ? esc(p.paypalPlanKey)
+                  : ''
+              }
+            </div>
+
+          </td>
+
+          <td data-label="Amount">
+
+            <span class="amount">
+              ${esc(
+                fmtMoney(p.amount)
+              )}/month
+            </span>
+
+          </td>
+
+          <td data-label="Method">
+
+            <span class="method">
+
+              <i class="${methodIcon}"></i>
+
+              ${esc(methodLabel)}
+
+            </span>
+
+          </td>
+
+          <td data-label="Payment">
+
+            ${paymentHtml}
+
+            ${paypalStatus}
+
+          </td>
+
+          <td data-label="Date">
+
+            ${
+              p.paidAt
+                ? esc(
+                    p.paidAt.toLocaleString()
+                  )
+                : '—'
+            }
+
+          </td>
+
+          <td data-label="PayPal Subscription">
+
+            ${subscription}
+
+          </td>
+
+        </tr>
+      `;
+
+    }).join('');
+
+  pg.style.display = 'flex';
+
+  document.getElementById(
+    'pagerInfo'
+  ).textContent =
+    `Showing ${start + 1}–${
+      Math.min(
+        start + PER,
+        filtered.length
+      )
+    } of ${filtered.length}`;
+
+  const btns =
+    document.getElementById(
+      'pagerBtns'
+    );
+
+  let h = `
+    <button
+      ${currentPage === 1 ? 'disabled' : ''}
+      data-page="${currentPage - 1}">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+  `;
+
+  const sp =
+    Math.max(
+      1,
+      currentPage - 2
+    );
+
+  const ep =
+    Math.min(
+      totalPages,
+      sp + 4
+    );
+
+  for(
+    let i = sp;
+    i <= ep;
+    i++
+  ){
+
+    h += `
+      <button
+        ${i === currentPage ? 'class="active"' : ''}
+        data-page="${i}">
+        ${i}
+      </button>
+    `;
+
+  }
+
+  h += `
+    <button
+      ${currentPage === totalPages ? 'disabled' : ''}
+      data-page="${currentPage + 1}">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  `;
+
+  btns.innerHTML = h;
+
+}
+
+/* ================= PAGER ================= */
+
+document
+  .getElementById('pagerBtns')
+  .addEventListener(
+    'click',
+    e=>{
+
+      const b =
+        e.target.closest(
+          'button[data-page]'
+        );
+
+      if(!b) return;
+
+      currentPage =
+        parseInt(
+          b.dataset.page,
+          10
+        );
+
+      render();
+
+      window.scrollTo({
+        top:0,
+        behavior:'smooth'
+      });
+
+    }
+  );
+
+/* ================= SORT ================= */
+
+document
+  .querySelectorAll(
+    'thead th[data-sort]'
+  )
+  .forEach(th=>{
+
+    th.addEventListener(
+      'click',
+      ()=>{
+
+        const k =
+          th.dataset.sort;
+
+        if(sortKey === k){
+
+          sortDir =
+            sortDir === 'asc'
+              ? 'desc'
+              : 'asc';
+
+        }else{
+
+          sortKey = k;
+          sortDir = 'desc';
+
+        }
+
+        document
+          .querySelectorAll(
+            'thead th'
+          )
+          .forEach(t=>
+            t.classList.remove(
+              'sorted'
+            )
+          );
+
+        th.classList.add('sorted');
+
+        const icon =
+          th.querySelector('.si');
+
+        if(icon){
+
+          icon.className =
+            'fas ' +
+            (
+              sortDir === 'asc'
+                ? 'fa-sort-up'
+                : 'fa-sort-down'
+            ) +
+            ' si';
+
+        }
+
+        applyFilters();
+
+      }
+    );
+
+  });
+
+/* ================= FILTER EVENTS ================= */
+
+[
+  'searchInput',
+  'methodFilter',
+  'paymentFilter',
+  'planFilter',
+  'fromDate',
+  'toDate'
+].forEach(id=>{
+
+  const el =
+    document.getElementById(id);
+
+  el.addEventListener(
+    'input',
+    ()=>{
+
+      clearTimeout(
+        window._st
+      );
+
+      window._st =
+        setTimeout(
+          applyFilters,
+          180
+        );
+
+    }
+  );
+
+  el.addEventListener(
+    'change',
+    applyFilters
+  );
+
+});
+
+/* ================= REFRESH ================= */
+
+document
+  .getElementById('refreshBtn')
+  .addEventListener(
+    'click',
+    async e=>{
+
+      const btn = e.currentTarget;
+
+      btn.disabled = true;
+
+      try{
+
+        await loadPayments();
+
+        toast(
+          'Payments refreshed.'
+        );
+
+      }finally{
+
+        btn.disabled = false;
+
+      }
+
+    }
+  );
+
+/* ================= CSV EXPORT ================= */
+
+document
+  .getElementById('exportBtn')
+  .addEventListener(
+    'click',
+    ()=>{
+
+      if(!filtered.length){
+
+        toast(
+          'Nothing to export.',
+          true
+        );
+
+        return;
+
+      }
+
+      const rows = [[
+
+        'Member',
+        'Email',
+        'Plan',
+        'Amount',
+        'Currency',
+        'Method',
+        'Payment Status',
+        'PayPal Status',
+        'PayPal Subscription ID',
+        'PayPal Plan ID',
+        'Paid At'
+
+      ]];
+
+      filtered.forEach(p=>{
+
+        rows.push([
+
+          p.memberName,
+
+          p.memberEmail,
+
+          p.planName,
+
+          p.amount,
+
+          p.currency,
+
+          p.method,
+
+          p.paymentStatus,
+
+          p.paypalStatus,
+
+          p.paypalSubscriptionId,
+
+          p.paypalPlanId,
+
+          p.paidAt
+            ? p.paidAt.toISOString()
+            : ''
+
+        ]);
+
+      });
+
+      const csv =
+        rows
+          .map(r=>
+            r.map(c=>
+              '"' +
+              String(
+                c == null
+                  ? ''
+                  : c
+              )
+              .replace(
+                /"/g,
+                '""'
+              ) +
+              '"'
+            ).join(',')
+          )
+          .join('\n');
+
+      const blob =
+        new Blob(
+          [csv],
+          {type:'text/csv'}
+        );
+
+      const a =
+        document.createElement(
+          'a'
+        );
+
+      a.href =
+        URL.createObjectURL(
+          blob
+        );
+
+      a.download =
+        'studyflix-payments-' +
+        Date.now() +
+        '.csv';
+
+      a.click();
+
+      URL.revokeObjectURL(
+        a.href
+      );
+
+      toast(
+        'Exported ' +
+        filtered.length +
+        ' rows.'
+      );
+
+    }
+  );
+
+/* ================= SIDEBAR ================= */
+
+(async function(){
+
+  try{
+
+    const r =
+      await fetch(
+        'admin-sidebar.html'
+      );
+
+    document
+      .getElementById(
+        'sidebar-placeholder'
+      )
+      .innerHTML =
+        await r.text();
+
+    const sb =
+      document.getElementById(
+        'sidebar'
+      );
+
+    const tg =
+      document.getElementById(
+        'sidebarToggle'
+      );
+
+    const cl =
+      document.getElementById(
+        'sidebarClose'
+      );
+
+    const ov =
+      document.getElementById(
+        'sidebarOverlay'
+      );
+
+    const lo =
+      document.getElementById(
+        'sidebarLogout'
+      );
+
+    if(tg){
+
+      tg.addEventListener(
+        'click',
+        ()=>{
+          sb.classList.add('open');
+          ov.classList.add('active');
+        }
+      );
+
+    }
+
+    function closeSidebar(){
+
+      if(sb)
+        sb.classList.remove('open');
+
+      if(ov)
+        ov.classList.remove('active');
+
+    }
+
+    if(cl)
+      cl.addEventListener(
+        'click',
+        closeSidebar
+      );
+
+    if(ov)
+      ov.addEventListener(
+        'click',
+        closeSidebar
+      );
+
+    const cur =
+      location.pathname
+        .split('/')
+        .pop();
+
+    document
+      .querySelectorAll(
+        '.sidebar-link'
+      )
+      .forEach(a=>
+        a.classList.toggle(
+          'active',
+          a.dataset.page === cur
+        )
+      );
+
+    if(lo){
+
+      lo.addEventListener(
+        'click',
+        async ()=>{
+
+          lo.disabled = true;
+
+          try{
+
+            await auth.signOut();
+
+          }catch(e){}
+
+          location.href =
+            'admin-login.html';
+
+        }
+      );
+
+    }
+
+  }catch(e){
+
+    console.error(
+      'Sidebar load failed:',
+      e
+    );
+
+  }
+
+})();
+
+/* ================= AUTH ================= */
+
+auth.onAuthStateChanged(
+  async user=>{
+
+    const guard =
+      document.getElementById(
+        'guard'
+      );
+
+    const gt =
+      document.getElementById(
+        'guardText'
+      );
+
+    if(!user){
+
+      gt.textContent =
+        'Not signed in. Redirecting…';
+
+      setTimeout(
+        ()=>{
+          location.href =
+            'admin-login.html';
+        },
+        900
+      );
+
+      return;
+
+    }
+
+    currentUser = user;
+
+    try{
+
+      const snap =
+        await db
+          .collection('admins')
+          .doc(user.uid)
+          .get();
+
+      if(
+        !snap.exists ||
+        snap.data().role !== 'admin' ||
+        snap.data().status !== 'active'
+      ){
+
+        gt.textContent =
+          'Admin access required.';
+
+        setTimeout(
+          ()=>{
+            location.href =
+              'admin-login.html';
+          },
+          1200
+        );
+
+        return;
+
+      }
+
+      currentAdmin =
+        snap.data();
+
+      const name =
+        currentAdmin.name ||
+        (
+          user.email
+            ? user.email.split('@')[0]
+            : 'Admin'
+        );
+
+      const av =
+        document.getElementById(
+          'sidebarAdminAvatar'
+        );
+
+      const nm =
+        document.getElementById(
+          'sidebarAdminName'
+        );
+
+      const em =
+        document.getElementById(
+          'sidebarAdminEmail'
+        );
+
+      if(av)
+        av.textContent =
+          name.charAt(0).toUpperCase();
+
+      if(nm)
+        nm.textContent =
+          name;
+
+      if(em)
+        em.textContent =
+          user.email || '';
+
+      guard.classList.add(
+        'hidden'
+      );
+
+      await loadSettings();
+
+      /*
+        Initial load.
+      */
+
+      await loadPayments();
+
+      /*
+        Then start the real-time listener.
+
+        When the PayPal webhook changes
+        members/{uid}, this page will
+        automatically receive the update.
+      */
+
+      startPaymentListener();
+
+    }catch(err){
+
+      console.error(err);
+
+      gt.textContent =
+        'Verification failed.';
+
+      setTimeout(
+        ()=>{
+          location.href =
+            'admin-login.html';
+        },
+        1500
+      );
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Admin Register — StudyFlix</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,.07);--red:#ff5555}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0a0a2a,#1a1a3e);color:#E8EEFF;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.grid{position:fixed;inset:0;background-image:linear-gradient(rgba(245,200,66,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,200,66,.03) 1px,transparent 1px);background-size:50px 50px;z-index:-1}
+.card{width:100%;max-width:460px;background:var(--card);border:1px solid rgba(255,215,0,.2);border-radius:22px;padding:2.2rem 1.8rem;box-shadow:0 25px 60px rgba(0,0,0,.55);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,215,0,.05);top:-130px;right:-90px}
+.card>*{position:relative;z-index:1}
+.badge{display:flex;align-items:center;gap:.4rem;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);color:var(--gold);font-size:.62rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:.28rem .75rem;border-radius:30px;margin:0 auto .9rem;width:fit-content}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;text-align:center;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:1.5px;margin-bottom:.2rem}
+.title{text-align:center;font-size:1.1rem;font-weight:800;margin-bottom:.25rem}
+.sub{text-align:center;font-size:.76rem;color:var(--muted);margin-bottom:1.4rem}
+.msg{display:none;font-size:.78rem;padding:.6rem .85rem;border-radius:10px;margin-bottom:.9rem;text-align:center;line-height:1.4}
+.msg.error{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.35);color:#ff9b9b}
+.msg.success{background:rgba(0,212,180,.1);border:1px solid rgba(0,212,180,.35);color:#7ff0dd}
+.fg{margin-bottom:.9rem}
+.fg label{display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;letter-spacing:.5px}
+.fg input{width:100%;padding:.78rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s}
+.fg input:focus{border-color:var(--teal)}
+.code{font-family:'Courier New',monospace;letter-spacing:3px;text-transform:uppercase;text-align:center;font-weight:800}
+.iw{position:relative}
+.iw input{padding-right:2.6rem}
+.toggle{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:.3rem}
+.toggle:hover{color:var(--teal)}
+.strength{display:flex;align-items:center;gap:.6rem;margin-top:.5rem;min-height:1.1rem}
+.sbar{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden}
+.sfill{height:100%;width:0;border-radius:5px;transition:width .25s,background-color .25s}
+.stext{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);min-width:60px;text-align:right}
+.match{display:none;font-size:.7rem;font-weight:700;margin-top:.4rem}
+.match.ok{display:block;color:var(--teal)}
+.match.bad{display:block;color:var(--red)}
+.hint{font-size:.7rem;color:var(--muted);margin-top:.35rem;line-height:1.5}
+.btn{width:100%;padding:.82rem;border:none;border-radius:40px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-weight:800;font-size:.98rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:.2s;margin-top:.5rem}
+.btn:hover:not(:disabled){transform:scale(1.02);box-shadow:0 0 30px rgba(255,215,0,.3)}
+.btn:disabled{opacity:.7;cursor:not-allowed}
+.foot{text-align:center;font-size:.78rem;color:var(--muted);margin-top:1.3rem;padding-top:1.3rem;border-top:1px solid var(--border)}
+.foot a{color:var(--teal);font-weight:700;text-decoration:none}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.25);border-top-color:#000;border-radius:50%;animation:s .7s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="grid"></div>
+
+<div class="card">
+  <div class="badge"><i class="fas fa-user-shield"></i> Admin Registration</div>
+  <div class="brand">STUDYFLIX</div>
+  <div class="title">Create Admin Account</div>
+  <div class="sub">You need a valid invite code from an existing admin</div>
+
+  <div class="msg error" id="err" role="alert"></div>
+  <div class="msg success" id="ok" role="status"></div>
+
+  <form id="form" novalidate>
+    <div class="fg">
+      <label for="inviteCode">Invite Code</label>
+      <input type="text" id="inviteCode" class="code" placeholder="XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" spellcheck="false" />
+      <div class="hint">Ask an existing admin to generate one for you.</div>
+    </div>
+
+    <div class="fg">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" placeholder="Your full name" autocomplete="name" />
+    </div>
+
+    <div class="fg">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="you@studyflix.com" autocomplete="email" />
+    </div>
+
+    <div class="fg">
+      <label for="password">Password</label>
+      <div class="iw">
+        <input type="password" id="password" placeholder="Create a password" autocomplete="new-password" />
+        <button type="button" class="toggle" data-target="password"><i class="fas fa-eye"></i></button>
+      </div>
+      <div class="strength"><div class="sbar"><div class="sfill" id="sFill"></div></div><span class="stext" id="sText"></span></div>
+    </div>
+
+    <div class="fg">
+      <label for="confirm">Confirm Password</label>
+      <div class="iw">
+        <input type="password" id="confirm" placeholder="Re-enter password" autocomplete="new-password" />
+        <button type="button" class="toggle" data-target="confirm"><i class="fas fa-eye"></i></button>
+      </div>
+      <div class="match" id="matchHint"></div>
+    </div>
+
+    <button type="submit" class="btn" id="btn">
+      <i class="fas fa-user-plus" id="btnIcon"></i>
+      <span id="btnText">Create Admin Account</span>
+    </button>
+  </form>
+
+  <div class="foot">Already an admin? <a href="admin-login.html">Sign in</a></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNWXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();const db=firebase.firestore();
+
+const els={form:document.getElementById('form'),invite:document.getElementById('inviteCode'),name:document.getElementById('fullName'),email:document.getElementById('email'),pw:document.getElementById('password'),confirm:document.getElementById('confirm'),btn:document.getElementById('btn'),btnText:document.getElementById('btnText'),btnIcon:document.getElementById('btnIcon'),err:document.getElementById('err'),ok:document.getElementById('ok'),sFill:document.getElementById('sFill'),sText:document.getElementById('sText'),match:document.getElementById('matchHint')};
+
+function showErr(m){els.ok.style.display='none';els.err.textContent=m;els.err.style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
+function showOk(m){els.err.style.display='none';els.ok.textContent=m;els.ok.style.display='block'}
+function clearMsgs(){els.err.style.display='none';els.ok.style.display='none'}
+function friendly(c){return({'auth/email-already-in-use':'That email is already registered.','auth/invalid-email':'That email looks invalid.','auth/weak-password':'Password is too weak. Use at least 6 characters.','auth/operation-not-allowed':'Email registration is disabled.','auth/network-request-failed':'Network error. Check your connection.'})[c]||'Registration failed. Please try again.'}
+
+// Invite code formatting: XXXX-XXXX-XXXX
+els.invite.addEventListener('input',()=>{
+  let v=els.invite.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12);
+  els.invite.value=v.replace(/(.{4})(?=.)/g,'$1-');
+});
+
+// Password toggles
+document.querySelectorAll('.toggle').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const t=document.getElementById(b.dataset.target);
+    const s=t.type==='password';
+    t.type=s?'text':'password';
+    b.innerHTML=s?'<i class="fas fa-eye-slash"></i>':'<i class="fas fa-eye"></i>';
+    t.focus();
+  });
+});
+
+// Strength
+const STR=[{l:'',c:'transparent'},{l:'Weak',c:'#ff5555'},{l:'Fair',c:'#ffaa33'},{l:'Good',c:'#2288FF'},{l:'Strong',c:'#00D4B4'}];
+function score(p){if(!p)return 0;let s=0;if(p.length>=8)s++;if(/[a-z]/.test(p)&&/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;return s}
+els.pw.addEventListener('input',()=>{
+  const sc=score(els.pw.value);const lvl=STR[sc];const w=['0%','25%','50%','75%','100%'];
+  els.sFill.style.width=els.pw.value?w[sc]:'0%';
+  els.sFill.style.backgroundColor=lvl.c;
+  els.sText.textContent=els.pw.value?lvl.l:'';
+  els.sText.style.color=lvl.c;
+  updateMatch();
+});
+function updateMatch(){const p=els.pw.value,c=els.confirm.value;if(!c){els.match.className='match';els.match.textContent='';return}if(p===c){els.match.className='match ok';els.match.innerHTML='<i class="fas fa-check"></i> Passwords match'}else{els.match.className='match bad';els.match.innerHTML='<i class="fas fa-times"></i> Passwords do not match'}}
+els.confirm.addEventListener('input',updateMatch);
+
+// Submit
+els.form.addEventListener('submit',async e=>{
+  e.preventDefault();clearMsgs();
+
+  const code=els.invite.value.trim().toUpperCase();
+  const name=els.name.value.trim();
+  const email=els.email.value.trim();
+  const pw=els.pw.value;
+  const cf=els.confirm.value;
+
+  if(!code||!name||!email||!pw||!cf){showErr('Please fill in all fields.');return}
+  if(!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)){showErr('Invite code should look like XXXX-XXXX-XXXX.');els.invite.focus();return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('Please enter a valid email address.');els.email.focus();return}
+  if(pw.length<6){showErr('Password must be at least 6 characters.');els.pw.focus();return}
+  if(pw!==cf){showErr('Passwords do not match.');els.confirm.focus();return}
+
+  els.btn.disabled=true;els.btnText.textContent='Verifying invite…';els.btnIcon.className='fas fa-spinner fa-spin';
+
+  try{
+    // 1. Verify invite
+    const invSnap=await db.collection('adminInvites').doc(code).get();
+    if(!invSnap.exists){throw new Error('That invite code does not exist.')}
+    const inv=invSnap.data();
+    if(inv.used){throw new Error('That invite code has already been used.')}
+    if(inv.expiresAt&&inv.expiresAt.toDate&&inv.expiresAt.toDate()<new Date()){throw new Error('That invite code has expired.')}
+
+    els.btnText.textContent='Creating account…';
+
+    // 2. Create auth user
+    const cred=await auth.createUserWithEmailAndPassword(email,pw);
+
+    // 3. Write admin doc
+    await db.collection('admins').doc(cred.user.uid).set({
+      uid:cred.user.uid,
+      name:name,
+      email:email,
+      role:'admin',
+      status:'active',
+      inviteCode:code,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // 4. Mark invite used
+    try{await db.collection('adminInvites').doc(code).update({used:true,usedBy:cred.user.uid,usedAt:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){console.warn('invite mark failed',e)}
+
+    // 5. Update displayName
+    try{await cred.user.updateProfile({displayName:name})}catch(e){}
+
+    // 6. Log activity
+    try{await db.collection('activity').add({type:'admin_created',adminUid:cred.user.uid,adminEmail:email,adminName:name,at:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){}
+
+    showOk('Admin account created. Redirecting…');
+    els.btnText.textContent='Account created';
+    els.btnIcon.className='fas fa-check';
+    setTimeout(()=>window.location.href='admin-dashboard.html',1200);
+
+  }catch(err){
+    console.error(err);
+    els.btn.disabled=false;
+    els.btnText.textContent='Create Admin Account';
+    els.btnIcon.className='fas fa-user-plus';
+    if(err.code){showErr(friendly(err.code))}else{showErr(err.message||'Registration failed.')}
+  }
+});
+</script>
+</body>
+</html>

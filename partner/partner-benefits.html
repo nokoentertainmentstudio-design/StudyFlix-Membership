@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Partner Benefits | StudyFlix</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        :root {
+            --gold: #FFD700;
+            --teal: #00D4B4;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Nunito', sans-serif;
+            color: white;
+            background: linear-gradient(135deg, #080D1A, #101A30);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .navbar-links a:hover {
+            color: var(--gold);
+        }
+
+        /* HEADER */
+
+        .page-header {
+            text-align: center;
+            padding: 55px 0 35px;
+        }
+
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 50px;
+            margin: 0;
+        }
+
+        .highlight {
+            color: var(--gold);
+        }
+
+        .page-sub {
+            color: var(--muted);
+            margin-top: 10px;
+        }
+
+        /* BENEFITS GRID */
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .benefit-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            transition: 0.3s;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+        }
+
+        .benefit-icon {
+            font-size: 40px;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .benefit-card h2 {
+            margin: 0 0 10px;
+        }
+
+        .benefit-description {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .benefit-offer {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #111A2E;
+            color: var(--teal);
+            font-weight: 800;
+        }
+
+        .benefit-status {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(0, 212, 180, 0.12);
+            color: var(--teal);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 13px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .dashboard-btn {
+            background: var(--gold);
+            color: #111;
+        }
+
+        .verification-btn {
+            background: #263352;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .navbar-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .navbar-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 40px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="container navbar-content">
+
+            <a href="../member/index.html" class="navbar-brand">
+                STUDYFLIX
+            </a>
+
+            <div class="navbar-links">
+
+                <a href="../member/index.html">
+                    Home
+                </a>
+
+                <a href="partner-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="partner-verification.html">
+                    Verification
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HEADER -->
+
+    <section class="page-header">
+
+        <div class="container">
+
+            <h1 class="page-title">
+                MY <span class="highlight">BENEFITS</span>
+            </h1>
+
+            <p class="page-sub">
+                Manage the benefits your organization offers to StudyFlix members.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- BENEFITS -->
+
+    <main class="container">
+
+        <div class="benefits-grid">
+
+
+            <!-- BENEFIT 1 -->
+
+            <div class="benefit-card">
+
+                <div class="benefit-icon">
+                    <i class="fas fa-percent"></i>
+                </div>
+
+                <h2>
+                    StudyFlix Member Discount
+                </h2>
+
+                <p class="benefit-description">
+                    StudyFlix members receive a special discount
+                    when purchasing qualifying products or services.
+                </p>
+
+                <div class="benefit-offer">
+                    10% Member Discount
+                </div>
+
+                <span class="benefit-status">
+                    ACTIVE
+                </span>
+
+            </div>
+
+
+            <!-- BENEFIT 2 -->
+
+            <div class="benefit-card">
+
+                <div class="benefit-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+
+                <h2>
+                    Education Special
+                </h2>
+
+                <p class="benefit-description">
+                    Members receive access to special educational
+                    offers provided by the partner.
+                </p>
+
+                <div class="benefit-offer">
+                    Special Member Pricing
+                </div>
+
+                <span class="benefit-status">
+                    ACTIVE
+                </span>
+
+            </div>
+
+
+            <!-- BENEFIT 3 -->
+
+            <div class="benefit-card">
+
+                <div class="benefit-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+
+                <h2>
+                    Member Special Offer
+                </h2>
+
+                <p class="benefit-description">
+                    Exclusive promotional offers available to
+                    verified StudyFlix members.
+                </p>
+
+                <div class="benefit-offer">
+                    Exclusive Offer
+                </div>
+
+                <span class="benefit-status">
+                    ACTIVE
+                </span>
+
+            </div>
+
+
+            <!-- BENEFIT 4 -->
+
+            <div class="benefit-card">
+
+                <div class="benefit-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+
+                <h2>
+                    Premium Member Benefit
+                </h2>
+
+                <p class="benefit-description">
+                    Additional value and special services available
+                    to StudyFlix members.
+                </p>
+
+                <div class="benefit-offer">
+                    Member Exclusive
+                </div>
+
+                <span class="benefit-status">
+                    ACTIVE
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="buttons">
+
+            <a href="partner-dashboard.html"
+               class="btn dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+
+            </a>
+
+            <a href="partner-verification.html"
+               class="btn verification-btn">
+
+                <i class="fas fa-id-card"></i>
+                Verify Member
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <div class="container">
+
+            <p>
+                © 2025 Noko Entertainment Studio · StudyFlix · All rights reserved
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>

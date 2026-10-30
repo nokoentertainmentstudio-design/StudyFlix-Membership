@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "studyflix-membership"
+  },
+  "targets": {
+    "studyflix-membership": {
+      "hosting": {
+        "admin": [
+          "studyflix-membership-admin"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

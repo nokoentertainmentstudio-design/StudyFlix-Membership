@@ -1,0 +1,46 @@
+﻿{
+    "hosting":  [
+                    {
+                        "site":  "studyflix-membership",
+                        "public":  ".",
+                        "ignore":  [
+                                       "firebase.json",
+                                       "**/.*",
+                                       "**/node_modules/**",
+                                       "admin/**"
+                                   ],
+                        "rewrites":  [
+                                         {
+                                             "function":  {
+                                                              "region":  "us-central1",
+                                                              "functionId":  "paypalWebhook"
+                                                          },
+                                             "source":  "/api/paypal-webhook"
+                                         }
+                                     ]
+                    },
+                    {
+                        "target":  "admin",
+                        "public":  "admin",
+                        "ignore":  [
+                                       "firebase.json",
+                                       "**/.*",
+                                       "**/node_modules/**"
+                                   ]
+                    }
+                ],
+    "functions":  [
+                      {
+                          "source":  "functions",
+                          "codebase":  "default",
+                          "disallowLegacyRuntimeConfig":  true,
+                          "ignore":  [
+                                         "node_modules",
+                                         ".git",
+                                         "firebase-debug.log",
+                                         "firebase-debug.*.log",
+                                         "*.local"
+                                     ]
+                      }
+                  ]
+}

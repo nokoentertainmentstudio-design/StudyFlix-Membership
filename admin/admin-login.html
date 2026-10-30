@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Admin Login — StudyFlix</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3e 100%);
+            color: #E8EEFF;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            overflow-x: hidden;
+        }
+
+        .hero-bg {
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 40%, #1e1040 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, #0f2040 0%, transparent 55%);
+            z-index: -2;
+        }
+        .hero-grid {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(245,200,66,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245,200,66,.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.2rem 1.8rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-card::before {
+            content: "";
+            position: absolute;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.05);
+            top: -120px; right: -80px;
+            pointer-events: none;
+        }
+        .auth-card > * { position: relative; z-index: 1; }
+
+        .admin-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: var(--gold);
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            margin: 0 auto 1rem;
+            width: fit-content;
+        }
+
+        .auth-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            margin-bottom: 0.2rem;
+        }
+
+        .auth-title {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .auth-sub {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 1.6rem;
+            line-height: 1.5;
+        }
+
+        .form-group { margin-bottom: 0.95rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.78rem 1rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 0.88rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus { border-color: var(--teal); }
+        .form-group input::placeholder { color: #5b6788; }
+
+        .input-wrap { position: relative; }
+        .input-wrap input { padding-right: 2.6rem; }
+
+        .toggle-pw {
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.3rem;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .toggle-pw:hover { color: var(--teal); }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 0.2rem 0 1.1rem;
+            font-size: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--muted);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+        }
+        .remember input { accent-color: var(--teal); cursor: pointer; }
+        .forgot-link { color: var(--teal); text-decoration: none; font-weight: 700; }
+        .forgot-link:hover { text-decoration: underline; }
+
+        .auth-btn {
+            width: 100%;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #000;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .auth-btn:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 0 30px rgba(255,215,0,0.3); }
+        .auth-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+        .auth-msg {
+            display: none;
+            font-size: 0.78rem;
+            padding: 0.65rem 0.9rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .auth-msg.error {
+            background: rgba(255,80,80,0.1);
+            border: 1px solid rgba(255,80,80,0.35);
+            color: #ff9b9b;
+        }
+        .auth-msg.success {
+            background: rgba(0,212,180,0.1);
+            border: 1px solid rgba(0,212,180,0.35);
+            color: #7ff0dd;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.4rem;
+            padding-top: 1.3rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+        .auth-footer a { color: var(--teal); font-weight: 700; text-decoration: none; }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+        }
+        .back-home:hover { color: var(--teal); }
+
+        .spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(0,0,0,0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="auth-card">
+
+        <div class="admin-badge">
+            <i class="fas fa-shield-halved"></i> Staff Access Only
+        </div>
+
+        <div class="auth-brand">StudyFlix</div>
+        <div class="auth-title">Admin Sign In</div>
+        <div class="auth-sub">
+            Sign in with your StudyFlix administrator account
+        </div>
+
+        <div class="auth-msg error"   id="authError"   role="alert"></div>
+        <div class="auth-msg success" id="authSuccess" role="status"></div>
+
+        <form id="adminLoginForm" novalidate>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="admin@studyflix.com" required autocomplete="email" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password" />
+                    <button type="button" class="toggle-pw" id="togglePw" aria-label="Show password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label class="remember">
+                    <input type="checkbox" id="remember" checked />
+                    Remember me
+                </label>
+                <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="auth-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt" id="btnIcon"></i>
+                <span id="btnText">Sign In as Admin</span>
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            Not an admin? <a href="../index.html">Go to member login</a>
+        </div>
+
+        <a href="index.html" class="back-home">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        /* ---------- FIREBASE ---------- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+            authDomain: "studyflix-membership.firebaseapp.com",
+            projectId: "studyflix-membership",
+            storageBucket: "studyflix-membership.firebasestorage.app",
+            messagingSenderId: "641080177215",
+            appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+            measurementId: "G-3384WRNWXW"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db   = firebase.firestore();
+
+        /* ---------- PATH ---------- */
+        const ADMIN_DASHBOARD = '/admin/dashboard.html';
+
+        /* ---------- DOM ---------- */
+        const els = {
+            form:        document.getElementById('adminLoginForm'),
+            email:       document.getElementById('email'),
+            password:    document.getElementById('password'),
+            remember:    document.getElementById('remember'),
+            togglePw:    document.getElementById('togglePw'),
+            forgotLink:  document.getElementById('forgotLink'),
+            loginBtn:    document.getElementById('loginBtn'),
+            loginText:   document.getElementById('btnText'),
+            loginIcon:   document.getElementById('btnIcon'),
+            authError:   document.getElementById('authError'),
+            authSuccess: document.getElementById('authSuccess')
+        };
+
+        /* ---------- HELPERS ---------- */
+        function showError(msg) {
+            els.authSuccess.style.display = 'none';
+            els.authError.textContent = msg;
+            els.authError.style.display = 'block';
+        }
+        function showSuccess(msg) {
+            els.authError.style.display = 'none';
+            els.authSuccess.textContent = msg;
+            els.authSuccess.style.display = 'block';
+        }
+        function clearMessages() {
+            els.authError.style.display = 'none';
+            els.authSuccess.style.display = 'none';
+        }
+
+        function friendlyError(code) {
+            switch (code) {
+                case 'auth/invalid-email':          return 'That email address looks invalid.';
+                case 'auth/user-not-found':         return 'No account found with that email.';
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential':     return 'Incorrect email or password.';
+                case 'auth/missing-password':       return 'Please enter your password.';
+                case 'auth/user-disabled':          return 'This account has been disabled. Contact support.';
+                case 'auth/too-many-requests':      return 'Too many attempts. Please try again later.';
+                case 'auth/network-request-failed': return 'Network error. Check your connection.';
+                default:                            return 'Sign in failed. Please try again.';
+            }
+        }
+
+        /* ---------- PASSWORD TOGGLE ---------- */
+        els.togglePw.addEventListener('click', () => {
+            const show = els.password.type === 'password';
+            els.password.type = show ? 'text' : 'password';
+            els.togglePw.innerHTML = show
+                ? '<i class="fas fa-eye-slash"></i>'
+                : '<i class="fas fa-eye"></i>';
+            els.togglePw.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            els.password.focus();
+        });
+
+        /* ---------- FORGOT PASSWORD ---------- */
+        els.forgotLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            clearMessages();
+
+            const email = els.email.value.trim();
+            if (!email) {
+                showError('Enter your email address above first, then tap "Forgot password".');
+                els.email.focus();
+                return;
+            }
+
+            els.forgotLink.style.pointerEvents = 'none';
+            els.forgotLink.style.opacity = '0.6';
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                showSuccess('Reset link sent to ' + email + '. Check your inbox.');
+            } catch (err) {
+                console.error(err);
+                showError(friendlyError(err.code));
+            } finally {
+                els.forgotLink.style.pointerEvents = '';
+                els.forgotLink.style.opacity = '';
+            }
+        });
+
+        /* ---------- VERIFY ADMIN ---------- */
+        async function isAdmin(uid) {
+            try {
+                const snap = await db.collection('admins').doc(uid).get();
+                return snap.exists;
+            } catch (err) {
+                console.error('Could not verify admin status:', err.message);
+                return false;
+            }
+        }
+
+        /* ---------- AUTO-REDIRECT IF ALREADY SIGNED IN AS ADMIN ---------- */
+        auth.onAuthStateChanged(async user => {
+            if (!user) return;
+            const admin = await isAdmin(user.uid);
+            if (admin) window.location.href = ADMIN_DASHBOARD;
+        });
+
+        /* ---------- SUBMIT ---------- */
+        els.form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+
+            const email    = els.email.value.trim();
+            const password = els.password.value;
+
+            if (!email || !password) {
+                showError('Please fill in all fields.');
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('Please enter a valid email address.');
+                els.email.focus();
+                return;
+            }
+
+            els.loginBtn.disabled = true;
+            els.loginText.textContent = 'Signing in…';
+            els.loginIcon.className = 'fas fa-spinner fa-spin';
+
+            try {
+                /* Persistence before sign-in */
+                const persistence = els.remember.checked
+                    ? firebase.auth.Auth.Persistence.LOCAL
+                    : firebase.auth.Auth.Persistence.SESSION;
+                try { await auth.setPersistence(persistence); }
+                catch (pErr) { console.warn('setPersistence failed:', pErr.message); }
+
+                /* 1. Sign in */
+                const cred = await auth.signInWithEmailAndPassword(email, password);
+
+                /* 2. Check admin status */
+                els.loginText.textContent = 'Verifying admin access…';
+                const admin = await isAdmin(cred.user.uid);
+
+                if (!admin) {
+                    /* Not an admin — sign them back out immediately */
+                    await auth.signOut();
+                    showError('This account does not have administrator access.');
+                    els.loginBtn.disabled = false;
+                    els.loginText.textContent = 'Sign In as Admin';
+                    els.loginIcon.className = 'fas fa-sign-in-alt';
+                    return;
+                }
+
+                /* 3. Admin verified — redirect */
+                showSuccess('Welcome back. Opening admin dashboard…');
+                els.loginText.textContent = 'Signed in';
+                els.loginIcon.className = 'fas fa-check';
+
+                setTimeout(() => {
+                    window.location.href = ADMIN_DASHBOARD;
+                }, 700);
+
+            } catch (err) {
+                console.error(err);
+                showError(friendlyError(err.code));
+                els.loginBtn.disabled = false;
+                els.loginText.textContent = 'Sign In as Admin';
+                els.loginIcon.className = 'fas fa-sign-in-alt';
+            }
+        });
+    </script>
+
+</body>
+</html>

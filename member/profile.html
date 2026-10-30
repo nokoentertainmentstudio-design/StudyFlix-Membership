@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>My Profile — StudyFlix</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --red: #ff5555;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #080C18, #111A2E);
+            color: #E8EEFF;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ---------- MAIN AREA ---------- */
+        .dash-main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 3rem;
+        }
+        @media (max-width: 768px) {
+            .dash-main { padding-top: 75px; }
+        }
+
+        /* ---------- TOP BAR ---------- */
+        .dash-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+        .dash-user { display: flex; align-items: center; gap: 0.8rem; }
+
+        .dash-avatar {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .dash-name { font-weight: 800; font-size: 0.98rem; line-height: 1.2; }
+        .dash-email { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+
+        .dash-logout {
+            background: rgba(255, 80, 80, 0.1);
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            color: #ff9b9b;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .dash-logout:hover { background: rgba(255, 80, 80, 0.2); border-color: rgba(255, 80, 80, 0.5); }
+        .dash-logout i { margin-right: 5px; }
+
+        /* ---------- HEADER ---------- */
+        .dash-header { margin-bottom: 1.6rem; }
+        .dash-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.6rem;
+            letter-spacing: 1.5px;
+            line-height: 1.1;
+        }
+        .dash-header h1 .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .dash-header p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* ---------- MESSAGES ---------- */
+        .msg {
+            display: none;
+            font-size: 0.82rem;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.2rem;
+            line-height: 1.5;
+        }
+        .msg.error {
+            background: rgba(255,80,80,0.1);
+            border: 1px solid rgba(255,80,80,0.35);
+            color: #ff9b9b;
+        }
+        .msg.success {
+            background: rgba(0,212,180,0.1);
+            border: 1px solid rgba(0,212,180,0.35);
+            color: #7ff0dd;
+        }
+
+        /* ---------- PROFILE HEADER CARD ---------- */
+        .profile-hero {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 1.4rem;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-hero::before {
+            content: "";
+            position: absolute;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.04);
+            top: -120px; right: -80px;
+        }
+        .profile-hero > * { position: relative; z-index: 1; }
+
+        .hero-avatar {
+            width: 82px; height: 82px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .hero-text { flex: 1; min-width: 200px; }
+        .hero-text h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.9rem;
+            letter-spacing: 0.5px;
+            line-height: 1.15;
+        }
+        .hero-text p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+        .hero-text .member-since {
+            color: var(--muted);
+            font-size: 0.75rem;
+            margin-top: 0.4rem;
+        }
+        .hero-text .member-since strong { color: #dce2f0; }
+
+        .hero-actions { flex-shrink: 0; }
+
+        .edit-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255,215,0,0.35);
+            background: rgba(255,215,0,0.08);
+            color: var(--gold);
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .edit-toggle:hover {
+            background: rgba(255,215,0,0.15);
+            border-color: rgba(255,215,0,0.55);
+        }
+
+        /* ---------- SECTIONS ---------- */
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1.5rem 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-card .section-head {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .section-head .head-accent {
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(180deg, var(--gold), var(--orange));
+            border-radius: 4px;
+        }
+
+        /* ---------- ROWS ---------- */
+        .field-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.95rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .field-row:last-child { border-bottom: none; }
+
+        .field-label {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            min-width: 130px;
+        }
+
+        .field-value {
+            font-weight: 700;
+            font-size: 0.92rem;
+            text-align: right;
+            word-break: break-word;
+            flex: 1;
+        }
+        .field-value.empty {
+            color: var(--muted);
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        /* ---------- INPUTS IN EDIT MODE ---------- */
+        .field-input {
+            flex: 1;
+            padding: 0.6rem 0.9rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: right;
+        }
+        .field-input:focus { border-color: var(--teal); }
+        .field-input::placeholder { color: #5b6788; font-weight: 600; }
+
+        
+        .field-select {
+            cursor: pointer;
+            appearance: none;
+            padding-right: 2.2rem;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238892B0'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 18px;
+        }
+        .field-select option {
+            background: #1C2640;
+            color: #E8EEFF;
+        }
+
+
+
+
+        /* ---------- BADGES ---------- */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+        }
+        .badge-active   { background: rgba(0, 212, 180, 0.15); color: var(--teal); }
+        .badge-pending  { background: rgba(255, 215, 0, 0.15);  color: var(--gold); }
+        .badge-inactive { background: rgba(255, 100, 100, 0.15); color: #ff8888; }
+        .badge-none     { background: rgba(136, 146, 176, 0.15); color: var(--muted); }
+
+        /* ---------- SAVE / CANCEL ---------- */
+        .edit-actions {
+            display: none;
+            gap: 0.7rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .edit-actions.visible { display: flex; }
+
+        .btn {
+            padding: 0.65rem 1.4rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+        }
+        .btn-save:hover { transform: scale(1.03); box-shadow: 0 0 22px rgba(255,215,0,0.28); }
+        .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-cancel {
+            background: rgba(255,255,255,0.06);
+            color: #E8EEFF;
+            border: 1px solid var(--border);
+        }
+        .btn-cancel:hover { background: rgba(255,255,255,0.1); }
+
+        /* ---------- SKELETON ---------- */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: skel 1.4s ease-in-out infinite;
+            border-radius: 6px;
+            display: inline-block;
+            width: 60%;
+            height: 1rem;
+            vertical-align: middle;
+        }
+        @keyframes skel {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 700px) {
+            .dash-header h1 { font-size: 2rem; }
+
+            .profile-hero {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            .hero-actions { width: 100%; }
+            .edit-toggle { display: flex; width: 100%; justify-content: center; }
+
+            .field-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.4rem;
+                padding: 0.9rem 0;
+            }
+            .field-label { min-width: 0; }
+            .field-value { text-align: left; }
+            .field-input { text-align: left; }
+
+            .field-select { text-align: left; padding-right: 2.2rem; }
+
+            .edit-actions { justify-content: stretch; }
+            .edit-actions .btn { flex: 1; justify-content: center; }
+        }
+
+        @media (max-width: 480px) {
+            .dash-name { font-size: 0.88rem; }
+            .dash-logout { padding: 0.45rem 0.85rem; font-size: 0.72rem; }
+            .hero-avatar { width: 70px; height: 70px; font-size: 1.7rem; }
+            .hero-text h2 { font-size: 1.6rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton { animation: none; }
+        }
+    </style>
+</head>
+<body class="has-sidebar">
+
+    <!-- Sidebar injected here -->
+    <div id="sidebar-placeholder"></div>
+
+    <main class="dash-main">
+
+        <!-- ---------- TOP BAR ---------- -->
+        <div class="dash-topbar">
+
+            <div class="dash-user">
+                <div class="dash-avatar" id="topAvatar">–</div>
+                <div>
+                    <div class="dash-name" id="topName"><span class="skeleton"></span></div>
+                    <div class="dash-email" id="topEmail"></div>
+                </div>
+            </div>
+
+            <button class="dash-logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+
+        </div>
+
+        <!-- ---------- HEADER ---------- -->
+        <header class="dash-header">
+            <h1>MY <span class="highlight">PROFILE</span></h1>
+            <p>View and manage your StudyFlix membership information.</p>
+        </header>
+
+        <!-- ---------- MESSAGES ---------- -->
+        <div class="msg error"   id="msgError"   role="alert"></div>
+        <div class="msg success" id="msgSuccess" role="status"></div>
+
+        <!-- ---------- PROFILE HERO ---------- -->
+        <div class="profile-hero">
+
+            <div class="hero-avatar" id="heroAvatar">–</div>
+
+            <div class="hero-text">
+                <h2 id="heroName">Loading…</h2>
+                <p id="heroEmail"></p>
+                <div class="member-since" id="heroSince"></div>
+            </div>
+
+            <div class="hero-actions">
+                <button class="edit-toggle" id="editToggle">
+                    <i class="fas fa-edit"></i>
+                    <span id="editToggleText">Edit Profile</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ---------- PERSONAL INFORMATION ---------- -->
+        <section class="section-card">
+
+            <h3 class="section-head">
+                <span class="head-accent"></span>
+                Personal Information
+            </h3>
+
+            <!-- Full Name -->
+            <div class="field-row">
+                <span class="field-label">Full Name</span>
+                <span class="field-value" id="valName">—</span>
+                <input class="field-input" type="text" id="inputName" placeholder="Your full name" style="display:none;" autocomplete="name" />
+            </div>
+
+            <!-- Cellphone -->
+            <div class="field-row">
+                <span class="field-label">Cellphone</span>
+                <span class="field-value empty" id="valPhone">Not set</span>
+                <input class="field-input" type="tel" id="inputPhone" placeholder="e.g. 071 234 5678" style="display:none;" autocomplete="tel" />
+            </div>
+
+            <!-- Location -->
+            <div class="field-row">
+                <span class="field-label">Location</span>
+                <span class="field-value empty" id="valLocation">Not set</span>
+                <input class="field-input" type="text" id="inputLocation" placeholder="e.g. Pretoria, South Africa" style="display:none;" autocomplete="address-level2" />
+            </div>
+
+            <!-- School -->
+            <div class="field-row">
+                <span class="field-label">School</span>
+                <span class="field-value empty" id="valSchool">Not set</span>
+                <input class="field-input" type="text" id="inputSchool" placeholder="Name of your school" style="display:none;" autocomplete="organization" />
+            </div>
+
+            <!-- Gender -->
+            <div class="field-row">
+                <span class="field-label">Gender</span>
+                <span class="field-value empty" id="valGender">Not set</span>
+                <select class="field-input field-select" id="inputGender" style="display:none;">
+                    <option value="" disabled>Select your gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+            </div>
+
+            <!-- Province -->
+            <div class="field-row">
+                <span class="field-label">Province</span>
+                <span class="field-value empty" id="valProvince">Not set</span>
+                <select class="field-input field-select" id="inputProvince" style="display:none;">
+                    <option value="" disabled>Select your province</option>
+                    <option value="Eastern Cape">Eastern Cape</option>
+                    <option value="Free State">Free State</option>
+                    <option value="Gauteng">Gauteng</option>
+                    <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                    <option value="Limpopo">Limpopo</option>
+                    <option value="Mpumalanga">Mpumalanga</option>
+                    <option value="Northern Cape">Northern Cape</option>
+                    <option value="North West">North West</option>
+                    <option value="Western Cape">Western Cape</option>
+                </select>
+            </div>
+
+            <!-- Address -->
+            <div class="field-row">
+                <span class="field-label">Address</span>
+                <span class="field-value empty" id="valAddress">Not set</span>
+                <input class="field-input" type="text" id="inputAddress" placeholder="Street address, suburb, postal code" style="display:none;" autocomplete="street-address" />
+            </div>
+
+            <!-- Save / Cancel -->
+            <div class="edit-actions" id="editActions">
+                <button class="btn btn-cancel" id="cancelBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-save" id="saveBtn">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+
+        </section>
+
+        <!-- ---------- ACCOUNT ---------- -->
+        <section class="section-card">
+
+            <h3 class="section-head">
+                <span class="head-accent"></span>
+                Account Details
+            </h3>
+
+            <div class="field-row">
+                <span class="field-label">Email</span>
+                <span class="field-value" id="valEmail">—</span>
+            </div>
+
+            <div class="field-row">
+                <span class="field-label">Membership No.</span>
+                <span class="field-value" id="valMemberNo">—</span>
+            </div>
+
+            <div class="field-row">
+                <span class="field-label">Member Since</span>
+                <span class="field-value" id="valMemberSince">—</span>
+            </div>
+
+            <div class="field-row">
+                <span class="field-label">Membership Status</span>
+                <span class="field-value" id="valMembershipStatus">—</span>
+            </div>
+
+            <div class="field-row">
+                <span class="field-label">Application Status</span>
+                <span class="field-value" id="valApplicationStatus">—</span>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FIREBASE ================= -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <!-- ================= SIDEBAR LOADER ================= -->
+    <script>
+        (function () {
+            'use strict';
+            const SIDEBAR_PLACEHOLDER_ID = 'sidebar-placeholder';
+            const SIDEBAR_PATH = 'sidebar.html';
+
+            async function loadSidebar() {
+                const placeholder = document.getElementById(SIDEBAR_PLACEHOLDER_ID);
+                if (!placeholder) return;
+                try {
+                    const response = await fetch(SIDEBAR_PATH);
+                    const html = await response.text();
+                    placeholder.innerHTML = html;
+                    initSidebar();
+                } catch (err) {
+                    console.error('Failed to load sidebar:', err);
+                }
+            }
+
+            function initSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebarClose = document.getElementById('sidebarClose');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (!sidebar) return;
+
+                // Ensure Dashboard link exists
+                const nav = sidebar.querySelector('.sidebar-nav');
+                if (nav && !nav.querySelector('[data-page="dashboard.html"]')) {
+                    const dashLink = document.createElement('a');
+                    dashLink.href = 'dashboard.html';
+                    dashLink.className = 'sidebar-link';
+                    dashLink.setAttribute('data-page', 'dashboard.html');
+                    dashLink.innerHTML =
+                        '<i class="fas fa-th-large"></i>' +
+                        '<div class="link-content">' +
+                            '<span class="link-title">Dashboard</span>' +
+                            '<span class="link-desc">Your membership overview.</span>' +
+                        '</div>';
+                    nav.prepend(dashLink);
+                }
+
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', () => {
+                        sidebar.classList.add('open');
+                        if (overlay) overlay.classList.add('active');
+                    });
+                }
+                function closeSidebar() {
+                    sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+                if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+                if (overlay) overlay.addEventListener('click', closeSidebar);
+
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+                    if (link.getAttribute('data-page') === currentPath) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadSidebar);
+            } else {
+                loadSidebar();
+            }
+
+            window.StudyFlixSidebar = {
+                load: loadSidebar,
+                close: function () {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    if (sidebar) sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+            };
+        })();
+    </script>
+
+    <!-- ================= PROFILE LOGIC ================= -->
+    <script>
+        /* ---------- FIREBASE ---------- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+            authDomain: "studyflix-membership.firebaseapp.com",
+            projectId: "studyflix-membership",
+            storageBucket: "studyflix-membership.firebasestorage.app",
+            messagingSenderId: "641080177215",
+            appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+            measurementId: "G-3384WRNWXW"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        /* ---------- DOM ---------- */
+        const els = {
+            topAvatar:    document.getElementById('topAvatar'),
+            topName:      document.getElementById('topName'),
+            topEmail:     document.getElementById('topEmail'),
+            heroAvatar:   document.getElementById('heroAvatar'),
+            heroName:     document.getElementById('heroName'),
+            heroEmail:    document.getElementById('heroEmail'),
+            heroSince:    document.getElementById('heroSince'),
+            editToggle:   document.getElementById('editToggle'),
+            editToggleText: document.getElementById('editToggleText'),
+            editActions:  document.getElementById('editActions'),
+            saveBtn:      document.getElementById('saveBtn'),
+            cancelBtn:    document.getElementById('cancelBtn'),
+            logoutBtn:    document.getElementById('logoutBtn'),
+
+            valName:      document.getElementById('valName'),
+            valPhone:     document.getElementById('valPhone'),
+            valLocation:  document.getElementById('valLocation'),
+            valSchool:    document.getElementById('valSchool'),
+            inputName:    document.getElementById('inputName'),
+            inputPhone:   document.getElementById('inputPhone'),
+            inputLocation:document.getElementById('inputLocation'),
+            inputSchool:  document.getElementById('inputSchool'),
+            valGender:    document.getElementById('valGender'),
+            valProvince:  document.getElementById('valProvince'),
+            valAddress:   document.getElementById('valAddress'),
+            inputGender:  document.getElementById('inputGender'),
+            inputProvince:document.getElementById('inputProvince'),
+            inputAddress: document.getElementById('inputAddress'),
+
+            valEmail:     document.getElementById('valEmail'),
+            valMemberNo:  document.getElementById('valMemberNo'),
+            valMemberSince: document.getElementById('valMemberSince'),
+            valMembershipStatus: document.getElementById('valMembershipStatus'),
+            valApplicationStatus: document.getElementById('valApplicationStatus'),
+
+            msgError:     document.getElementById('msgError'),
+            msgSuccess:   document.getElementById('msgSuccess')
+        };
+
+        /* ---------- STATE ---------- */
+        let currentUser   = null;
+        let currentData   = null;
+        let editing       = false;
+        let originalValues = { name: '', phone: '', location: '', school: '', gender: '', province: '', address:'' };
+        let unsubDoc      = null;
+        let healedOnce    = false;
+
+        /* ---------- MESSAGE HELPERS ---------- */
+        function showError(msg) {
+            els.msgSuccess.style.display = 'none';
+            els.msgError.textContent = msg;
+            els.msgError.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function showSuccess(msg) {
+            els.msgError.style.display = 'none';
+            els.msgSuccess.textContent = msg;
+            els.msgSuccess.style.display = 'block';
+            setTimeout(() => { els.msgSuccess.style.display = 'none'; }, 4000);
+        }
+        function clearMessages() {
+            els.msgError.style.display = 'none';
+            els.msgSuccess.style.display = 'none';
+        }
+
+        /* ---------- NAME RESOLUTION (same chain as dashboard) ---------- */
+        async function resolveName(user, data) {
+            if (data && (data.name || data.fullName || data.displayName)) {
+                return { name: data.name || data.fullName || data.displayName, source: 'firestore' };
+            }
+            try {
+                const stored = localStorage.getItem('studyflix_name_' + user.uid);
+                if (stored && stored.trim()) return { name: stored.trim(), source: 'localStorage' };
+            } catch (e) { /* ignore */ }
+            if (user.displayName && user.displayName.trim()) {
+                return { name: user.displayName.trim(), source: 'auth' };
+            }
+            if (user.email) {
+                return { name: user.email.split('@')[0], source: 'email' };
+            }
+            return { name: 'Member', source: 'fallback' };
+        }
+
+        /* ---------- HEAL MEMBER DOC ---------- */
+        async function healMemberDoc(user, name, data) {
+            const ref = db.collection('members').doc(user.uid);
+            try {
+                if (!data) {
+                    await ref.set({
+                        uid: user.uid,
+                        name: name,
+                        email: user.email || '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        plan: 'studyflix-monthly',
+                        status: 'pending',
+                        applicationStatus: 'pending',
+                        membershipNumber: null
+                    }, { merge: true });
+                    console.log('Member doc created on profile load.');
+                } else {
+                    const hasName = !!(data.name || data.fullName || data.displayName);
+                    if (!hasName) {
+                        await ref.set({ name: name }, { merge: true });
+                        console.log('Member name healed to Firestore.');
+                    }
+                }
+            } catch (err) {
+                console.warn('Could not heal member doc:', err.message);
+            }
+        }
+
+        /* ---------- FORMAT HELPERS ---------- */
+        function formatDate(ts) {
+            if (!ts) return null;
+            try {
+                const d = ts.toDate ? ts.toDate() : new Date(ts);
+                return d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' });
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function badgeClass(raw) {
+            const t = (raw || '').toString().toLowerCase();
+            if (t === 'active' || t === 'approved')                           return 'badge-active';
+            if (t === 'pending' || t === 'in review' || t === 'under review') return 'badge-pending';
+            if (t === 'inactive' || t === 'declined' || t === 'rejected')     return 'badge-inactive';
+            return 'badge-none';
+        }
+
+        function badgeLabel(raw, fallback) {
+            if (!raw) return fallback || '—';
+            return raw.toString().toUpperCase();
+        }
+
+        /* ---------- RENDER ---------- */
+        function renderProfile(user, data) {
+            currentData = data;
+
+            /* Resolve display name */
+            resolveName(user, data).then(({ name, source }) => {
+                els.topName.textContent = name;
+                els.topName.classList.remove('skeleton');
+                els.topAvatar.textContent = name.charAt(0).toUpperCase();
+                els.heroName.textContent = name;
+                els.heroAvatar.textContent = name.charAt(0).toUpperCase();
+
+                /* Auto-heal doc if name came from a weaker source */
+                if (!healedOnce && source !== 'firestore') {
+                    healedOnce = true;
+                    healMemberDoc(user, name, data);
+                }
+            });
+
+            /* Top bar email */
+            els.topEmail.textContent = user.email || '';
+            els.heroEmail.textContent = user.email || '';
+
+            /* Member since */
+            const created = data && (data.createdAt || data.applicationCreatedAt);
+            const createdStr = formatDate(created);
+            if (createdStr) {
+                els.heroSince.innerHTML = 'Member since <strong>' + createdStr + '</strong>';
+                els.valMemberSince.textContent = createdStr;
+            } else {
+                els.heroSince.textContent = '';
+                els.valMemberSince.textContent = '—';
+            }
+
+            /* Personal info */
+            setValue(els.valName, data && (data.name || data.fullName));
+            setValue(els.valPhone, data && data.phone);
+            setValue(els.valLocation, data && data.location);
+            setValue(els.valSchool, data && data.school);
+            setValue(els.valGender,   data && (data.gender   || (data.application && data.application.gender)));
+            setValue(els.valProvince, data && (data.province || (data.application && data.application.province)));
+            setValue(els.valAddress,  data && (data.address  || (data.application && data.application.address)));
+
+            /* Account */
+            els.valEmail.textContent = user.email || '—';
+
+            const memberNo = data && (data.membershipNumber || data.memberNumber);
+            if (memberNo) {
+                els.valMemberNo.textContent = memberNo;
+            } else {
+                els.valMemberNo.innerHTML = '<span class="badge badge-none">NOT ASSIGNED</span>';
+            }
+
+            /* Membership status */
+            const memRaw = (data && (data.status || data.membershipStatus)) || '';
+            els.valMembershipStatus.innerHTML =
+                '<span class="badge ' + badgeClass(memRaw) + '">' +
+                    badgeLabel(memRaw, 'PENDING') +
+                '</span>';
+
+            /* Application status */
+            const appRaw = (data && (data.applicationStatus || data.application)) || '';
+            let appForBadge = appRaw;
+            if (appRaw && typeof appRaw === 'object') {
+                appForBadge = appRaw.status || '';
+            }
+            els.valApplicationStatus.innerHTML =
+                '<span class="badge ' + badgeClass(appForBadge) + '">' +
+                    badgeLabel(appForBadge, 'NOT SUBMITTED') +
+                '</span>';
+
+            /* Capture original values for cancel */
+            originalValues = {
+            name:     getText(data && (data.name || data.fullName)),
+            phone:    getText(data && data.phone),
+            location: getText(data && data.location),
+            school:   getText(data && data.school),
+            gender:   getText(data && (data.gender || (data.application && data.application.gender))),
+            province: getText(data && (data.province || (data.application && data.application.province))),
+            address:  getText(data && (data.address || (data.application && data.application.address)))
+        };
+
+            /* If currently editing, refresh input values without exiting */
+            if (editing) {
+                populateInputs(originalValues);
+            }
+        }
+
+        function setValue(el, value) {
+            const v = getText(value);
+            if (v) {
+                el.textContent = v;
+                el.classList.remove('empty');
+            } else {
+                el.textContent = 'Not set';
+                el.classList.add('empty');
+            }
+        }
+
+        function getText(v) {
+            return v ? v.toString().trim() : '';
+        }
+
+        /* ---------- EDIT MODE ---------- */
+        function populateInputs(values) {
+        els.inputName.value     = values.name     || '';
+        els.inputPhone.value    = values.phone    || '';
+        els.inputLocation.value = values.location || '';
+        els.inputSchool.value   = values.school   || '';
+        els.inputGender.value   = values.gender   || '';
+        els.inputProvince.value = values.province || '';
+        els.inputAddress.value  = values.address  || '';
+}
+
+        function enterEditMode() {
+            editing = true;
+            populateInputs(originalValues);
+
+            els.valName.style.display     = 'none';
+            els.valPhone.style.display    = 'none';
+            els.valLocation.style.display = 'none';
+            els.valSchool.style.display   = 'none';
+            els.valGender.style.display   = 'none';
+            els.valProvince.style.display = 'none';
+            els.valAddress.style.display  = 'none';
+            els.inputName.style.display     = 'block';
+            els.inputPhone.style.display    = 'block';
+            els.inputLocation.style.display = 'block';
+            els.inputSchool.style.display   = 'block';
+            els.inputGender.style.display   = 'block';
+            els.inputProvince.style.display = 'block';
+            els.inputAddress.style.display  = 'block';
+
+            els.editActions.classList.add('visible');
+            els.editToggleText.textContent = 'Editing…';
+            els.editToggle.disabled = true;
+            els.editToggle.style.opacity = '0.5';
+            els.editToggle.style.cursor = 'not-allowed';
+
+            els.inputName.focus();
+        }
+
+        function exitEditMode() {
+            editing = false;
+
+            els.valName.style.display     = '';
+            els.valPhone.style.display    = '';
+            els.valLocation.style.display = '';
+            els.valSchool.style.display   = '';
+            els.valGender.style.display   = '';
+            els.valProvince.style.display = '';
+            els.valAddress.style.display  = '';
+            els.inputName.style.display     = 'none';
+            els.inputPhone.style.display    = 'none';
+            els.inputLocation.style.display = 'none';
+            els.inputSchool.style.display   = 'none';
+            els.inputGender.style.display   = 'none';
+            els.inputProvince.style.display = 'none';
+            els.inputAddress.style.display  = 'none';
+
+            els.editActions.classList.remove('visible');
+            els.editToggleText.textContent = 'Edit Profile';
+            els.editToggle.disabled = false;
+            els.editToggle.style.opacity = '';
+            els.editToggle.style.cursor = '';
+        }
+
+        /* ---------- SAVE ---------- */
+        async function saveProfile() {
+            if (!currentUser) return;
+
+            const newName     = els.inputName.value.trim();
+            const newPhone    = els.inputPhone.value.trim();
+            const newLocation = els.inputLocation.value.trim();
+            const newSchool   = els.inputSchool.value.trim();
+            const newGender   = els.inputGender.value;
+            const newProvince = els.inputProvince.value;
+            const newAddress  = els.inputAddress.value.trim();
+
+            if (!newName) {
+                showError('Full name cannot be empty.');
+                els.inputName.focus();
+                return;
+            }
+            if (newName.length > 80) {
+                showError('Full name is too long.');
+                els.inputName.focus();
+                return;
+            }
+
+            els.saveBtn.disabled = true;
+            els.saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+            try {
+                /* 1. Firestore update */
+                await db.collection('members').doc(currentUser.uid).set({
+                    name: newName,
+                    fullName: newName,
+                    phone: newPhone,
+                    location: newLocation,
+                    school: newSchool,
+                    gender: newGender,
+                    province: newProvince,
+                    address: newAddress,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                /* 2. Auth displayName (if changed) */
+                if (currentUser.displayName !== newName) {
+                    try {
+                        await currentUser.updateProfile({ displayName: newName });
+                    } catch (upErr) {
+                        console.warn('updateProfile failed:', upErr.message);
+                    }
+                }
+
+                /* 3. localStorage safety net */
+                try {
+                    localStorage.setItem('studyflix_name_' + currentUser.uid, newName);
+                } catch (e) { /* ignore */ }
+
+                /* 4. UI refresh happens automatically via onSnapshot,
+                      but update the top-bar + hero immediately for snappiness */
+                els.topName.textContent = newName;
+                els.topAvatar.textContent = newName.charAt(0).toUpperCase();
+                els.heroName.textContent = newName;
+                els.heroAvatar.textContent = newName.charAt(0).toUpperCase();
+
+                exitEditMode();
+                clearMessages();
+                showSuccess('Profile updated successfully.');
+
+            } catch (err) {
+                console.error(err);
+                showError('Could not save your changes: ' + err.message);
+            } finally {
+                els.saveBtn.disabled = false;
+                els.saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            }
+        }
+
+        /* ---------- WIRE BUTTONS ---------- */
+        els.editToggle.addEventListener('click', () => {
+            if (!editing) {
+                clearMessages();
+                enterEditMode();
+            }
+        });
+
+        els.cancelBtn.addEventListener('click', () => {
+            exitEditMode();
+            clearMessages();
+        });
+
+        els.saveBtn.addEventListener('click', saveProfile);
+
+        /* Save on Enter key in any input */
+        [els.inputName, els.inputPhone, els.inputLocation, els.inputSchool, els.inputAddress].forEach(input => {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveProfile();
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    exitEditMode();
+                    clearMessages();
+                }
+            });
+        });
+
+        /* ---------- AUTH GUARD + LIVE DATA ---------- */
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+
+            try { await user.reload(); } catch (e) { /* ignore */ }
+            const freshUser = auth.currentUser || user;
+
+            /* Initial read to resolve name + heal doc */
+            let initialData = null;
+            try {
+                const snap = await db.collection('members').doc(freshUser.uid).get();
+                if (snap.exists) initialData = snap.data();
+            } catch (err) {
+                console.warn('Firestore read blocked:', err.message);
+            }
+
+            renderProfile(freshUser, initialData);
+
+            /* Live updates */
+            if (unsubDoc) unsubDoc();
+            unsubDoc = db.collection('members').doc(freshUser.uid).onSnapshot(
+                (snap) => {
+                    const data = snap.exists ? snap.data() : null;
+                    renderProfile(freshUser, data);
+                },
+                (err) => {
+                    console.warn('Live updates unavailable:', err.message);
+                }
+            );
+        });
+
+        /* ---------- LOGOUT ---------- */
+        els.logoutBtn.addEventListener('click', async () => {
+            els.logoutBtn.disabled = true;
+            try {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                await auth.signOut();
+            } catch (err) {
+                console.error(err);
+                els.logoutBtn.disabled = false;
+            }
+            window.location.href = 'login.html';
+        });
+    </script>
+
+</body>
+</html>

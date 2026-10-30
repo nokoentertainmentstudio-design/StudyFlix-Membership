@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#080D1A">
+
+    <title>Partner Verification | StudyFlix</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+            --pad-x: clamp(1rem, 4vw, 1.5rem);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Nunito', sans-serif;
+            color: white;
+            background: linear-gradient(135deg, #080D1A, #101A30);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            padding-left: max(var(--pad-x), env(safe-area-inset-left));
+            padding-right: max(var(--pad-x), env(safe-area-inset-right));
+        }
+
+        /* ------------- NAVBAR ------------- */
+
+        .navbar {
+            padding: clamp(14px, 4vw, 20px) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(1.4rem, 5vw, 1.9rem);
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: clamp(14px, 3vw, 25px);
+        }
+
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            touch-action: manipulation;
+        }
+
+        .navbar-links a:hover { color: var(--gold); }
+
+        /* ------------- HEADER ------------- */
+
+        .page-header {
+            text-align: center;
+            padding: clamp(30px, 8vw, 60px) 0 clamp(16px, 4vw, 30px);
+        }
+
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(1.9rem, 8vw, 3rem);
+            margin: 0;
+            color: white;
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        .highlight { color: var(--gold); }
+
+        .page-sub {
+            color: var(--muted);
+            margin-top: 10px;
+            font-size: clamp(0.85rem, 2.6vw, 0.95rem);
+            padding: 0 4px;
+        }
+
+        /* ------------- VERIFICATION CARD ------------- */
+
+        .verification-card {
+            max-width: 650px;
+            margin: 20px auto;
+            background: var(--card);
+            padding: clamp(20px, 5vw, 35px);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .verification-card h2 {
+            text-align: center;
+            margin-top: 0;
+            font-size: clamp(1.15rem, 4vw, 1.4rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .verification-card > p {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        /* ------------- FORM ------------- */
+
+        .form-group {
+            margin-top: clamp(18px, 4vw, 25px);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #111A2E;
+            color: white;
+            font-size: 16px;              /* prevents iOS zoom on focus */
+            outline: none;
+            font-family: inherit;
+            min-height: 48px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--gold);
+        }
+
+        .form-group input::placeholder {
+            color: #5b6a90;
+        }
+
+        .verify-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: var(--gold);
+            color: #111;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            min-height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            touch-action: manipulation;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .verify-btn:hover { background: #e6c200; }
+        .verify-btn:active { transform: scale(0.99); }
+
+        /* ------------- RESULT ------------- */
+
+        .result {
+            display: none;
+            margin-top: 25px;
+            padding: clamp(18px, 4vw, 25px);
+            border-radius: 12px;
+            background: #111A2E;
+            border: 1px solid var(--teal);
+        }
+
+        .success-icon {
+            text-align: center;
+            font-size: clamp(36px, 9vw, 45px);
+            color: var(--teal);
+        }
+
+        .result h3 {
+            text-align: center;
+            color: var(--teal);
+            font-size: clamp(1.05rem, 4vw, 1.25rem);
+            margin: 8px 0 0;
+        }
+
+        .member-info {
+            margin-top: 20px;
+        }
+
+        .member-info div {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.92rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+            word-break: break-word;
+        }
+
+        .member-info div:last-child { border-bottom: none; }
+
+        .member-info strong {
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .active-status {
+            color: var(--teal);
+            font-weight: 800;
+        }
+
+        /* ------------- ERROR ------------- */
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: rgba(255, 70, 70, 0.1);
+            border: 1px solid #ff4646;
+            color: #ff7777;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* ------------- QR ------------- */
+
+        .qr-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .qr-section h3 {
+            font-size: clamp(1rem, 3.6vw, 1.15rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .qr-section p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin: 8px 0 0;
+        }
+
+        .qr-placeholder {
+            width: 88px;
+            height: 88px;
+            margin: 16px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--muted);
+            border-radius: 10px;
+            color: var(--muted);
+            font-size: 34px;
+        }
+
+        .qr-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 24px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 8px;
+            background: var(--teal);
+            color: #062620;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            min-height: 48px;
+            touch-action: manipulation;
+            transition: background 0.2s, transform 0.15s;
+            width: 100%;
+            max-width: 260px;
+        }
+
+        .qr-btn:hover { background: #00b89c; }
+        .qr-btn:active { transform: scale(0.98); }
+        .qr-btn.stop { background: #ff4646; color: #fff; }
+        .qr-btn.stop:hover { background: #e03434; }
+
+        /* html5-qrcode injects video inside this element */
+        #qrReader {
+            display: none;
+            width: 100%;
+            max-width: 320px;
+            margin: 18px auto 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            min-height: 220px;
+        }
+
+        #qrReader video,
+        #qrReader canvas {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .qr-status {
+            margin-top: 14px;
+            font-size: 0.88rem;
+            color: var(--muted);
+            min-height: 22px;
+            line-height: 1.5;
+        }
+
+        .qr-status.ok  { color: var(--teal); font-weight: 700; }
+        .qr-status.err { color: #ff7777; font-weight: 700; }
+
+        .qr-hint {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            line-height: 1.5;
+        }
+
+        /* ------------- BACK ------------- */
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: fit-content;
+            margin: 30px auto calc(60px + env(safe-area-inset-bottom));
+            padding: 12px 25px;
+            border-radius: 8px;
+            background: #263352;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+
+        .back-btn:hover { background: #344363; }
+
+        /* ------------- TABLET ------------- */
+
+        @media (max-width: 700px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .navbar-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .verification-card {
+                border-radius: 14px;
+            }
+        }
+
+        /* ------------- SMALL PHONES ------------- */
+
+        @media (max-width: 400px) {
+            .verification-card h2 {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .member-info div {
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .back-btn {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+
+            <a href="../member/index.html" class="navbar-brand">
+                STUDYFLIX
+            </a>
+
+            <div class="navbar-links">
+                <a href="../member/index.html">Home</a>
+                <a href="../member/dashboard.html">Member</a>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- HEADER -->
+    <section class="page-header">
+        <div class="container">
+
+            <h1 class="page-title">
+                PARTNER <span class="highlight">VERIFICATION</span>
+            </h1>
+
+            <p class="page-sub">
+                Verify a StudyFlix member before providing a benefit.
+            </p>
+
+        </div>
+    </section>
+
+
+    <!-- VERIFICATION -->
+    <main class="container">
+
+        <div class="verification-card">
+
+            <h2>
+                <i class="fas fa-id-card"></i>
+                Verify Membership
+            </h2>
+
+            <p>
+                Enter the member's StudyFlix membership number.
+            </p>
+
+
+            <div class="form-group">
+
+                <label for="membershipNumber">
+                    Membership Number
+                </label>
+
+                <input
+                    type="text"
+                    id="membershipNumber"
+                    placeholder="Example: SF20260001"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    inputmode="text"
+                >
+
+            </div>
+
+
+            <button class="verify-btn" onclick="verifyMembership()">
+                <i class="fas fa-search"></i>
+                Verify Membership
+            </button>
+
+
+            <!-- ERROR MESSAGE -->
+            <div id="errorMessage" class="error">
+                Membership could not be verified.
+            </div>
+
+
+            <!-- SUCCESS RESULT -->
+            <div id="verificationResult" class="result">
+
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+
+                <h3>Membership Verified</h3>
+
+                <div class="member-info">
+
+                    <div>
+                        <strong>Member Name:</strong>
+                        <span id="memberName"></span>
+                    </div>
+
+                    <div>
+                        <strong>Membership Number:</strong>
+                        <span id="memberNumber"></span>
+                    </div>
+
+                    <div>
+                        <strong>School:</strong>
+                        <span id="memberSchool"></span>
+                    </div>
+
+                    <div>
+                        <strong>Status:</strong>
+                        <span id="memberStatus" class="active-status"></span>
+                    </div>
+
+                    <div>
+                        <strong>Valid Until:</strong>
+                        <span id="memberValidUntil"></span>
+                    </div>
+
+                </div>
+
+                <p style="color: var(--teal); margin-top: 20px; text-align:center;">
+                    <i class="fas fa-check"></i>
+                    This member is eligible for StudyFlix benefits.
+                </p>
+
+            </div>
+
+
+            <!-- QR SCANNER -->
+            <div class="qr-section">
+
+                <h3>
+                    <i class="fas fa-qrcode"></i>
+                    QR Verification
+                </h3>
+
+                <p>
+                    Scan the member's StudyFlix QR code to verify instantly.
+                </p>
+
+                <div class="qr-placeholder">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+
+                <button class="qr-btn" id="qrStartBtn" onclick="toggleQrScanner()">
+                    <i class="fas fa-camera"></i>
+                    Scan QR Code
+                </button>
+
+                <div id="qrReader"></div>
+
+                <div id="qrStatus" class="qr-status"></div>
+
+                <p class="qr-hint">
+                    <i class="fas fa-lock"></i>
+                    Camera access requires a secure (HTTPS) connection.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <a href="../member/index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+
+    </main>
+
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+            authDomain: "studyflix-membership.firebaseapp.com",
+            projectId: "studyflix-membership",
+            storageBucket: "studyflix-membership.firebasestorage.app",
+            messagingSenderId: "641080177215",
+            appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+            measurementId: "G-3384WRNWXW"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.firestore();
+    </script>
+
+
+    <script>
+
+    /* =========================================================
+       MEMBERSHIP VERIFICATION (manual entry)
+       ========================================================= */
+
+    async function verifyMembership() {
+
+        const membershipNumber =
+            document.getElementById("membershipNumber").value.trim().toUpperCase();
+
+        const result =
+            document.getElementById("verificationResult");
+
+        const errorMessage =
+            document.getElementById("errorMessage");
+
+        result.style.display = "none";
+        errorMessage.style.display = "none";
+
+        if (!membershipNumber) {
+            errorMessage.textContent = "Please enter a membership number.";
+            errorMessage.style.display = "block";
+            return;
+        }
+
+        try {
+
+            console.log("Checking membership:", membershipNumber);
+
+            const doc = await db
+                .collection("memberVerification")
+                .doc(membershipNumber)
+                .get();
+
+            console.log("Document exists:", doc.exists);
+
+            if (!doc.exists) {
+                errorMessage.textContent =
+                    "Membership number could not be verified.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            const member = doc.data();
+
+            console.log("Verified member:", member);
+
+            if ((member.status || "").toLowerCase() !== "active") {
+                errorMessage.textContent =
+                    "This membership is not currently active.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            document.getElementById("memberName").textContent =
+                member.memberName || "Not available";
+
+            document.getElementById("memberNumber").textContent =
+                member.membershipNumber || membershipNumber;
+
+            document.getElementById("memberSchool").textContent =
+                member.school || "Not available";
+
+            document.getElementById("memberStatus").textContent =
+                (member.status || "ACTIVE").toUpperCase();
+
+            document.getElementById("memberValidUntil").textContent =
+                formatDate(member.validUntil);
+
+            result.style.display = "block";
+
+        } catch (err) {
+
+            console.error("Verification error:", err);
+
+            errorMessage.textContent =
+                "Unable to verify membership. Please try again.";
+            errorMessage.style.display = "block";
+        }
+    }
+
+
+    /* =========================================================
+       DATE HELPERS
+       ========================================================= */
+
+    function formatDate(value) {
+
+        if (!value) {
+            return "Not available";
+        }
+
+        if (value.toDate) {
+            return value.toDate().toLocaleDateString("en-ZA", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
+        }
+
+        if (value instanceof Date) {
+            return value.toLocaleDateString("en-ZA", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
+        }
+
+        const parsed = new Date(value);
+
+        if (isNaN(parsed.getTime())) {
+            return String(value);
+        }
+
+        return parsed.toLocaleDateString("en-ZA", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+    }
+
+
+    /* =========================================================
+       QR VERIFICATION
+       ========================================================= */
+
+    let qrScanner = null;
+    let isScanning = false;
+    let handlingScan = false;
+
+
+    function setQrStatus(message, type) {
+
+        const el = document.getElementById("qrStatus");
+
+        el.textContent = message || "";
+        el.className = "qr-status" + (type ? " " + type : "");
+    }
+
+
+    async function toggleQrScanner() {
+
+        if (isScanning) {
+            await stopQrScanner();
+        } else {
+            await startQrScanner();
+        }
+    }
+
+
+    async function startQrScanner() {
+
+        const readerEl = document.getElementById("qrReader");
+        const startBtn = document.getElementById("qrStartBtn");
+
+        if (typeof Html5Qrcode === "undefined") {
+            setQrStatus(
+                "QR scanner failed to load. Check your connection and reload.",
+                "err"
+            );
+            return;
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setQrStatus(
+                "This browser does not support camera scanning. " +
+                "Please enter the membership number manually.",
+                "err"
+            );
+            return;
+        }
+
+        readerEl.style.display = "block";
+        setQrStatus("Requesting camera access...", "");
+
+        qrScanner = new Html5Qrcode("qrReader", { verbose: false });
+
+        try {
+
+            await qrScanner.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    qrbox: { width: 240, height: 240 },
+                    aspectRatio: 1.0
+                },
+                onQrScanSuccess,
+                () => { /* ignore per-frame decode misses */ }
+            );
+
+            isScanning = true;
+
+            startBtn.innerHTML =
+                '<i class="fas fa-stop"></i> Stop Camera';
+
+            startBtn.classList.add("stop");
+
+            setQrStatus("Point the camera at the member's QR code.", "");
+
+        } catch (err) {
+
+            console.error("QR start error:", err);
+
+            readerEl.style.display = "none";
+
+            try {
+                if (qrScanner) {
+                    qrScanner.clear();
+                }
+            } catch (e) { /* ignore */ }
+
+            qrScanner = null;
+            isScanning = false;
+
+            setQrStatus(cameraErrorMessage(err), "err");
+        }
+    }
+
+
+    async function stopQrScanner() {
+
+        const readerEl = document.getElementById("qrReader");
+        const startBtn = document.getElementById("qrStartBtn");
+
+        if (qrScanner) {
+
+            try {
+                await qrScanner.stop();
+            } catch (e) { /* already stopped */ }
+
+            try {
+                qrScanner.clear();
+            } catch (e) { /* ignore */ }
+
+            qrScanner = null;
+        }
+
+        isScanning = false;
+
+        readerEl.style.display = "none";
+
+        startBtn.innerHTML =
+            '<i class="fas fa-camera"></i> Scan QR Code';
+
+        startBtn.classList.remove("stop");
+    }
+
+
+    function onQrScanSuccess(decodedText) {
+
+        if (handlingScan) {
+            return;
+        }
+
+        const membershipNumber = extractMembershipNumber(decodedText);
+
+        if (!membershipNumber) {
+            setQrStatus(
+                "QR code detected, but no membership number was found in it.",
+                "err"
+            );
+            return;
+        }
+
+        handlingScan = true;
+
+        setQrStatus("Scanned: " + membershipNumber + " — verifying...", "ok");
+
+        document.getElementById("membershipNumber").value = membershipNumber;
+
+        setTimeout(async () => {
+
+            await stopQrScanner();
+
+            await verifyMembership();
+
+            handlingScan = false;
+
+        }, 350);
+    }
+
+
+    function extractMembershipNumber(raw) {
+
+        if (!raw) {
+            return "";
+        }
+
+        const text = String(raw).trim();
+
+        /* 1. JSON payload */
+        if (text.startsWith("{")) {
+            try {
+                const obj = JSON.parse(text);
+                const candidate =
+                    obj.membershipNumber ||
+                    obj.memberNumber ||
+                    obj.membership ||
+                    obj.memberId ||
+                    obj.id ||
+                    obj.code;
+
+                if (candidate) {
+                    return normalizeCode(candidate);
+                }
+            } catch (e) { /* not valid JSON */ }
+        }
+
+        /* 2. URL payload */
+        if (/^https?:\/\//i.test(text)) {
+            try {
+                const url = new URL(text);
+
+                const keys = [
+                    "member",
+                    "membership",
+                    "membershipNumber",
+                    "membership_number",
+                    "memberNumber",
+                    "member_number",
+                    "id",
+                    "code"
+                ];
+
+                for (const key of keys) {
+                    const value = url.searchParams.get(key);
+                    if (value) {
+                        return normalizeCode(value);
+                    }
+                }
+
+                const hashMatch = url.hash.match(/SF[A-Z0-9]+/i);
+                if (hashMatch) {
+                    return normalizeCode(hashMatch[0]);
+                }
+
+                const segments = url.pathname.split("/").filter(Boolean);
+                const last = segments[segments.length - 1];
+
+                if (last && /^[A-Z0-9-]{5,20}$/i.test(last)) {
+                    return normalizeCode(last);
+                }
+
+            } catch (e) { /* not a valid URL */ }
+        }
+
+        /* 3. Membership number embedded anywhere in the text */
+        const match = text.match(/SF[A-Z0-9]{4,}/i);
+        if (match) {
+            return normalizeCode(match[0]);
+        }
+
+        /* 4. Plain alphanumeric code */
+        if (/^[A-Z0-9-]{5,20}$/i.test(text)) {
+            return normalizeCode(text);
+        }
+
+        return "";
+    }
+
+
+    function normalizeCode(value) {
+        return String(value)
+            .trim()
+            .toUpperCase()
+            .replace(/\s+/g, "");
+    }
+
+
+    function cameraErrorMessage(err) {
+
+        const name = String(
+            (err && (err.name || err.message)) || err || ""
+        );
+
+        if (/NotAllowed|Permission|denied/i.test(name)) {
+            return "Camera permission was denied. Allow camera access, " +
+                   "or enter the membership number manually.";
+        }
+
+        if (/NotFound|DevicesNotFound|no camera/i.test(name)) {
+            return "No camera was found on this device. " +
+                   "Please enter the membership number manually.";
+        }
+
+        if (/NotReadable|TrackStart|in use/i.test(name)) {
+            return "The camera is already in use by another app. " +
+                   "Close it and try again.";
+        }
+
+        if (/secure|https|insecure/i.test(name)) {
+            return "Camera access requires a secure (HTTPS) connection.";
+        }
+
+        return "Unable to start the camera. " +
+               "Please enter the membership number manually.";
+    }
+
+
+    
+
+    document
+        .getElementById("membershipNumber")
+        .addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                verifyMembership();
+            }
+        });
+
+    document.addEventListener("visibilitychange", function () {
+
+        if (document.hidden && isScanning) {
+            stopQrScanner();
+        }
+    });
+
+    window.addEventListener("pagehide", function () {
+
+        if (isScanning) {
+            stopQrScanner();
+        }
+    });
+
+    /* =========================================================
+   AUTO-VERIFY FROM URL  (?member=SF20260001)
+   ========================================================= */
+
+(function autoVerifyFromUrl() {
+
+    const params = new URLSearchParams(window.location.search);
+
+    const code = params.get("member")
+              || params.get("membership")
+              || params.get("membershipNumber")
+              || params.get("id")
+              || params.get("code");
+
+    if (!code) return;
+
+    const input = document.getElementById("membershipNumber");
+    if (!input) return;
+
+    input.value = code.trim().toUpperCase();
+
+    /* Let the DOM paint, then verify */
+    setTimeout(() => {
+
+        verifyMembership();
+
+        /* Tidy the address bar after verification runs */
+        setTimeout(() => {
+            window.history.replaceState({}, "", window.location.pathname);
+        }, 800);
+
+    }, 250);
+
+})();
+
+    </script>
+
+</body>
+</html>

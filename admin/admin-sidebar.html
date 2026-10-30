@@ -1,0 +1,74 @@
+<style>
+  .sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:#141c33;border-right:1px solid rgba(255,215,0,.12);z-index:1000;display:flex;flex-direction:column;transition:transform .3s;overflow-y:auto;font-family:'Nunito',sans-serif;color:#E8EEFF}
+  .sidebar-header{display:flex;justify-content:space-between;align-items:center;padding:1.4rem 1.1rem .9rem;border-bottom:1px solid rgba(255,215,0,.1)}
+  .sidebar-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;background:linear-gradient(135deg,#FFD700,#FF6B00);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0;letter-spacing:1.5px;display:flex;align-items:center;gap:.5rem}
+  .sidebar-header h2 .admin-tag{font-family:'Nunito',sans-serif;font-size:.55rem;font-weight:800;letter-spacing:1px;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.35);color:#FFD700;padding:.15rem .5rem;border-radius:20px;text-transform:uppercase}
+  .sidebar-close{background:none;border:none;color:#8892B0;font-size:1.4rem;cursor:pointer;display:none}
+  .sidebar-section-label{font-size:.6rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#566080;padding:1rem 1.4rem .35rem}
+  .sidebar-nav{flex:1;padding:.5rem .7rem .4rem;display:flex;flex-direction:column;gap:.2rem}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.65rem .85rem;border-radius:10px;text-decoration:none;color:#dce2f0;font-size:.83rem;font-weight:700;transition:.2s;border:1px solid transparent}
+  .sidebar-link i{font-size:.95rem;color:#8892B0;width:20px;text-align:center;flex-shrink:0;transition:.2s}
+  .sidebar-link:hover{background:rgba(255,215,0,.06);color:#FFD700}
+  .sidebar-link:hover i{color:#FFD700}
+  .sidebar-link.active{background:linear-gradient(135deg,rgba(255,215,0,.14),rgba(255,107,0,.08));border-color:rgba(255,215,0,.3);color:#FFD700}
+  .sidebar-link.active i{color:#FFD700}
+  .sidebar-link .badge{margin-left:auto;background:rgba(255,85,85,.18);color:#ff8888;font-size:.62rem;font-weight:800;padding:.1rem .45rem;border-radius:12px}
+  .sidebar-footer{padding:.85rem .7rem 1rem;border-top:1px solid rgba(255,255,255,.06);margin-top:auto;flex-shrink:0}
+  .sidebar-admin-chip{display:flex;align-items:center;gap:.6rem;padding:.55rem .65rem;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:10px;margin-bottom:.6rem}
+  .sidebar-admin-chip .chip-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FF6B00);color:#111;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0}
+  .sidebar-admin-chip .chip-info{min-width:0;flex:1}
+  .sidebar-admin-chip .chip-name{font-size:.78rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sidebar-admin-chip .chip-email{font-size:.66rem;color:#8892B0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sidebar-logout{width:100%;display:flex;align-items:center;gap:.75rem;padding:.7rem .85rem;background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.25);color:#ff9b9b;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:800;font-size:.8rem;text-align:left;transition:.2s}
+  .sidebar-logout:hover:not(:disabled){background:rgba(255,80,80,.18);border-color:rgba(255,80,80,.45);color:#ffb8b8}
+  .sidebar-logout:disabled{opacity:.55;cursor:not-allowed}
+  .sidebar-logout i{font-size:.9rem;width:20px;text-align:center}
+  .sidebar-toggle{position:fixed;top:18px;left:18px;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FF6B00);border:2px solid rgba(255,215,0,.5);color:#111;font-size:1.15rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:1001;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+  .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);z-index:999;display:none}
+  .sidebar-overlay.active{display:block}
+  @media(min-width:769px){.sidebar{transform:translateX(0)}body.has-sidebar{padding-left:260px}}
+  @media(max-width:768px){.sidebar{transform:translateX(-100%);box-shadow:4px 0 24px rgba(0,0,0,.5)}.sidebar.open{transform:translateX(0)}.sidebar-close{display:block}.sidebar-toggle{display:flex}body.has-sidebar{padding-left:0}}
+</style>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>STUDYFLIX <span class="admin-tag">Admin</span></h2>
+    <button class="sidebar-close" id="sidebarClose" aria-label="Close"><i class="fas fa-times"></i></button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Overview</div>
+    <a href="admin-dashboard.html" class="sidebar-link" data-page="admin-dashboard.html"><i class="fas fa-gauge-high"></i><span>Dashboard</span></a>
+    <a href="admin-analytics.html" class="sidebar-link" data-page="admin-analytics.html"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+
+    <div class="sidebar-section-label">Members</div>
+    <a href="admin-members.html" class="sidebar-link" data-page="admin-members.html"><i class="fas fa-users"></i><span>All Members</span></a>
+    <a href="admin-applications.html" class="sidebar-link" data-page="admin-applications.html"><i class="fas fa-file-lines"></i><span>Applications</span><span class="badge" id="pendingCount" style="display:none">0</span></a>
+    <a href="admin-payments.html" class="sidebar-link" data-page="admin-payments.html"><i class="fas fa-credit-card"></i><span>Payments</span></a>
+
+    <div class="sidebar-section-label">Content</div>
+    <a href="admin-content.html" class="sidebar-link" data-page="admin-content.html"><i class="fas fa-photo-film"></i><span>Site Content</span></a>
+    <a href="admin-notifications.html" class="sidebar-link" data-page="admin-notifications.html"><i class="fas fa-bullhorn"></i><span>Notifications</span></a>
+
+    <div class="sidebar-section-label">System</div>
+    <a href="admin-admins.html" class="sidebar-link" data-page="admin-admins.html"><i class="fas fa-user-shield"></i><span>Admins</span></a>
+    <a href="admin-activity-log.html" class="sidebar-link" data-page="admin-activity-log.html"><i class="fas fa-clock-rotate-left"></i><span>Activity Log</span></a>
+    <a href="admin-settings.html" class="sidebar-link" data-page="admin-settings.html"><i class="fas fa-gear"></i><span>Settings</span></a>
+    <a href="admin-policies.html" class="sidebar-link" data-page="admin-policies.html">
+  <i class="fas fa-file-contract"></i><span>Policies</span></a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-admin-chip">
+      <div class="chip-avatar" id="sidebarAdminAvatar">–</div>
+      <div class="chip-info">
+        <div class="chip-name" id="sidebarAdminName">Admin</div>
+        <div class="chip-email" id="sidebarAdminEmail"></div>
+      </div>
+    </div>
+    <button class="sidebar-logout" id="sidebarLogout" type="button"><i class="fas fa-right-from-bracket"></i><span>Sign out</span></button>
+  </div>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Open menu"><i class="fas fa-bars"></i></button>

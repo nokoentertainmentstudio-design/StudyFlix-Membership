@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Site Content — StudyFlix Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;--red:#ff5555;--muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,.07)}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#080C18,#111A2E);color:#E8EEFF;min-height:100vh;overflow-x:hidden}
+.hero-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.guard{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,42,.95);z-index:10000;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.guard.hidden{display:none}
+.guard-text{color:var(--muted);font-size:.9rem}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,215,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.main{padding:1.5rem 1.5rem 3rem;max-width:1100px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;flex-wrap:wrap}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1.5px}
+h1 .hl{background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+.btn{padding:.65rem 1.2rem;border-radius:10px;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:rgba(255,255,255,.05);color:#E8EEFF;border-color:var(--border)}
+.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--orange));color:#111;border:none}
+.btn-gold:hover:not(:disabled){transform:scale(1.02);box-shadow:0 0 20px rgba(255,215,0,.3)}
+.btn-teal{background:rgba(0,212,180,.1);color:var(--teal);border-color:rgba(0,212,180,.3)}
+.btn-teal:hover:not(:disabled){background:rgba(0,212,180,.2)}
+.btn-red{background:rgba(255,85,85,.12);color:#ff9b9b;border-color:rgba(255,85,85,.35)}
+.btn-red:hover:not(:disabled){background:rgba(255,85,85,.22)}
+.btn-sm{padding:.4rem .8rem;font-size:.72rem;border-radius:8px}
+
+.section{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:1.2rem;overflow:hidden}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.1rem 1.4rem;cursor:pointer;user-select:none;transition:background .15s;flex-wrap:wrap}
+.section-head:hover{background:rgba(255,255,255,.02)}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.8px;color:var(--gold);display:flex;align-items:center;gap:.6rem}
+.section-title i{font-size:1.1rem}
+.section-count{margin-left:.4rem;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;background:rgba(255,215,0,.12);color:var(--gold);padding:.15rem .5rem;border-radius:12px}
+.section-arrow{color:var(--muted);font-size:.8rem;transition:transform .25s}
+.section.open .section-arrow{transform:rotate(180deg);color:var(--teal)}
+.section-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.section.open .section-body{max-height:none}
+.section-inner{padding:0 1.4rem 1.4rem;border-top:1px solid var(--border);padding-top:1.2rem}
+
+.fg{margin-bottom:1rem}
+.fg:last-child{margin-bottom:0}
+.fg label{display:block;font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;letter-spacing:.5px}
+.fg input[type="text"],.fg input[type="number"],.fg textarea,.fg select{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--teal)}
+.fg input::placeholder,.fg textarea::placeholder{color:#5b6788}
+.fg textarea{min-height:80px;resize:vertical}
+.fg .hint{font-size:.7rem;color:var(--muted);margin-top:.35rem;line-height:1.5}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+.img-picker{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.img-preview{width:70px;height:70px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.img-preview img{width:100%;height:100%;object-fit:cover}
+.img-preview.icon-preview{background:rgba(255,215,0,.08);border-color:rgba(255,215,0,.25)}
+.img-preview.icon-preview i{font-size:1.5rem;color:var(--gold)}
+.img-preview.icon-preview.blue{background:rgba(34,136,255,.1);border-color:rgba(34,136,255,.3)}
+.img-preview.icon-preview.blue i{color:var(--blue)}
+.img-preview.icon-preview.teal{background:rgba(0,212,180,.1);border-color:rgba(0,212,180,.3)}
+.img-preview.icon-preview.teal i{color:var(--teal)}
+.img-controls{display:flex;gap:.4rem;flex-wrap:wrap;flex:1;min-width:150px}
+
+.icon-note{font-size:.7rem;color:var(--muted);line-height:1.5;display:flex;align-items:flex-start;gap:.4rem}
+.icon-note i{color:var(--gold);margin-top:2px;flex-shrink:0}
+.icon-note code{background:rgba(0,212,180,.08);color:var(--teal);padding:.05rem .3rem;border-radius:3px;font-size:.7rem}
+
+.item-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.8rem}
+.item-head{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.8rem}
+.item-title{font-weight:800;font-size:.85rem;color:var(--teal);display:flex;align-items:center;gap:.5rem}
+.item-title .img-badge{font-size:.6rem;font-weight:800;background:rgba(0,212,180,.15);color:var(--teal);padding:.1rem .45rem;border-radius:10px;text-transform:uppercase;letter-spacing:.4px}
+.item-actions{display:flex;gap:.3rem}
+.item-actions button{background:rgba(255,255,255,.05);border:1px solid var(--border);color:#E8EEFF;width:30px;height:30px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:.15s}
+.item-actions button:hover{background:rgba(255,255,255,.1)}
+.item-actions .del{color:#ff9b9b;border-color:rgba(255,85,85,.3)}
+.item-actions .del:hover{background:rgba(255,85,85,.15)}
+.item-actions .move{color:var(--muted)}
+.item-actions .move:hover{color:var(--teal)}
+
+.features-list{list-style:none;padding:0;margin:.5rem 0}
+.features-list li{display:flex;gap:.5rem;align-items:center;margin-bottom:.4rem}
+.features-list li input{flex:1;padding:.5rem .8rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:.82rem;font-family:inherit;outline:none}
+.features-list li input:focus{border-color:var(--teal)}
+.features-list li button{background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);color:#ff9b9b;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:.7rem}
+.add-feature{background:none;border:1px dashed rgba(0,212,180,.4);color:var(--teal);padding:.4rem .9rem;border-radius:8px;font-size:.72rem;font-weight:800;cursor:pointer;font-family:inherit;transition:.15s}
+.add-feature:hover{background:rgba(0,212,180,.08)}
+
+.add-item{width:100%;background:none;border:1px dashed rgba(255,215,0,.4);color:var(--gold);padding:.8rem;border-radius:12px;font-weight:800;font-size:.82rem;cursor:pointer;font-family:inherit;transition:.15s;margin-top:.4rem}
+.add-item:hover{background:rgba(255,215,0,.06)}
+
+.empty-mini{text-align:center;padding:1.5rem;color:var(--muted);font-size:.82rem}
+.empty-mini i{display:block;font-size:1.5rem;color:rgba(255,215,0,.3);margin-bottom:.5rem}
+
+.info-banner{background:rgba(0,212,180,.06);border:1px solid rgba(0,212,180,.25);border-radius:10px;padding:.8rem 1rem;font-size:.78rem;color:#7ff0dd;line-height:1.55;display:flex;gap:.6rem;align-items:flex-start;margin-bottom:1.1rem}
+.info-banner i{color:var(--teal);margin-top:2px;flex-shrink:0}
+
+.save-bar{position:sticky;bottom:1rem;background:linear-gradient(135deg,rgba(28,38,64,.98),rgba(22,32,58,.98));border:1px solid rgba(255,215,0,.25);border-radius:14px;padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;box-shadow:0 12px 30px rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:100;margin-top:1.5rem}
+.save-bar .status{font-size:.8rem;color:var(--muted)}
+.save-bar .status.dirty{color:var(--gold)}
+.save-bar .status.saved{color:var(--teal)}
+.save-bar .btn{min-width:150px;justify-content:center}
+
+#toast{position:fixed;bottom:24px;right:24px;background:rgba(28,38,64,.98);border:1px solid var(--border);border-left:3px solid var(--teal);padding:.9rem 1.2rem;border-radius:12px;font-size:.85rem;font-weight:700;z-index:20000;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;max-width:340px}
+#toast.error{border-left-color:var(--red);color:#ff9b9b}
+
+#globalFileInput{display:none}
+
+@media(max-width:700px){.main{padding-top:75px}h1{font-size:2rem}.grid-2{grid-template-columns:1fr}.section-head{padding:1rem}.section-inner{padding:0 1rem 1.2rem;padding-top:1rem}.save-bar{padding:.85rem 1rem}.save-bar .btn{width:100%}}
+</style>
+</head>
+<body class="has-sidebar">
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard"><div class="spinner"></div><div class="guard-text" id="guardText">Verifying admin access…</div></div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1><span class="hl">Site</span> Content</h1><p class="sub">Edit the homepage hero, plans, benefits, partners, and FAQs.</p></div>
+    <button class="btn btn-ghost" id="reloadBtn"><i class="fas fa-rotate-left"></i> Reload</button>
+  </div>
+
+  <div class="info-banner">
+    <i class="fas fa-circle-info"></i>
+    <div>Changes here go live on <strong>index.html</strong> as soon as you save. Icons are locked by the system — you can upload a <strong>logo or image</strong> to replace the icon. Pricing is managed in <strong>Settings</strong> and will appear on the homepage when payment goes live.</div>
+  </div>
+
+  <!-- HERO -->
+  <section class="section open" data-section="hero">
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-star"></i> Homepage Hero</div>
+      <i class="fas fa-chevron-down section-arrow"></i>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <div class="fg"><label for="heroBadge">Badge Text</label><input type="text" id="heroBadge" placeholder="Student Membership Programme" /></div>
+        <div class="grid-2">
+          <div class="fg"><label for="heroTitle1">Title — Line 1</label><input type="text" id="heroTitle1" placeholder="Your Student Card." /></div>
+          <div class="fg"><label for="heroTitle2">Title — Line 2</label><input type="text" id="heroTitle2" placeholder="Every Benefit." /></div>
+        </div>
+        <div class="fg"><label for="heroSub">Subtitle</label><textarea id="heroSub" placeholder="StudyFlix gives students a digital membership card…"></textarea></div>
+        <div class="fg"><label for="heroNote">Small Note Below CTAs</label><input type="text" id="heroNote" placeholder="Takes about 2 minutes · ID and proof of school required" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANS -->
+  <section class="section" data-section="plans">
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-crown"></i> Membership Plans <span class="section-count" id="plansCount">0</span></div>
+      <i class="fas fa-chevron-down section-arrow"></i>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <div id="plansList"></div>
+        <button class="add-item" id="addPlanBtn"><i class="fas fa-plus"></i> Add Plan</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="section" data-section="benefits">
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-gift"></i> Benefit Cards <span class="section-count" id="benefitsCount">0</span></div>
+      <i class="fas fa-chevron-down section-arrow"></i>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <div id="benefitsList"></div>
+        <button class="add-item" id="addBenefitBtn"><i class="fas fa-plus"></i> Add Benefit Card</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="section" data-section="partners">
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-handshake"></i> Partners <span class="section-count" id="partnersCount">0</span></div>
+      <i class="fas fa-chevron-down section-arrow"></i>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <div id="partnersList"></div>
+        <button class="add-item" id="addPartnerBtn"><i class="fas fa-plus"></i> Add Partner</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQS -->
+  <section class="section" data-section="faqs">
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-circle-question"></i> FAQ Items <span class="section-count" id="faqsCount">0</span></div>
+      <i class="fas fa-chevron-down section-arrow"></i>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <div id="faqsList"></div>
+        <button class="add-item" id="addFaqBtn"><i class="fas fa-plus"></i> Add FAQ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER LINKS -->
+  <section class="section" data-section="footer">
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-link"></i> Footer Social Links <span class="section-count" id="linksCount">0</span></div>
+      <i class="fas fa-chevron-down section-arrow"></i>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <div id="linksList"></div>
+        <button class="add-item" id="addLinkBtn"><i class="fas fa-plus"></i> Add Link</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="save-bar">
+    <div class="status" id="saveStatus">All changes saved</div>
+    <button class="btn btn-gold" id="saveBtn"><i class="fas fa-save"></i> Save Content</button>
+  </div>
+</main>
+
+<div id="toast"></div>
+<input type="file" id="globalFileInput" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" />
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();const db=firebase.firestore();const storage=firebase.storage();
+
+let currentUser=null,currentAdmin=null;
+let content=null;let dirty=false;
+let pendingUpload=null;
+
+const toastEl=document.getElementById('toast');let tt=null;
+function toast(m,err){toastEl.textContent=m;toastEl.classList.toggle('error',!!err);toastEl.style.display='block';clearTimeout(tt);tt=setTimeout(()=>toastEl.style.display='none',3200)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+
+/* Icon pools — locked */
+const ICON_POOLS={
+  plans:['fa-crown','fa-wifi','fa-star','fa-gem','fa-rocket','fa-bolt','fa-medal','fa-shield-halved'],
+  benefits:['fa-id-card','fa-graduation-cap','fa-tags','fa-store','fa-gift','fa-headset','fa-star','fa-medal','fa-shield','fa-heart','fa-book','fa-chart-line','fa-bolt','fa-mobile-screen','fa-globe','fa-certificate'],
+  partners:['fa-handshake','fa-store','fa-building','fa-briefcase','fa-shop','fa-utensils','fa-mug-hot','fa-cart-shopping','fa-ticket','fa-plane','fa-hotel','fa-film']
+};
+function nextIcon(pool,items){const p=ICON_POOLS[pool]||[];return p[items.length%p.length]}
+
+const DEFAULTS={
+  hero:{
+    badgeText:'Student Membership Programme',
+    title1:'Your Student Card.',
+    title2:'Every Benefit.',
+    subtitle:'StudyFlix gives students a digital membership card, partner discounts, and access to educational opportunities — all from one account.',
+    note:'Takes about 2 minutes · ID and proof of school required'
+  },
+  plans:[
+    {name:'StudyFlix Plan',duration:'Membership Plan',icon:'fa-crown',image:'',features:['Digital Membership Card','Access to Member Benefits','Partner Verification']},
+    {name:'StudyFlix Plan + Data',duration:'Membership Plan',icon:'fa-wifi',image:'',features:['Telkom Mobile Data Included','Digital Membership Card','Access to Member Benefits','Partner Verification']}
+  ],
+  benefits:[
+    {icon:'fa-id-card',image:'',title:'Digital Card',text:'Access your digital StudyFlix membership card whenever you need it.'},
+    {icon:'fa-graduation-cap',image:'',title:'Education',text:'Get access to educational opportunities and resources available to StudyFlix members.'},
+    {icon:'fa-tags',image:'',title:'Discounts',text:'Enjoy special discounts and offers from participating StudyFlix partners.'},
+    {icon:'fa-store',image:'',title:'Partner Benefits',text:'Use your membership at participating businesses and partner organisations.'},
+    {icon:'fa-gift',image:'',title:'Special Offers',text:'Receive access to selected promotions and special offers for members.'},
+    {icon:'fa-headset',image:'',title:'Member Support',text:'Get assistance when you need help with your StudyFlix membership.'}
+  ],
+  partners:[
+    {icon:'fa-handshake',image:'',name:'Partner One',description:'Local business offering member discounts.',url:''},
+    {icon:'fa-store',image:'',name:'Partner Two',description:'Retail partner with special student pricing.',url:''},
+    {icon:'fa-building',image:'',name:'Partner Three',description:'Education and tutoring services.',url:''},
+    {icon:'fa-briefcase',image:'',name:'Partner Four',description:'Internships and career support.',url:''}
+  ],
+  faqs:[
+    {q:'What is StudyFlix?',a:'StudyFlix is a student membership programme. You get a digital membership card, member benefits, and access to discounts from participating partners.'},
+    {q:'Who can join?',a:'Any registered student can apply. You\'ll need to provide proof of school or institution when you submit your application.'},
+    {q:'What documents do I need to apply?',a:'A copy of your identity document and proof of school or institution. Both can be uploaded as a PDF or image during the application.'},
+    {q:'How long does approval take?',a:'Applications are reviewed by our team. You can track your progress at any time from your dashboard under Application Status.'},
+    {q:'Where can I use my membership card?',a:'At any participating StudyFlix partner. Open your digital card and let the partner scan the QR code to verify your membership.'},
+    {q:'Can I cancel my membership?',a:'Yes. Contact member support and we\'ll help you cancel.'}
+  ],
+  footerLinks:[
+    {label:'YouTube',url:'https://youtube.com/@studyflix-noko',icon:'fa-youtube'},
+    {label:'TikTok',url:'https://www.tiktok.com/@studyflixnokoente',icon:'fa-tiktok'},
+    {label:'Facebook',url:'https://www.facebook.com/profile.php?id=61591802301419',icon:'fa-facebook-f'}
+  ]
+};
+
+/* Sidebar */
+(async function(){
+  try{
+    const r=await fetch('admin-sidebar.html');
+    document.getElementById('sidebar-placeholder').innerHTML=await r.text();
+    const sb=document.getElementById('sidebar'),tg=document.getElementById('sidebarToggle'),cl=document.getElementById('sidebarClose'),ov=document.getElementById('sidebarOverlay'),lo=document.getElementById('sidebarLogout');
+    tg.addEventListener('click',()=>{sb.classList.add('open');ov.classList.add('active')});
+    function c(){sb.classList.remove('open');ov.classList.remove('active')}
+    cl.addEventListener('click',c);ov.addEventListener('click',c);
+    const cur=location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.page===cur));
+    lo.addEventListener('click',async()=>{lo.disabled=true;try{await auth.signOut()}catch(e){}location.href='admin-login.html'});
+  }catch(e){console.error(e)}
+})();
+
+/* Sections */
+document.querySelectorAll('.section-head').forEach(h=>{
+  h.addEventListener('click',()=>{h.parentElement.classList.toggle('open')});
+});
+
+async function logActivity(type,payload){
+  try{await db.collection('activity').add({type,by:currentUser.uid,byEmail:currentUser.email,byName:currentAdmin.name||'',at:firebase.firestore.FieldValue.serverTimestamp(),...payload})}catch(e){}
+}
+
+/* ---------- STORAGE HELPERS ---------- */
+async function uploadImage(file,folder){
+  if(!file)throw new Error('No file selected.');
+  if(file.size>2*1024*1024)throw new Error('File too large. Maximum size is 2MB.');
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  const allowed=['jpg','jpeg','png','webp','gif','svg'];
+  if(!allowed.includes(ext))throw new Error('Unsupported file type. Use JPG, PNG, WebP, GIF or SVG.');
+  const path=`content/${folder}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const ref=storage.ref(path);
+  const snap=await ref.put(file);
+  return await snap.ref.getDownloadURL();
+}
+
+async function deleteImage(url){
+  if(!url||!url.includes('firebasestorage'))return;
+  try{
+    const ref=storage.refFromURL(url);
+    await ref.delete();
+  }catch(e){console.warn('Delete image failed:',e.message)}
+}
+
+function getItem(type,idx){
+  if(type==='plan')return content.plans[idx];
+  if(type==='benefit')return content.benefits[idx];
+  if(type==='partner')return content.partners[idx];
+  return null;
+}
+
+function renderType(type){
+  if(type==='plan')renderPlans();
+  else if(type==='benefit')renderBenefits();
+  else if(type==='partner')renderPartners();
+}
+
+/* ---------- IMAGE PICKER ---------- */
+function imagePickerHTML(type,idx,item,accent){
+  const hasImage=!!(item.image&&item.image.trim());
+  const fallbackIcon=item.icon||'fa-image';
+
+  const previewHTML=hasImage
+    ?`<img src="${esc(item.image)}" alt="" />`
+    :`<i class="fas ${esc(fallbackIcon)}"></i>`;
+
+  return `
+    <div class="fg">
+      <label>Logo / Image ${hasImage?'<span style="color:var(--teal)">· Set</span>':''}</label>
+      <div class="img-picker">
+        <div class="img-preview ${hasImage?'':'icon-preview '+(accent==='blue'?'blue':accent==='teal'?'teal':'')}" id="preview-${type}-${idx}">
+          ${previewHTML}
+        </div>
+        <div class="img-controls">
+          <button type="button" class="btn btn-teal btn-sm" data-img-upload="${type}" data-idx="${idx}">
+            <i class="fas fa-upload"></i> ${hasImage?'Replace':'Upload'}
+          </button>
+          ${hasImage?`
+            <button type="button" class="btn btn-red btn-sm" data-img-remove="${type}" data-idx="${idx}">
+              <i class="fas fa-trash"></i> Remove
+            </button>
+          `:''}
+        </div>
+      </div>
+      ${hasImage
+        ?`<div class="hint">Custom image is shown instead of the icon.</div>`
+        :`<div class="hint">Optional. JPG, PNG, WebP or SVG · max 2MB. If no image is uploaded, the locked icon <code>${esc(fallbackIcon)}</code> is used.</div>`}
+    </div>
+  `;
+}
+
+function showPreviewLoading(type,idx){
+  const el=document.getElementById(`preview-${type}-${idx}`);
+  if(el)el.innerHTML='<i class="fas fa-spinner fa-spin" style="color:var(--teal);font-size:1.3rem"></i>';
+}
+
+/* ---------- LOAD ---------- */
+async function loadContent(){
+  try{
+    const snap=await db.collection('settings').doc('content').get();
+    const data=snap.exists?snap.data():{};
+    content=deepMerge(structuredClone(DEFAULTS),data);
+    if(!Array.isArray(content.partners))content.partners=[];
+    content.partners.forEach((p,i)=>{if(!p.icon)p.icon=ICON_POOLS.partners[i%ICON_POOLS.partners.length];if(!p.image)p.image=''});
+    content.plans.forEach((p,i)=>{if(!p.icon)p.icon=ICON_POOLS.plans[i%ICON_POOLS.plans.length];if(!p.image)p.image=''});
+    content.benefits.forEach((b,i)=>{if(!b.icon)b.icon=ICON_POOLS.benefits[i%ICON_POOLS.benefits.length];if(!b.image)b.image=''});
+    populateAll();
+    dirty=false;updateSaveBar();
+  }catch(err){
+    console.error(err);
+    toast('Load failed — using defaults.',true);
+    content=structuredClone(DEFAULTS);
+    populateAll();
+  }
+}
+
+function deepMerge(base,over){
+  for(const k in over){
+    if(over[k]&&typeof over[k]==='object'&&!Array.isArray(over[k])&&base[k])base[k]=deepMerge(base[k],over[k]);
+    else base[k]=over[k];
+  }
+  return base;
+}
+
+function populateAll(){
+  document.getElementById('heroBadge').value=content.hero.badgeText||'';
+  document.getElementById('heroTitle1').value=content.hero.title1||'';
+  document.getElementById('heroTitle2').value=content.hero.title2||'';
+  document.getElementById('heroSub').value=content.hero.subtitle||'';
+  document.getElementById('heroNote').value=content.hero.note||'';
+  renderPlans();
+  renderBenefits();
+  renderPartners();
+  renderFaqs();
+  renderLinks();
+}
+
+/* ---------- PLANS (no price field) ---------- */
+function renderPlans(){
+  const wrap=document.getElementById('plansList');
+  document.getElementById('plansCount').textContent=content.plans.length;
+  if(!content.plans.length){wrap.innerHTML='<div class="empty-mini"><i class="fas fa-crown"></i>No plans yet.</div>';return}
+  wrap.innerHTML=content.plans.map((p,i)=>`
+    <div class="item-card">
+      <div class="item-head">
+        <div class="item-title">${esc(p.name||'Untitled Plan')}${p.image?'<span class="img-badge">Image</span>':''}</div>
+        <div class="item-actions">
+          <button class="move" data-plan-move="${i}" data-dir="-1" title="Move up"><i class="fas fa-arrow-up"></i></button>
+          <button class="move" data-plan-move="${i}" data-dir="1" title="Move down"><i class="fas fa-arrow-down"></i></button>
+          <button class="del" data-plan-del="${i}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      ${imagePickerHTML('plan',i,p,'gold')}
+      <div class="fg">
+        <label>Icon (locked — used when no image)</label>
+        <div class="icon-note"><i class="fas fa-lock"></i><span>System icon: <code>${esc(p.icon||'fa-crown')}</code> · you cannot change this</span></div>
+      </div>
+      <div class="grid-2">
+        <div class="fg"><label>Name</label><input type="text" data-plan-field="name" data-idx="${i}" value="${esc(p.name||'')}" /></div>
+        <div class="fg"><label>Subtitle</label><input type="text" data-plan-field="duration" data-idx="${i}" value="${esc(p.duration||'Membership Plan')}" placeholder="Membership Plan" /></div>
+      </div>
+      <div class="fg">
+        <label>Features</label>
+        <ul class="features-list">
+          ${(p.features||[]).map((f,fi)=>`
+            <li><input type="text" data-plan-feature="${i}" data-feature-idx="${fi}" value="${esc(f)}" /><button data-plan-feature-del="${i}" data-feature-idx="${fi}"><i class="fas fa-times"></i></button></li>
+          `).join('')}
+        </ul>
+        <button class="add-feature" data-plan-feature-add="${i}"><i class="fas fa-plus"></i> Add Feature</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---------- BENEFITS ---------- */
+function renderBenefits(){
+  const wrap=document.getElementById('benefitsList');
+  document.getElementById('benefitsCount').textContent=content.benefits.length;
+  if(!content.benefits.length){wrap.innerHTML='<div class="empty-mini"><i class="fas fa-gift"></i>No benefit cards yet.</div>';return}
+  wrap.innerHTML=content.benefits.map((b,i)=>`
+    <div class="item-card">
+      <div class="item-head">
+        <div class="item-title">${esc(b.title||'Untitled')}${b.image?'<span class="img-badge">Image</span>':''}</div>
+        <div class="item-actions">
+          <button class="move" data-benefit-move="${i}" data-dir="-1"><i class="fas fa-arrow-up"></i></button>
+          <button class="move" data-benefit-move="${i}" data-dir="1"><i class="fas fa-arrow-down"></i></button>
+          <button class="del" data-benefit-del="${i}"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      ${imagePickerHTML('benefit',i,b,'gold')}
+      <div class="fg">
+        <label>Icon (locked — used when no image)</label>
+        <div class="icon-note"><i class="fas fa-lock"></i><span>System icon: <code>${esc(b.icon||'fa-star')}</code> · you cannot change this</span></div>
+      </div>
+      <div class="fg"><label>Title</label><input type="text" data-benefit-field="title" data-idx="${i}" value="${esc(b.title||'')}" /></div>
+      <div class="fg"><label>Description</label><textarea data-benefit-field="text" data-idx="${i}">${esc(b.text||'')}</textarea></div>
+    </div>
+  `).join('');
+}
+
+/* ---------- PARTNERS ---------- */
+function renderPartners(){
+  const wrap=document.getElementById('partnersList');
+  document.getElementById('partnersCount').textContent=content.partners.length;
+  if(!content.partners.length){wrap.innerHTML='<div class="empty-mini"><i class="fas fa-handshake"></i>No partners yet.</div>';return}
+  wrap.innerHTML=content.partners.map((p,i)=>`
+    <div class="item-card">
+      <div class="item-head">
+        <div class="item-title">${esc(p.name||'Untitled Partner')}${p.image?'<span class="img-badge">Logo</span>':''}</div>
+        <div class="item-actions">
+          <button class="move" data-partner-move="${i}" data-dir="-1"><i class="fas fa-arrow-up"></i></button>
+          <button class="move" data-partner-move="${i}" data-dir="1"><i class="fas fa-arrow-down"></i></button>
+          <button class="del" data-partner-del="${i}"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      ${imagePickerHTML('partner',i,p,'blue')}
+      <div class="fg">
+        <label>Icon (locked — used when no image)</label>
+        <div class="icon-note"><i class="fas fa-lock"></i><span>System icon: <code>${esc(p.icon||'fa-handshake')}</code> · you cannot change this</span></div>
+      </div>
+      <div class="fg"><label>Name</label><input type="text" data-partner-field="name" data-idx="${i}" value="${esc(p.name||'')}" /></div>
+      <div class="fg"><label>Description</label><textarea data-partner-field="description" data-idx="${i}" placeholder="Short description of this partner">${esc(p.description||'')}</textarea></div>
+      <div class="fg"><label>Website URL (optional)</label><input type="text" data-partner-field="url" data-idx="${i}" value="${esc(p.url||'')}" placeholder="https://example.com" /></div>
+    </div>
+  `).join('');
+}
+
+/* ---------- FAQS ---------- */
+function renderFaqs(){
+  const wrap=document.getElementById('faqsList');
+  document.getElementById('faqsCount').textContent=content.faqs.length;
+  if(!content.faqs.length){wrap.innerHTML='<div class="empty-mini"><i class="fas fa-circle-question"></i>No FAQs yet.</div>';return}
+  wrap.innerHTML=content.faqs.map((f,i)=>`
+    <div class="item-card">
+      <div class="item-head">
+        <div class="item-title">${esc((f.q||'').slice(0,60))}${(f.q||'').length>60?'…':''}</div>
+        <div class="item-actions">
+          <button class="move" data-faq-move="${i}" data-dir="-1"><i class="fas fa-arrow-up"></i></button>
+          <button class="move" data-faq-move="${i}" data-dir="1"><i class="fas fa-arrow-down"></i></button>
+          <button class="del" data-faq-del="${i}"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="fg"><label>Question</label><input type="text" data-faq-field="q" data-idx="${i}" value="${esc(f.q||'')}" /></div>
+      <div class="fg"><label>Answer</label><textarea data-faq-field="a" data-idx="${i}">${esc(f.a||'')}</textarea></div>
+    </div>
+  `).join('');
+}
+
+/* ---------- LINKS ---------- */
+function renderLinks(){
+  const wrap=document.getElementById('linksList');
+  document.getElementById('linksCount').textContent=content.footerLinks.length;
+  if(!content.footerLinks.length){wrap.innerHTML='<div class="empty-mini"><i class="fas fa-link"></i>No links yet.</div>';return}
+  wrap.innerHTML=content.footerLinks.map((l,i)=>`
+    <div class="item-card">
+      <div class="item-head">
+        <div class="item-title">${esc(l.label||'Untitled')}</div>
+        <div class="item-actions">
+          <button class="del" data-link-del="${i}"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="fg"><label>Label</label><input type="text" data-link-field="label" data-idx="${i}" value="${esc(l.label||'')}" /></div>
+        <div class="fg"><label>Icon (locked)</label>
+          <div class="icon-note"><i class="fas fa-lock"></i><span>System icon: <code>${esc(l.icon||'fa-link')}</code></span></div>
+        </div>
+      </div>
+      <div class="fg"><label>URL</label><input type="text" data-link-field="url" data-idx="${i}" value="${esc(l.url||'')}" /></div>
+    </div>
+  `).join('');
+}
+
+/* ---------- HERO EVENTS ---------- */
+['heroBadge','heroTitle1','heroTitle2','heroSub','heroNote'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',e=>{
+    const key={heroBadge:'badgeText',heroTitle1:'title1',heroTitle2:'title2',heroSub:'subtitle',heroNote:'note'}[id];
+    content.hero[key]=e.target.value;markDirty();
+  });
+});
+
+/* ---------- DELEGATED INPUT ---------- */
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.planField){content.plans[+t.dataset.idx][t.dataset.planField]=t.value;markDirty()}
+  else if(t.dataset.planFeature!==undefined&&t.dataset.featureIdx!==undefined){
+    content.plans[+t.dataset.planFeature].features[+t.dataset.featureIdx]=t.value;markDirty();
+  }
+  else if(t.dataset.benefitField){content.benefits[+t.dataset.idx][t.dataset.benefitField]=t.value;markDirty()}
+  else if(t.dataset.partnerField){content.partners[+t.dataset.idx][t.dataset.partnerField]=t.value;markDirty()}
+  else if(t.dataset.faqField){content.faqs[+t.dataset.idx][t.dataset.faqField]=t.value;markDirty()}
+  else if(t.dataset.linkField){content.footerLinks[+t.dataset.idx][t.dataset.linkField]=t.value;markDirty()}
+});
+
+/* ---------- GLOBAL FILE INPUT ---------- */
+document.getElementById('globalFileInput').addEventListener('change',async e=>{
+  const file=e.target.files[0];
+  const ctx=pendingUpload;
+  pendingUpload=null;
+  e.target.value='';
+  if(!file||!ctx)return;
+
+  const item=getItem(ctx.type,ctx.idx);
+  if(!item)return;
+
+  showPreviewLoading(ctx.type,ctx.idx);
+  try{
+    const oldImage=item.image||'';
+    const url=await uploadImage(file,ctx.type+'s');
+    item.image=url;
+    if(oldImage&&oldImage!==url)deleteImage(oldImage);
+    renderType(ctx.type);
+    markDirty();
+    toast('Image uploaded. Remember to Save.');
+  }catch(err){
+    console.error(err);
+    toast('Upload failed: '+err.message,true);
+    renderType(ctx.type);
+  }
+});
+
+/* ---------- DELEGATED CLICK ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');
+  if(!t)return;
+
+  if(t.dataset.imgUpload){
+    pendingUpload={type:t.dataset.imgUpload,idx:+t.dataset.idx};
+    document.getElementById('globalFileInput').click();
+    return;
+  }
+  if(t.dataset.imgRemove){
+    const type=t.dataset.imgRemove;
+    const idx=+t.dataset.idx;
+    const item=getItem(type,idx);
+    if(!item)return;
+    if(!confirm('Remove this image? The locked icon will show instead.'))return;
+    const oldUrl=item.image||'';
+    item.image='';
+    if(oldUrl)deleteImage(oldUrl);
+    renderType(type);
+    markDirty();
+    return;
+  }
+
+  if(t.dataset.planDel!==undefined){if(confirm('Delete this plan?')){const old=content.plans[+t.dataset.planDel];if(old&&old.image)deleteImage(old.image);content.plans.splice(+t.dataset.planDel,1);renderPlans();markDirty()}}
+  else if(t.dataset.planMove!==undefined){
+    const i=+t.dataset.planMove,d=+t.dataset.dir,ni=i+d;
+    if(ni<0||ni>=content.plans.length)return;
+    [content.plans[i],content.plans[ni]]=[content.plans[ni],content.plans[i]];renderPlans();markDirty();
+  }
+  else if(t.dataset.planFeatureAdd!==undefined){
+    const i=+t.dataset.planFeatureAdd;
+    content.plans[i].features=content.plans[i].features||[];
+    content.plans[i].features.push('New feature');renderPlans();markDirty();
+  }
+  else if(t.dataset.planFeatureDel!==undefined){
+    const i=+t.dataset.planFeatureDel,fi=+t.dataset.featureIdx;
+    content.plans[i].features.splice(fi,1);renderPlans();markDirty();
+  }
+
+  else if(t.dataset.benefitDel!==undefined){if(confirm('Delete this benefit?')){const old=content.benefits[+t.dataset.benefitDel];if(old&&old.image)deleteImage(old.image);content.benefits.splice(+t.dataset.benefitDel,1);renderBenefits();markDirty()}}
+  else if(t.dataset.benefitMove!==undefined){
+    const i=+t.dataset.benefitMove,d=+t.dataset.dir,ni=i+d;
+    if(ni<0||ni>=content.benefits.length)return;
+    [content.benefits[i],content.benefits[ni]]=[content.benefits[ni],content.benefits[i]];renderBenefits();markDirty();
+  }
+
+  else if(t.dataset.partnerDel!==undefined){if(confirm('Delete this partner?')){const old=content.partners[+t.dataset.partnerDel];if(old&&old.image)deleteImage(old.image);content.partners.splice(+t.dataset.partnerDel,1);renderPartners();markDirty()}}
+  else if(t.dataset.partnerMove!==undefined){
+    const i=+t.dataset.partnerMove,d=+t.dataset.dir,ni=i+d;
+    if(ni<0||ni>=content.partners.length)return;
+    [content.partners[i],content.partners[ni]]=[content.partners[ni],content.partners[i]];renderPartners();markDirty();
+  }
+
+  else if(t.dataset.faqDel!==undefined){if(confirm('Delete this FAQ?')){content.faqs.splice(+t.dataset.faqDel,1);renderFaqs();markDirty()}}
+  else if(t.dataset.faqMove!==undefined){
+    const i=+t.dataset.faqMove,d=+t.dataset.dir,ni=i+d;
+    if(ni<0||ni>=content.faqs.length)return;
+    [content.faqs[i],content.faqs[ni]]=[content.faqs[ni],content.faqs[i]];renderFaqs();markDirty();
+  }
+
+  else if(t.dataset.linkDel!==undefined){if(confirm('Delete this link?')){content.footerLinks.splice(+t.dataset.linkDel,1);renderLinks();markDirty()}}
+});
+
+/* ---------- ADD BUTTONS ---------- */
+document.getElementById('addPlanBtn').addEventListener('click',()=>{
+  content.plans.push({name:'New Plan',duration:'Membership Plan',icon:nextIcon('plans',content.plans),image:'',features:['Feature 1']});
+  renderPlans();markDirty();
+});
+document.getElementById('addBenefitBtn').addEventListener('click',()=>{
+  content.benefits.push({icon:nextIcon('benefits',content.benefits),image:'',title:'New Benefit',text:'Describe this benefit.'});
+  renderBenefits();markDirty();
+});
+document.getElementById('addPartnerBtn').addEventListener('click',()=>{
+  content.partners.push({icon:nextIcon('partners',content.partners),image:'',name:'New Partner',description:'Short description.',url:''});
+  renderPartners();markDirty();
+});
+document.getElementById('addFaqBtn').addEventListener('click',()=>{
+  content.faqs.push({q:'New question?',a:'Answer goes here.'});
+  renderFaqs();markDirty();
+});
+document.getElementById('addLinkBtn').addEventListener('click',()=>{
+  const icons=['fa-instagram','fa-twitter','fa-linkedin','fa-whatsapp','fa-discord'];
+  content.footerLinks.push({label:'New Link',url:'https://',icon:icons[content.footerLinks.length%icons.length]});
+  renderLinks();markDirty();
+});
+
+/* ---------- SAVE ---------- */
+function markDirty(){dirty=true;updateSaveBar()}
+function updateSaveBar(){
+  const el=document.getElementById('saveStatus');
+  if(dirty){el.textContent='You have unsaved changes';el.className='status dirty'}
+  else{el.textContent='All changes saved';el.className='status saved'}
+}
+
+document.getElementById('saveBtn').addEventListener('click',async()=>{
+  const btn=document.getElementById('saveBtn');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Saving…';
+  try{
+    const payload=JSON.parse(JSON.stringify(content));
+    payload.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+    payload.updatedBy=currentUser.uid;
+    await db.collection('settings').doc('content').set(payload);
+    dirty=false;updateSaveBar();
+    await logActivity('content_updated',{});
+    toast('Content saved. Live on index.html now.');
+  }catch(err){console.error(err);toast('Save failed: '+(err.code||err.message),true)}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-save"></i> Save Content'}
+});
+
+document.getElementById('reloadBtn').addEventListener('click',async()=>{
+  if(dirty&&!confirm('You have unsaved changes. Discard and reload?'))return;
+  await loadContent();toast('Reloaded.');
+});
+
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+
+auth.onAuthStateChanged(async user=>{
+  const guard=document.getElementById('guard'),gt=document.getElementById('guardText');
+  if(!user){gt.textContent='Not signed in. Redirecting…';setTimeout(()=>location.href='admin-login.html',900);return}
+  currentUser=user;
+  try{
+    const snap=await db.collection('admins').doc(user.uid).get();
+    if(!snap.exists||snap.data().role!=='admin'||snap.data().status!=='active'){gt.textContent='Admin access required.';setTimeout(()=>location.href='admin-login.html',1200);return}
+    currentAdmin=snap.data();
+    const name=currentAdmin.name||user.email.split('@')[0];
+    const av=document.getElementById('sidebarAdminAvatar'),nm=document.getElementById('sidebarAdminName'),em=document.getElementById('sidebarAdminEmail');
+    if(av)av.textContent=name.charAt(0).toUpperCase();if(nm)nm.textContent=name;if(em)em.textContent=user.email||'';
+    guard.classList.add('hidden');
+    await loadContent();
+  }catch(err){console.error(err);gt.textContent='Verification failed.';setTimeout(()=>location.href='admin-login.html',1500)}
+});
+</script>
+</body>
+</html>

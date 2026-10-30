@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Settings — StudyFlix</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FFD700;
+            --orange: #FF6B00;
+            --teal: #00D4B4;
+            --blue: #2288FF;
+            --red: #ff5555;
+            --muted: #8892B0;
+            --card: #1C2640;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #080C18, #111A2E);
+            color: #E8EEFF;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dash-main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 3rem;
+        }
+        @media (max-width: 768px) {
+            .dash-main { padding-top: 75px; }
+        }
+
+        /* ---------- TOP BAR ---------- */
+        .dash-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+        .dash-user { display: flex; align-items: center; gap: 0.8rem; }
+
+        .dash-avatar {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00FFCC, #2288FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .dash-name { font-weight: 800; font-size: 0.98rem; line-height: 1.2; }
+        .dash-email { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+
+        .dash-logout {
+            background: rgba(255, 80, 80, 0.1);
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            color: #ff9b9b;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .dash-logout:hover { background: rgba(255, 80, 80, 0.2); border-color: rgba(255, 80, 80, 0.5); }
+        .dash-logout i { margin-right: 5px; }
+
+        /* ---------- HEADER ---------- */
+        .dash-header { margin-bottom: 1.6rem; }
+        .dash-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.6rem;
+            letter-spacing: 1.5px;
+            line-height: 1.1;
+        }
+        .dash-header h1 .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .dash-header p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* ---------- MESSAGES ---------- */
+        .msg {
+            display: none;
+            font-size: 0.82rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.2rem;
+            line-height: 1.5;
+        }
+        .msg.error {
+            background: rgba(255,80,80,0.1);
+            border: 1px solid rgba(255,80,80,0.35);
+            color: #ff9b9b;
+        }
+        .msg.success {
+            background: rgba(0,212,180,0.1);
+            border: 1px solid rgba(0,212,180,0.35);
+            color: #7ff0dd;
+        }
+
+        /* ---------- SECTION ---------- */
+        .section {
+            margin-bottom: 1.6rem;
+        }
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .section-title .head-accent {
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--gold), var(--orange));
+            border-radius: 4px;
+        }
+        .section-title.danger .head-accent {
+            background: linear-gradient(180deg, #ff5555, #cc3333);
+        }
+
+        /* ---------- COLLAPSIBLE SETTING ITEM ---------- */
+        .setting-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .setting-item.open {
+            border-color: rgba(0,212,180,0.35);
+        }
+
+        .setting-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 1.3rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .setting-header:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .setting-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: rgba(0, 212, 180, 0.12);
+            color: var(--teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .setting-info { flex: 1; min-width: 0; }
+        .setting-info h4 {
+            font-size: 0.92rem;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+        .setting-info p {
+            color: var(--muted);
+            font-size: 0.75rem;
+            margin-top: 0.15rem;
+            line-height: 1.45;
+        }
+
+        .setting-arrow {
+            color: var(--muted);
+            font-size: 0.8rem;
+            transition: transform 0.25s;
+            flex-shrink: 0;
+        }
+        .setting-item.open .setting-arrow {
+            transform: rotate(180deg);
+            color: var(--teal);
+        }
+
+        .setting-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+        .setting-item.open .setting-body {
+            max-height: 800px;
+        }
+
+        .setting-body-inner {
+            padding: 0 1.3rem 1.3rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.2rem;
+        }
+
+        /* ---------- FORM ---------- */
+        .form-group { margin-bottom: 0.9rem; }
+        .form-group:last-of-type { margin-bottom: 1rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.72rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: var(--teal); }
+        .form-group input::placeholder { color: #5b6788; }
+
+        .input-wrap { position: relative; }
+        .input-wrap input { padding-right: 2.6rem; }
+
+        .toggle-pw {
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 0.3rem;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .toggle-pw:hover { color: var(--teal); }
+
+        /* Strength meter */
+        .strength {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+            min-height: 1.1rem;
+        }
+        .strength-bar {
+            flex: 1;
+            height: 5px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+            transition: width 0.25s ease, background-color 0.25s ease;
+        }
+        .strength-text {
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .match-hint {
+            display: none;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 0.4rem;
+        }
+        .match-hint.ok  { display: block; color: var(--teal); }
+        .match-hint.bad { display: block; color: var(--red); }
+
+        .form-actions {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.65rem 1.4rem;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #111;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: scale(1.03);
+            box-shadow: 0 0 22px rgba(255,215,0,0.28);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-ghost {
+            background: rgba(255,255,255,0.06);
+            color: #E8EEFF;
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+
+        .btn-danger {
+            background: rgba(255, 80, 80, 0.15);
+            color: #ff8888;
+            border: 1px solid rgba(255, 80, 80, 0.4);
+        }
+        .btn-danger:hover:not(:disabled) {
+            background: rgba(255, 80, 80, 0.25);
+            border-color: rgba(255, 80, 80, 0.6);
+        }
+        .btn-danger:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ---------- TOGGLE ROWS ---------- */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.3rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .toggle-row:last-of-type { border-bottom: none; }
+        .toggle-row:hover { background: rgba(255,255,255,0.02); }
+
+        .toggle-info { flex: 1; min-width: 0; }
+        .toggle-info h4 {
+            font-size: 0.88rem;
+            font-weight: 800;
+            margin-bottom: 0.15rem;
+        }
+        .toggle-info p {
+            color: var(--muted);
+            font-size: 0.73rem;
+            line-height: 1.45;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 46px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 26px;
+            transition: background 0.25s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            left: 2px;
+            top: 2px;
+            transition: transform 0.25s, background 0.25s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--teal), #2288FF);
+        }
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+        }
+        .toggle-switch input:focus-visible + .toggle-slider {
+            box-shadow: 0 0 0 3px rgba(0,212,180,0.25);
+        }
+
+        .prefs-footer {
+            padding: 1rem 1.3rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* ---------- DANGER ZONE ---------- */
+        .danger-card {
+            background: rgba(255, 80, 80, 0.04);
+            border: 1px solid rgba(255, 80, 80, 0.25);
+            border-radius: 14px;
+            padding: 1.3rem 1.4rem;
+        }
+        .danger-card h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #ff9b9b;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .danger-card p {
+            color: var(--muted);
+            font-size: 0.78rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            max-width: 560px;
+        }
+
+        .confirm-area {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,80,80,0.2);
+        }
+        .confirm-area.visible { display: block; }
+
+        .confirm-area .form-group label {
+            color: #ff9b9b;
+        }
+
+        .delete-confirm-input {
+            letter-spacing: 2px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        /* ---------- SKELETON ---------- */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: skel 1.4s ease-in-out infinite;
+            border-radius: 6px;
+            display: inline-block;
+            width: 60%;
+            height: 1rem;
+            vertical-align: middle;
+        }
+        @keyframes skel {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 700px) {
+            .dash-header h1 { font-size: 2rem; }
+            .setting-header { padding: 1rem; }
+            .setting-body-inner { padding: 1rem; padding-top: 1rem; }
+            .toggle-row { padding: 1rem; }
+            .prefs-footer { padding: 1rem; }
+            .form-actions { flex-direction: column-reverse; }
+            .form-actions .btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 480px) {
+            .dash-name { font-size: 0.88rem; }
+            .dash-logout { padding: 0.45rem 0.85rem; font-size: 0.72rem; }
+            .setting-icon { width: 38px; height: 38px; font-size: 0.95rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton { animation: none; }
+            .setting-body { transition: none; }
+        }
+    </style>
+</head>
+<body class="has-sidebar">
+
+    <div id="sidebar-placeholder"></div>
+
+    <main class="dash-main">
+
+        <!-- ---------- TOP BAR ---------- -->
+        <div class="dash-topbar">
+            <div class="dash-user">
+                <div class="dash-avatar" id="topAvatar">–</div>
+                <div>
+                    <div class="dash-name" id="topName"><span class="skeleton"></span></div>
+                    <div class="dash-email" id="topEmail"></div>
+                </div>
+            </div>
+            <button class="dash-logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- ---------- HEADER ---------- -->
+        <header class="dash-header">
+            <h1>ACCOUNT <span class="highlight">SETTINGS</span></h1>
+            <p>Manage your account security, notifications, and preferences.</p>
+        </header>
+
+        <!-- ---------- MESSAGES ---------- -->
+        <div class="msg error"   id="msgError"   role="alert"></div>
+        <div class="msg success" id="msgSuccess" role="status"></div>
+
+        <!-- ---------- ACCOUNT SECURITY ---------- -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="head-accent"></span>
+                Account Security
+            </h2>
+
+            <!-- Change Password -->
+            <div class="setting-item" id="itemPassword">
+                <div class="setting-header" data-target="itemPassword">
+                    <div class="setting-icon"><i class="fas fa-key"></i></div>
+                    <div class="setting-info">
+                        <h4>Change Password</h4>
+                        <p>Update the password you use to sign in.</p>
+                    </div>
+                    <i class="fas fa-chevron-down setting-arrow"></i>
+                </div>
+                <div class="setting-body">
+                    <div class="setting-body-inner">
+                        <div class="form-group">
+                            <label for="currentPw">Current Password</label>
+                            <div class="input-wrap">
+                                <input type="password" id="currentPw" placeholder="Enter your current password" autocomplete="current-password" />
+                                <button type="button" class="toggle-pw" data-target="currentPw" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPw">New Password</label>
+                            <div class="input-wrap">
+                                <input type="password" id="newPw" placeholder="Create a new password" autocomplete="new-password" />
+                                <button type="button" class="toggle-pw" data-target="newPw" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="strength">
+                                <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                                <span class="strength-text" id="strengthText"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPw">Confirm New Password</label>
+                            <div class="input-wrap">
+                                <input type="password" id="confirmPw" placeholder="Re-enter the new password" autocomplete="new-password" />
+                                <button type="button" class="toggle-pw" data-target="confirmPw" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="match-hint" id="matchHint"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-ghost" id="cancelPwBtn" type="button">Cancel</button>
+                            <button class="btn btn-primary" id="savePwBtn" type="button">
+                                <i class="fas fa-save"></i> Update Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Change Email -->
+            <div class="setting-item" id="itemEmail">
+                <div class="setting-header" data-target="itemEmail">
+                    <div class="setting-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="setting-info">
+                        <h4>Change Email Address</h4>
+                        <p id="currentEmailLabel">Currently: —</p>
+                    </div>
+                    <i class="fas fa-chevron-down setting-arrow"></i>
+                </div>
+                <div class="setting-body">
+                    <div class="setting-body-inner">
+                        <div class="form-group">
+                            <label for="emailPassword">Current Password</label>
+                            <div class="input-wrap">
+                                <input type="password" id="emailPassword" placeholder="Confirm with your password" autocomplete="current-password" />
+                                <button type="button" class="toggle-pw" data-target="emailPassword" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newEmail">New Email Address</label>
+                            <input type="email" id="newEmail" placeholder="you@example.com" autocomplete="email" />
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-ghost" id="cancelEmailBtn" type="button">Cancel</button>
+                            <button class="btn btn-primary" id="saveEmailBtn" type="button">
+                                <i class="fas fa-save"></i> Update Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ---------- NOTIFICATIONS ---------- -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="head-accent"></span>
+                Notification Preferences
+            </h2>
+
+            <div class="setting-item" style="overflow:visible;">
+                <label class="toggle-row" for="prefEmail">
+                    <div class="toggle-info">
+                        <h4>Email Notifications</h4>
+                        <p>Application status updates, approvals, and important account notices.</p>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="prefEmail" />
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+
+                <label class="toggle-row" for="prefSms">
+                    <div class="toggle-info">
+                        <h4>SMS Notifications</h4>
+                        <p>Text message alerts when your application status changes.</p>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="prefSms" />
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+
+                <label class="toggle-row" for="prefMarketing">
+                    <div class="toggle-info">
+                        <h4>Special Offers & Promotions</h4>
+                        <p>Occasional emails about partner deals and member-only promotions.</p>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="prefMarketing" />
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+
+                <div class="prefs-footer">
+                    <button class="btn btn-primary" id="savePrefsBtn" type="button">
+                        <i class="fas fa-save"></i> Save Preferences
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ---------- DANGER ZONE ---------- -->
+        <section class="section">
+            <h2 class="section-title danger">
+                <span class="head-accent"></span>
+                Danger Zone
+            </h2>
+
+            <div class="danger-card">
+                <h4><i class="fas fa-exclamation-triangle"></i> Delete Account</h4>
+                <p>
+                    Permanently delete your StudyFlix account, membership data, and any
+                    documents you've uploaded. This cannot be undone. You will need to
+                    register again if you want to rejoin.
+                </p>
+
+                <button class="btn btn-danger" id="startDeleteBtn" type="button">
+                    <i class="fas fa-trash-alt"></i> Delete My Account
+                </button>
+
+                <div class="confirm-area" id="confirmArea">
+                    <div class="form-group">
+                        <label for="deleteConfirm">Type <strong>DELETE</strong> to confirm</label>
+                        <input type="text" id="deleteConfirm" class="delete-confirm-input" placeholder="DELETE" autocomplete="off" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deletePassword">Current Password</label>
+                        <div class="input-wrap">
+                            <input type="password" id="deletePassword" placeholder="Confirm with your password" autocomplete="current-password" />
+                            <button type="button" class="toggle-pw" data-target="deletePassword" aria-label="Show password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-ghost" id="cancelDeleteBtn" type="button">Cancel</button>
+                        <button class="btn btn-danger" id="confirmDeleteBtn" type="button" disabled>
+                            <i class="fas fa-trash-alt"></i> Permanently Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ================= FIREBASE ================= -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
+    <!-- ================= SIDEBAR LOADER ================= -->
+    <script>
+        (function () {
+            'use strict';
+            const SIDEBAR_PLACEHOLDER_ID = 'sidebar-placeholder';
+            const SIDEBAR_PATH = 'sidebar.html';
+
+            async function loadSidebar() {
+                const placeholder = document.getElementById(SIDEBAR_PLACEHOLDER_ID);
+                if (!placeholder) return;
+                try {
+                    const response = await fetch(SIDEBAR_PATH);
+                    const html = await response.text();
+                    placeholder.innerHTML = html;
+                    initSidebar();
+                } catch (err) {
+                    console.error('Failed to load sidebar:', err);
+                }
+            }
+
+            function initSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebarClose = document.getElementById('sidebarClose');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (!sidebar) return;
+
+                const nav = sidebar.querySelector('.sidebar-nav');
+
+                // Add Dashboard link if missing
+                if (nav && !nav.querySelector('[data-page="dashboard.html"]')) {
+                    const dashLink = document.createElement('a');
+                    dashLink.href = 'dashboard.html';
+                    dashLink.className = 'sidebar-link';
+                    dashLink.setAttribute('data-page', 'dashboard.html');
+                    dashLink.innerHTML =
+                        '<i class="fas fa-th-large"></i>' +
+                        '<div class="link-content">' +
+                            '<span class="link-title">Dashboard</span>' +
+                            '<span class="link-desc">Your membership overview.</span>' +
+                        '</div>';
+                    nav.prepend(dashLink);
+                }
+
+                // Add Settings link if missing
+                if (nav && !nav.querySelector('[data-page="settings.html"]')) {
+                    const setLink = document.createElement('a');
+                    setLink.href = 'settings.html';
+                    setLink.className = 'sidebar-link';
+                    setLink.setAttribute('data-page', 'settings.html');
+                    setLink.innerHTML =
+                        '<i class="fas fa-cog"></i>' +
+                        '<div class="link-content">' +
+                            '<span class="link-title">Settings</span>' +
+                            '<span class="link-desc">Account and notification preferences.</span>' +
+                        '</div>';
+                    nav.appendChild(setLink);
+                }
+
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', () => {
+                        sidebar.classList.add('open');
+                        if (overlay) overlay.classList.add('active');
+                    });
+                }
+                function closeSidebar() {
+                    sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+                if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+                if (overlay) overlay.addEventListener('click', closeSidebar);
+
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+                    if (link.getAttribute('data-page') === currentPath) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadSidebar);
+            } else {
+                loadSidebar();
+            }
+
+            window.StudyFlixSidebar = {
+                load: loadSidebar,
+                close: function () {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    if (sidebar) sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('active');
+                }
+            };
+        })();
+    </script>
+
+    <!-- ================= SETTINGS LOGIC ================= -->
+    <script>
+        /* ---------- FIREBASE ---------- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",
+            authDomain: "studyflix-membership.firebaseapp.com",
+            projectId: "studyflix-membership",
+            storageBucket: "studyflix-membership.firebasestorage.app",
+            messagingSenderId: "641080177215",
+            appId: "1:641080177215:web:8dc544f29bbad3d0acbe8a",
+            measurementId: "G-3384WRNWXW"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth    = firebase.auth();
+        const db      = firebase.firestore();
+        const storage = firebase.storage();
+
+        /* ---------- STATE ---------- */
+        let currentUser    = null;
+        let currentData    = null;
+        let unsubDoc       = null;
+        let healedOnce     = false;
+        let deletingAccount= false;
+
+        /* ---------- DOM ---------- */
+        const els = {
+            topAvatar:   document.getElementById('topAvatar'),
+            topName:     document.getElementById('topName'),
+            topEmail:    document.getElementById('topEmail'),
+            logoutBtn:   document.getElementById('logoutBtn'),
+
+            msgError:    document.getElementById('msgError'),
+            msgSuccess:  document.getElementById('msgSuccess'),
+
+            currentEmailLabel: document.getElementById('currentEmailLabel'),
+
+            // Password
+            currentPw:   document.getElementById('currentPw'),
+            newPw:       document.getElementById('newPw'),
+            confirmPw:   document.getElementById('confirmPw'),
+            strengthFill:document.getElementById('strengthFill'),
+            strengthText:document.getElementById('strengthText'),
+            matchHint:   document.getElementById('matchHint'),
+            savePwBtn:   document.getElementById('savePwBtn'),
+            cancelPwBtn: document.getElementById('cancelPwBtn'),
+
+            // Email
+            emailPassword: document.getElementById('emailPassword'),
+            newEmail:      document.getElementById('newEmail'),
+            saveEmailBtn:  document.getElementById('saveEmailBtn'),
+            cancelEmailBtn:document.getElementById('cancelEmailBtn'),
+
+            // Preferences
+            prefEmail:      document.getElementById('prefEmail'),
+            prefSms:        document.getElementById('prefSms'),
+            prefMarketing:  document.getElementById('prefMarketing'),
+            savePrefsBtn:   document.getElementById('savePrefsBtn'),
+
+            // Delete
+            startDeleteBtn:   document.getElementById('startDeleteBtn'),
+            confirmArea:      document.getElementById('confirmArea'),
+            deleteConfirm:    document.getElementById('deleteConfirm'),
+            deletePassword:   document.getElementById('deletePassword'),
+            confirmDeleteBtn: document.getElementById('confirmDeleteBtn'),
+            cancelDeleteBtn:  document.getElementById('cancelDeleteBtn')
+        };
+
+        /* ---------- MESSAGES ---------- */
+        function showError(msg) {
+            els.msgSuccess.style.display = 'none';
+            els.msgError.textContent = msg;
+            els.msgError.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function showSuccess(msg) {
+            els.msgError.style.display = 'none';
+            els.msgSuccess.textContent = msg;
+            els.msgSuccess.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { els.msgSuccess.style.display = 'none'; }, 5000);
+        }
+        function clearMessages() {
+            els.msgError.style.display = 'none';
+            els.msgSuccess.style.display = 'none';
+        }
+
+        /* ---------- FRIENDLY ERRORS ---------- */
+        function friendlyAuthError(code) {
+            switch (code) {
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential':     return 'Current password is incorrect.';
+                case 'auth/weak-password':          return 'New password is too weak. Use at least 6 characters.';
+                case 'auth/email-already-in-use':   return 'That email is already linked to another account.';
+                case 'auth/invalid-email':          return 'That email address looks invalid.';
+                case 'auth/requires-recent-login':  return 'Please sign out and sign back in to make this change.';
+                case 'auth/too-many-requests':      return 'Too many attempts. Please try again later.';
+                case 'auth/network-request-failed': return 'Network error. Check your connection.';
+                default:                            return 'Something went wrong. Please try again.';
+            }
+        }
+
+        /* ---------- NAME RESOLUTION ---------- */
+        async function resolveName(user, data) {
+            if (data && (data.name || data.fullName || data.displayName)) {
+                return { name: data.name || data.fullName || data.displayName, source: 'firestore' };
+            }
+            try {
+                const stored = localStorage.getItem('studyflix_name_' + user.uid);
+                if (stored && stored.trim()) return { name: stored.trim(), source: 'localStorage' };
+            } catch (e) { /* ignore */ }
+            if (user.displayName && user.displayName.trim()) {
+                return { name: user.displayName.trim(), source: 'auth' };
+            }
+            if (user.email) return { name: user.email.split('@')[0], source: 'email' };
+            return { name: 'Member', source: 'fallback' };
+        }
+
+        /* ---------- HEAL MEMBER DOC ---------- */
+        async function healMemberDoc(user, name, data) {
+            const ref = db.collection('members').doc(user.uid);
+            try {
+                if (!data) {
+                    await ref.set({
+                        uid: user.uid,
+                        name: name,
+                        email: user.email || '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        plan: 'studyflix-monthly',
+                        status: 'pending',
+                        applicationStatus: 'pending',
+                        membershipNumber: null
+                    }, { merge: true });
+                } else {
+                    const hasName = !!(data.name || data.fullName || data.displayName);
+                    if (!hasName) await ref.set({ name: name }, { merge: true });
+                }
+            } catch (err) {
+                console.warn('Could not heal member doc:', err.message);
+            }
+        }
+
+        /* ---------- PASSWORD TOGGLES ---------- */
+        document.querySelectorAll('.toggle-pw').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = document.getElementById(btn.dataset.target);
+                if (!target) return;
+                const show = target.type === 'password';
+                target.type = show ? 'text' : 'password';
+                btn.innerHTML = show
+                    ? '<i class="fas fa-eye-slash"></i>'
+                    : '<i class="fas fa-eye"></i>';
+                btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                target.focus();
+            });
+        });
+
+        /* ---------- COLLAPSIBLE ITEMS ---------- */
+        document.querySelectorAll('.setting-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = document.getElementById(header.dataset.target);
+                if (!item) return;
+                const isOpen = item.classList.contains('open');
+                // Close all others
+                document.querySelectorAll('.setting-item.open').forEach(other => {
+                    if (other !== item) other.classList.remove('open');
+                });
+                item.classList.toggle('open', !isOpen);
+            });
+        });
+
+        /* ---------- PASSWORD STRENGTH ---------- */
+        const STRENGTH = [
+            { label: '',        color: 'transparent' },
+            { label: 'Weak',    color: '#ff5555' },
+            { label: 'Fair',    color: '#ffaa33' },
+            { label: 'Good',    color: '#2288FF' },
+            { label: 'Strong',  color: '#00D4B4' }
+        ];
+
+        function scorePassword(pw) {
+            if (!pw) return 0;
+            let score = 0;
+            if (pw.length >= 8) score++;
+            if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+            if (/\d/.test(pw)) score++;
+            if (/[^A-Za-z0-9]/.test(pw)) score++;
+            return score;
+        }
+
+        els.newPw.addEventListener('input', () => {
+            const score = scorePassword(els.newPw.value);
+            const level = STRENGTH[score];
+            const widths = ['0%', '25%', '50%', '75%', '100%'];
+
+            els.strengthFill.style.width = els.newPw.value ? widths[score] : '0%';
+            els.strengthFill.style.backgroundColor = level.color;
+            els.strengthText.textContent = els.newPw.value ? level.label : '';
+            els.strengthText.style.color = level.color;
+
+            updateMatch();
+        });
+
+        function updateMatch() {
+            const pw = els.newPw.value;
+            const cf = els.confirmPw.value;
+            if (!cf) {
+                els.matchHint.className = 'match-hint';
+                els.matchHint.textContent = '';
+                return;
+            }
+            if (pw === cf) {
+                els.matchHint.className = 'match-hint ok';
+                els.matchHint.innerHTML = '<i class="fas fa-check"></i> Passwords match';
+            } else {
+                els.matchHint.className = 'match-hint bad';
+                els.matchHint.innerHTML = '<i class="fas fa-times"></i> Passwords do not match';
+            }
+        }
+        els.confirmPw.addEventListener('input', updateMatch);
+
+        /* ---------- CHANGE PASSWORD ---------- */
+        els.savePwBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            clearMessages();
+
+            const current = els.currentPw.value;
+            const next    = els.newPw.value;
+            const confirm = els.confirmPw.value;
+
+            if (!current) {
+                showError('Please enter your current password.');
+                els.currentPw.focus();
+                return;
+            }
+            if (!next || next.length < 6) {
+                showError('New password must be at least 6 characters.');
+                els.newPw.focus();
+                return;
+            }
+            if (next === current) {
+                showError('New password must be different from your current password.');
+                els.newPw.focus();
+                return;
+            }
+            if (next !== confirm) {
+                showError('New passwords do not match.');
+                els.confirmPw.focus();
+                return;
+            }
+
+            els.savePwBtn.disabled = true;
+            els.savePwBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating…';
+
+            try {
+                /* Re-authenticate first (Firebase requires recent sign-in) */
+                const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, current);
+                await currentUser.reauthenticateWithCredential(cred);
+
+                /* Update password */
+                await currentUser.updatePassword(next);
+
+                /* Clear fields */
+                els.currentPw.value = '';
+                els.newPw.value = '';
+                els.confirmPw.value = '';
+                els.strengthFill.style.width = '0%';
+                els.strengthText.textContent = '';
+                els.matchHint.className = 'match-hint';
+                els.matchHint.textContent = '';
+
+                document.getElementById('itemPassword').classList.remove('open');
+                showSuccess('Password updated successfully.');
+
+            } catch (err) {
+                console.error(err);
+                showError(friendlyAuthError(err.code));
+            } finally {
+                els.savePwBtn.disabled = false;
+                els.savePwBtn.innerHTML = '<i class="fas fa-save"></i> Update Password';
+            }
+        });
+
+        els.cancelPwBtn.addEventListener('click', () => {
+            document.getElementById('itemPassword').classList.remove('open');
+            els.currentPw.value = '';
+            els.newPw.value = '';
+            els.confirmPw.value = '';
+            els.strengthFill.style.width = '0%';
+            els.strengthText.textContent = '';
+            els.matchHint.className = 'match-hint';
+            els.matchHint.textContent = '';
+            clearMessages();
+        });
+
+        /* ---------- CHANGE EMAIL ---------- */
+        els.saveEmailBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            clearMessages();
+
+            const pw    = els.emailPassword.value;
+            const email = els.newEmail.value.trim();
+
+            if (!pw) {
+                showError('Please confirm with your current password.');
+                els.emailPassword.focus();
+                return;
+            }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('Please enter a valid email address.');
+                els.newEmail.focus();
+                return;
+            }
+            if (email === currentUser.email) {
+                showError('That is already your current email address.');
+                els.newEmail.focus();
+                return;
+            }
+
+            els.saveEmailBtn.disabled = true;
+            els.saveEmailBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating…';
+
+            try {
+                /* Re-authenticate */
+                const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, pw);
+                await currentUser.reauthenticateWithCredential(cred);
+
+                /* Update email — Firebase will send verification to the new address */
+                await currentUser.updateEmail(email);
+
+                /* Update Firestore */
+                await db.collection('members').doc(currentUser.uid).set({
+                    email: email,
+                    emailUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                /* Clear fields */
+                els.emailPassword.value = '';
+                els.newEmail.value = '';
+                document.getElementById('itemEmail').classList.remove('open');
+
+                /* Refresh labels */
+                els.topEmail.textContent = email;
+                els.currentEmailLabel.textContent = 'Currently: ' + email;
+
+                showSuccess('Email updated to ' + email + '. If verification is required, check the inbox of the new address.');
+
+            } catch (err) {
+                console.error(err);
+                showError(friendlyAuthError(err.code));
+            } finally {
+                els.saveEmailBtn.disabled = false;
+                els.saveEmailBtn.innerHTML = '<i class="fas fa-save"></i> Update Email';
+            }
+        });
+
+        els.cancelEmailBtn.addEventListener('click', () => {
+            document.getElementById('itemEmail').classList.remove('open');
+            els.emailPassword.value = '';
+            els.newEmail.value = '';
+            clearMessages();
+        });
+
+        /* ---------- NOTIFICATION PREFERENCES ---------- */
+        function loadPreferences(data) {
+            const settings = (data && data.settings) || {};
+            els.prefEmail.checked     = settings.emailNotifications !== false;  // default ON
+            els.prefSms.checked       = settings.smsNotifications === true;     // default OFF
+            els.prefMarketing.checked = settings.marketingEmails === true;      // default OFF
+        }
+
+        els.savePrefsBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            clearMessages();
+
+            els.savePrefsBtn.disabled = true;
+            els.savePrefsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+            try {
+                await db.collection('members').doc(currentUser.uid).set({
+                    settings: {
+                        emailNotifications: els.prefEmail.checked,
+                        smsNotifications:   els.prefSms.checked,
+                        marketingEmails:    els.prefMarketing.checked,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }
+                }, { merge: true });
+
+                showSuccess('Notification preferences saved.');
+            } catch (err) {
+                console.error(err);
+                showError('Could not save preferences: ' + err.message);
+            } finally {
+                els.savePrefsBtn.disabled = false;
+                els.savePrefsBtn.innerHTML = '<i class="fas fa-save"></i> Save Preferences';
+            }
+        });
+
+        /* ---------- DELETE ACCOUNT ---------- */
+        els.startDeleteBtn.addEventListener('click', () => {
+            els.confirmArea.classList.add('visible');
+            els.startDeleteBtn.style.display = 'none';
+            els.deleteConfirm.focus();
+        });
+
+        els.cancelDeleteBtn.addEventListener('click', () => {
+            els.confirmArea.classList.remove('visible');
+            els.startDeleteBtn.style.display = '';
+            els.deleteConfirm.value = '';
+            els.deletePassword.value = '';
+            els.confirmDeleteBtn.disabled = true;
+            clearMessages();
+        });
+
+        /* Enable confirm button only when "DELETE" is typed */
+        els.deleteConfirm.addEventListener('input', () => {
+            const ok = els.deleteConfirm.value.trim() === 'DELETE';
+            els.confirmDeleteBtn.disabled = !ok;
+        });
+
+        els.confirmDeleteBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            clearMessages();
+
+            const typed = els.deleteConfirm.value.trim();
+            const pw    = els.deletePassword.value;
+
+            if (typed !== 'DELETE') {
+                showError('Please type DELETE to confirm.');
+                els.deleteConfirm.focus();
+                return;
+            }
+            if (!pw) {
+                showError('Please enter your current password.');
+                els.deletePassword.focus();
+                return;
+            }
+
+            els.confirmDeleteBtn.disabled = true;
+            els.confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting…';
+
+            const uid = currentUser.uid;
+
+            try {
+                /* 1. Re-authenticate (delete requires recent sign-in) */
+                const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, pw);
+                await currentUser.reauthenticateWithCredential(cred);
+
+                /* 2. Delete Storage files (best effort) */
+                try {
+                    const list = await storage.ref('applications/' + uid).listAll();
+                    await Promise.all(list.items.map(item => item.delete()));
+                    console.log('Storage files deleted.');
+                } catch (sErr) {
+                    console.warn('Storage cleanup failed:', sErr.message);
+                }
+
+                /* 3. Delete Firestore member doc */
+                try {
+                    await db.collection('members').doc(uid).delete();
+                    console.log('Firestore doc deleted.');
+                } catch (fErr) {
+                    console.warn('Firestore cleanup failed:', fErr.message);
+                }
+
+                /* 4. Delete Auth user */
+                deletingAccount = true;
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                await currentUser.delete();
+
+                /* 5. Redirect */
+                window.location.href = 'index.html';
+
+            } catch (err) {
+                console.error(err);
+                deletingAccount = false;
+                showError(friendlyAuthError(err.code));
+                els.confirmDeleteBtn.disabled = false;
+                els.confirmDeleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Permanently Delete';
+            }
+        });
+
+        /* ---------- AUTH GUARD + LIVE DATA ---------- */
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                if (deletingAccount) return;  // deletion flow handles its own redirect
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+
+            try { await user.reload(); } catch (e) { /* ignore */ }
+            const freshUser = auth.currentUser || user;
+
+            /* Top bar */
+            const initialData = await (async () => {
+                try {
+                    const snap = await db.collection('members').doc(freshUser.uid).get();
+                    return snap.exists ? snap.data() : null;
+                } catch (err) {
+                    console.warn('Firestore read blocked:', err.message);
+                    return null;
+                }
+            })();
+
+            const { name, source } = await resolveName(freshUser, initialData);
+            els.topName.textContent = name;
+            els.topName.classList.remove('skeleton');
+            els.topAvatar.textContent = name.charAt(0).toUpperCase();
+            els.topEmail.textContent = freshUser.email || '';
+            els.currentEmailLabel.textContent = 'Currently: ' + (freshUser.email || '—');
+
+            if (!healedOnce && source !== 'firestore') {
+                healedOnce = true;
+                healMemberDoc(freshUser, name, initialData);
+            }
+
+            loadPreferences(initialData);
+
+            /* Live updates for preferences only */
+            if (unsubDoc) unsubDoc();
+            unsubDoc = db.collection('members').doc(freshUser.uid).onSnapshot(
+                (snap) => {
+                    const data = snap.exists ? snap.data() : null;
+                    currentData = data;
+                    loadPreferences(data);
+                },
+                (err) => {
+                    console.warn('Live updates unavailable:', err.message);
+                }
+            );
+        });
+
+        /* ---------- LOGOUT ---------- */
+        els.logoutBtn.addEventListener('click', async () => {
+            els.logoutBtn.disabled = true;
+            try {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                await auth.signOut();
+            } catch (err) {
+                console.error(err);
+                els.logoutBtn.disabled = false;
+            }
+            window.location.href = 'login.html';
+        });
+    </script>
+
+</body>
+</html>

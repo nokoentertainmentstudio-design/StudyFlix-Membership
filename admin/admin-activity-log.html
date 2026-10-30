@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>Activity Log — StudyFlix Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#FFD700;--orange:#FF6B00;--teal:#00D4B4;--blue:#2288FF;--red:#ff5555;--muted:#8892B0;--card:#1C2640;--border:rgba(255,255,255,.07)}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#080C18,#111A2E);color:#E8EEFF;min-height:100vh;overflow-x:hidden}
+.hero-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 40%,#1e1040 0,transparent 55%),radial-gradient(ellipse at 80% 70%,#0f2040 0,transparent 55%);z-index:-2}
+.guard{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,42,.95);z-index:10000;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.guard.hidden{display:none}
+.guard-text{color:var(--muted);font-size:.9rem}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,215,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.main{padding:1.5rem 1.5rem 3rem;max-width:1300px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;flex-wrap:wrap}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1.5px}
+h1 .hl{background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+.btn{padding:.65rem 1.2rem;border-radius:10px;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:rgba(255,255,255,.05);color:#E8EEFF;border-color:var(--border)}
+.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.btn-teal{background:rgba(0,212,180,.1);color:var(--teal);border-color:rgba(0,212,180,.3)}
+.btn-teal:hover:not(:disabled){background:rgba(0,212,180,.2)}
+
+.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;background:var(--card);padding:1rem;border-radius:14px;border:1px solid var(--border);margin-bottom:1rem}
+.search{position:relative;flex:1;min-width:200px}
+.search i{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem}
+.search input{width:100%;padding:.65rem 1rem .65rem 2.3rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:#E8EEFF;font-size:.85rem;font-family:inherit;outline:none}
+.search input:focus{border-color:var(--teal)}
+select.filter{padding:.65rem 2rem .65rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:#E8EEFF;font-size:.85rem;font-family:inherit;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238892B0'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right .5rem center;background-size:16px}
+select.filter:focus{border-color:var(--teal)}
+input.date{padding:.65rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:#E8EEFF;font-size:.85rem;font-family:inherit;outline:none;color-scheme:dark}
+input.date:focus{border-color:var(--teal)}
+
+.log-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.log-item{display:flex;gap:.9rem;padding:1rem 1.1rem;border-bottom:1px solid var(--border);align-items:flex-start}
+.log-item:last-child{border-bottom:none}
+.log-item:hover{background:rgba(0,212,180,.03)}
+.log-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;background:rgba(255,255,255,.05);color:var(--muted)}
+.log-icon.teal{background:rgba(0,212,180,.12);color:var(--teal)}
+.log-icon.red{background:rgba(255,85,85,.12);color:#ff9b9b}
+.log-icon.gold{background:rgba(255,215,0,.12);color:var(--gold)}
+.log-icon.blue{background:rgba(34,136,255,.12);color:#9cc7ff}
+.log-body{min-width:0;flex:1}
+.log-text{font-size:.87rem;line-height:1.5;word-break:break-word}
+.log-text strong{color:#E8EEFF;font-weight:800}
+.log-meta{color:var(--muted);font-size:.72rem;margin-top:.3rem;display:flex;gap:.9rem;flex-wrap:wrap}
+.log-meta span{display:inline-flex;align-items:center;gap:.35rem}
+
+.empty{text-align:center;padding:4rem 1rem;color:var(--muted)}
+.empty i{font-size:2.5rem;color:rgba(255,215,0,.35);display:block;margin-bottom:.9rem}
+
+.pager{display:flex;justify-content:space-between;align-items:center;padding:1rem;border-top:1px solid var(--border);flex-wrap:wrap;gap:.6rem}
+.pager-info{color:var(--muted);font-size:.75rem}
+.pager-btns{display:flex;gap:.3rem}
+.pager-btns button{background:rgba(255,255,255,.05);border:1px solid var(--border);color:#E8EEFF;padding:.4rem .7rem;border-radius:8px;font-family:inherit;font-weight:700;font-size:.75rem;cursor:pointer}
+.pager-btns button:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.pager-btns button:disabled{opacity:.4;cursor:not-allowed}
+.pager-btns button.active{background:var(--gold);color:#111;border-color:transparent}
+
+#toast{position:fixed;bottom:24px;right:24px;background:rgba(28,38,64,.98);border:1px solid var(--border);border-left:3px solid var(--teal);padding:.9rem 1.2rem;border-radius:12px;font-size:.85rem;font-weight:700;z-index:20000;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;max-width:340px}
+#toast.error{border-left-color:var(--red);color:#ff9b9b}
+
+@media(max-width:700px){.main{padding-top:75px}h1{font-size:2rem}.toolbar{padding:.8rem}input.date,select.filter{width:100%}}
+</style>
+</head>
+<body class="has-sidebar">
+<div class="hero-bg"></div>
+
+<div class="guard" id="guard"><div class="spinner"></div><div class="guard-text" id="guardText">Verifying admin access…</div></div>
+
+<div id="sidebar-placeholder"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1><span class="hl">Activity</span> Log</h1><p class="sub">Complete audit trail of every admin action.</p></div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn btn-teal" id="exportBtn"><i class="fas fa-download"></i> Export CSV</button>
+      <button class="btn btn-ghost" id="refreshBtn"><i class="fas fa-rotate-right"></i> Refresh</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search by admin, member name, or type…" /></div>
+    <select class="filter" id="typeFilter">
+      <option value="all">All types</option>
+      <option value="application_active">Approved</option>
+      <option value="application_rejected">Rejected</option>
+      <option value="application_info_requested">Info requested</option>
+      <option value="status_change">Status changed</option>
+      <option value="bulk_active">Bulk approve</option>
+      <option value="bulk_rejected">Bulk reject</option>
+      <option value="admin_created">Admin added</option>
+      <option value="admin_suspended">Admin suspended</option>
+      <option value="admin_reactivated">Admin reactivated</option>
+      <option value="admin_deleted">Admin deleted</option>
+      <option value="invite_created">Invite created</option>
+      <option value="settings_updated">Settings updated</option>
+    </select>
+    <select class="filter" id="adminFilter"><option value="all">All admins</option></select>
+    <input type="date" class="date" id="fromDate" />
+    <input type="date" class="date" id="toDate" />
+  </div>
+
+  <div class="log-wrap">
+    <div id="logList">
+      <div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading activity…</div>
+    </div>
+    <div class="pager" id="pager" style="display:none">
+      <div class="pager-info" id="pagerInfo"></div>
+      <div class="pager-btns" id="pagerBtns"></div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyABNx_RDW8ttLrSRRF0W3kHIzuU2DGpTHI",authDomain:"studyflix-membership.firebaseapp.com",projectId:"studyflix-membership",storageBucket:"studyflix-membership.firebasestorage.app",messagingSenderId:"641080177215",appId:"1:641080177215:web:8dc544f29bbad3d0acbe8a",measurementId:"G-3384WRNWXW"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();const db=firebase.firestore();
+
+let allLogs=[],filtered=[],currentPage=1;const PER=25;
+let currentUser=null,currentAdmin=null;
+
+const toastEl=document.getElementById('toast');let tt=null;
+function toast(m,err){toastEl.textContent=m;toastEl.classList.toggle('error',!!err);toastEl.style.display='block';clearTimeout(tt);tt=setTimeout(()=>toastEl.style.display='none',3200)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function toDate(t){if(!t)return null;try{if(t.toDate)return t.toDate();if(t.seconds)return new Date(t.seconds*1000);return new Date(t)}catch(e){return null}}
+function fmt(d){return d?d.toLocaleString():'—'}
+
+(async function(){
+  try{
+    const r=await fetch('admin-sidebar.html');
+    document.getElementById('sidebar-placeholder').innerHTML=await r.text();
+    const sb=document.getElementById('sidebar'),tg=document.getElementById('sidebarToggle'),cl=document.getElementById('sidebarClose'),ov=document.getElementById('sidebarOverlay'),lo=document.getElementById('sidebarLogout');
+    tg.addEventListener('click',()=>{sb.classList.add('open');ov.classList.add('active')});
+    function c(){sb.classList.remove('open');ov.classList.remove('active')}
+    cl.addEventListener('click',c);ov.addEventListener('click',c);
+    const cur=location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.page===cur));
+    lo.addEventListener('click',async()=>{lo.disabled=true;try{await auth.signOut()}catch(e){}location.href='admin-login.html'});
+  }catch(e){console.error(e)}
+})();
+
+async function loadLogs(){
+  const list=document.getElementById('logList');
+  list.innerHTML='<div class="empty"><i class="fas fa-spinner fa-spin"></i>Loading activity…</div>';
+  try{
+    const snap=await db.collection('activity').orderBy('at','desc').limit(1000).get();
+    allLogs=snap.docs.map(d=>({id:d.id,data:d.data()}));
+    populateAdminFilter();
+    applyFilters();
+  }catch(err){
+    console.error(err);
+    list.innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle"></i>'+esc(err.message)+'</div>';
+    toast('Load failed: '+(err.code||err.message),true);
+  }
+}
+
+function populateAdminFilter(){
+  const sel=document.getElementById('adminFilter');
+  const admins=new Map();
+  allLogs.forEach(l=>{
+    if(l.data.by&&l.data.byEmail)admins.set(l.data.by,l.data.byName||l.data.byEmail);
+  });
+  sel.innerHTML='<option value="all">All admins</option>';
+  admins.forEach((name,uid)=>{sel.innerHTML+=`<option value="${esc(uid)}">${esc(name)}</option>`});
+}
+
+function applyFilters(){
+  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  const type=document.getElementById('typeFilter').value;
+  const admin=document.getElementById('adminFilter').value;
+  const from=document.getElementById('fromDate').value?new Date(document.getElementById('fromDate').value):null;
+  const to=document.getElementById('toDate').value?new Date(document.getElementById('toDate').value+'T23:59:59'):null;
+
+  filtered=allLogs.filter(l=>{
+    const d=l.data;
+    if(type!=='all'&&d.type!==type)return false;
+    if(admin!=='all'&&d.by!==admin)return false;
+    const at=toDate(d.at);
+    if(from&&at&&at<from)return false;
+    if(to&&at&&at>to)return false;
+    if(q){
+      const hay=[d.type,d.byEmail,d.byName,d.memberName,d.adminName,d.code].filter(Boolean).join(' ').toLowerCase();
+      if(!hay.includes(q))return false;
+    }
+    return true;
+  });
+  currentPage=1;render();
+}
+
+function describe(a){
+  const who=a.byName||a.byEmail||'An admin';
+  const t=(a.type||'').toLowerCase();
+  if(t==='application_active'||t==='status_change'&&a.to==='active')return `<strong>${esc(who)}</strong> approved <strong>${esc(a.memberName||'a member')}</strong>`;
+  if(t==='application_rejected'||t==='status_change'&&a.to==='rejected')return `<strong>${esc(who)}</strong> rejected <strong>${esc(a.memberName||'a member')}</strong>`;
+  if(t==='application_info_requested')return `<strong>${esc(who)}</strong> requested more info from <strong>${esc(a.memberName||'a member')}</strong>`;
+  if(t==='bulk_active')return `<strong>${esc(who)}</strong> bulk approved <strong>${a.count||'?'} members</strong>`;
+  if(t==='bulk_rejected')return `<strong>${esc(who)}</strong> bulk rejected <strong>${a.count||'?'} members</strong>`;
+  if(t==='admin_created')return `<strong>${esc(who)}</strong> added <strong>${esc(a.adminName||a.adminEmail||'a new admin')}</strong>`;
+  if(t==='admin_suspended')return `<strong>${esc(who)}</strong> suspended <strong>${esc(a.adminName||'an admin')}</strong>`;
+  if(t==='admin_reactivated')return `<strong>${esc(who)}</strong> reactivated <strong>${esc(a.adminName||'an admin')}</strong>`;
+  if(t==='admin_deleted')return `<strong>${esc(who)}</strong> deleted <strong>${esc(a.adminName||'an admin')}</strong>`;
+  if(t==='invite_created')return `<strong>${esc(who)}</strong> created invite code <strong>${esc(a.code||'')}</strong>`;
+  if(t==='settings_updated')return `<strong>${esc(who)}</strong> updated site settings`;
+  if(t==='login')return `<strong>${esc(who)}</strong> signed in`;
+  return `<strong>${esc(who)}</strong> performed <strong>${esc(a.type||'an action')}</strong>`;
+}
+
+function iconFor(a){
+  const t=(a.type||'').toLowerCase();
+  if(t.includes('approve')||t==='status_change'&&a.to==='active')return{icon:'fa-check',cls:'teal'};
+  if(t.includes('reject'))return{icon:'fa-times',cls:'red'};
+  if(t.includes('admin'))return{icon:'fa-user-shield',cls:'gold'};
+  if(t.includes('bulk'))return{icon:'fa-layer-group',cls:'blue'};
+  if(t==='invite_created')return{icon:'fa-key',cls:'gold'};
+  if(t==='settings_updated')return{icon:'fa-gear',cls:'blue'};
+  if(t==='login')return{icon:'fa-right-to-bracket',cls:'gold'};
+  return{icon:'fa-circle-info',cls:''};
+}
+
+function render(){
+  const list=document.getElementById('logList');
+  const pg=document.getElementById('pager');
+  if(!filtered.length){
+    list.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>No activity matches your filters.</div>';
+    pg.style.display='none';return;
+  }
+  const totalPages=Math.ceil(filtered.length/PER);
+  if(currentPage>totalPages)currentPage=totalPages;
+  const start=(currentPage-1)*PER;
+  const page=filtered.slice(start,start+PER);
+
+  list.innerHTML=page.map(l=>{
+    const a=l.data;const at=toDate(a.at);const {icon,cls}=iconFor(a);
+    return `<div class="log-item">
+      <div class="log-icon ${cls}"><i class="fas ${icon}"></i></div>
+      <div class="log-body">
+        <div class="log-text">${describe(a)}</div>
+        <div class="log-meta">
+          <span><i class="fas fa-clock"></i> ${fmt(at)}</span>
+          <span><i class="fas fa-envelope"></i> ${esc(a.byEmail||'—')}</span>
+          <span><i class="fas fa-tag"></i> ${esc(a.type||'—')}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  pg.style.display='flex';
+  document.getElementById('pagerInfo').textContent=`Showing ${start+1}–${Math.min(start+PER,filtered.length)} of ${filtered.length}`;
+  const btns=document.getElementById('pagerBtns');
+  let h=`<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}"><i class="fas fa-chevron-left"></i></button>`;
+  const sp=Math.max(1,currentPage-2),ep=Math.min(totalPages,sp+4);
+  for(let i=sp;i<=ep;i++)h+=`<button ${i===currentPage?'class="active"':''} data-page="${i}">${i}</button>`;
+  h+=`<button ${currentPage===totalPages?'disabled':''} data-page="${currentPage+1}"><i class="fas fa-chevron-right"></i></button>`;
+  btns.innerHTML=h;
+}
+
+document.getElementById('pagerBtns').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-page]');if(!b)return;
+  currentPage=parseInt(b.dataset.page,10);render();window.scrollTo({top:0,behavior:'smooth'});
+});
+
+['searchInput','typeFilter','adminFilter','fromDate','toDate'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',()=>{clearTimeout(window._st);window._st=setTimeout(applyFilters,180)});
+  el.addEventListener('change',applyFilters);
+});
+
+document.getElementById('refreshBtn').addEventListener('click',async e=>{e.target.disabled=true;await loadLogs();e.target.disabled=false;toast('Refreshed.')});
+
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  if(!filtered.length){toast('Nothing to export.',true);return}
+  const rows=[['Timestamp','Admin Name','Admin Email','Type','Member/Admin','Details']];
+  filtered.forEach(l=>{
+    const a=l.data;const at=toDate(a.at);
+    rows.push([
+      at?at.toISOString():'',
+      a.byName||'',
+      a.byEmail||'',
+      a.type||'',
+      a.memberName||a.adminName||a.code||'',
+      JSON.stringify({count:a.count,memberId:a.memberId,adminId:a.adminId,to:a.to,notes:a.notes})
+    ]);
+  });
+  const csv=rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='studyflix-activity-'+Date.now()+'.csv';a.click();URL.revokeObjectURL(a.href);
+  toast('Exported '+filtered.length+' rows.');
+});
+
+auth.onAuthStateChanged(async user=>{
+  const guard=document.getElementById('guard'),gt=document.getElementById('guardText');
+  if(!user){gt.textContent='Not signed in. Redirecting…';setTimeout(()=>location.href='admin-login.html',900);return}
+  currentUser=user;
+  try{
+    const snap=await db.collection('admins').doc(user.uid).get();
+    if(!snap.exists||snap.data().role!=='admin'||snap.data().status!=='active'){gt.textContent='Admin access required.';setTimeout(()=>location.href='admin-login.html',1200);return}
+    currentAdmin=snap.data();
+    const name=currentAdmin.name||user.email.split('@')[0];
+    const av=document.getElementById('sidebarAdminAvatar'),nm=document.getElementById('sidebarAdminName'),em=document.getElementById('sidebarAdminEmail');
+    if(av)av.textContent=name.charAt(0).toUpperCase();if(nm)nm.textContent=name;if(em)em.textContent=user.email||'';
+    guard.classList.add('hidden');
+    await loadLogs();
+  }catch(err){console.error(err);gt.textContent='Verification failed.';setTimeout(()=>location.href='admin-login.html',1500)}
+});
+</script>
+</body>
+</html>
